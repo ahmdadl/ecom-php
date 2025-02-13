@@ -410,6 +410,8 @@ trait Listable
      */
     public function first(array $options): ?Model
     {
+        $options['limit'] = 1;
+
         return $this->listModels($options)->first();
     }
 
