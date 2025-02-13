@@ -584,4 +584,83 @@ trait Listable
 
         return $query->first();
     }
+
+    /**
+     * list all records
+     *
+     * @param array $options
+     * @return \Illuminate\Support\Collection
+     */
+    public function listAll(array $options = [])
+    {
+        $options['paginate'] = false;
+        unset($options['page']);
+        unset($options['limit']);
+
+        return $this->list($options);
+    }
+
+    /**
+     * list all published records
+     *
+     * @param array $options
+     * @return \Illuminate\Support\Collection
+     */
+    public function listAllPublished(array $options = [])
+    {
+        $options[$this->getPublishedColumn()] = true;
+
+        return $this->listAll($options);
+    }
+
+    /**
+     * list all models
+     *
+     * @param array $options
+     * @return \Illuminate\Support\Collection
+     */
+    public function listAllModels(array $options)
+    {
+        $options['as-model'] = true;
+
+        return $this->listAll($options);
+    }
+
+    /**
+     * list all published models
+     *
+     * @param array $options
+     * @return \Illuminate\Support\Collection
+     */
+    public function listAllPublishedModels(array $options)
+    {
+        $options[$this->getPublishedColumn()] = true;
+
+        return $this->listAllModels($options);
+    }
+
+    /**
+     * count all records
+     * ? alias to total
+     *
+     * @param array $options
+     * @return int
+     */
+    public function count(array $options = [])
+    {
+        return $this->total($options);
+    }
+
+    /**
+     * count all published records
+     *
+     * @param array $options
+     * @return int
+     */
+    public function countPublished(array $options = [])
+    {
+        $options[$this->getPublishedColumn()] = true;
+
+        return $this->count($options);
+    }
 }
