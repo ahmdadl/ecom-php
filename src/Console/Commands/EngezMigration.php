@@ -137,8 +137,6 @@ class EngezMigration extends EngezGeneratorCommand implements EngezInterface
         $replacements = [
             // table name
             '{{ tableName }}' => $this->tableName,
-            // class name
-            '{{ ClassName }}' => $this->studly($this->migrationName),
             // migration type create | table
             '{{ type }}' => $this->migrationType,
             // primary key
