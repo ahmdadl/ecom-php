@@ -53,6 +53,8 @@ class MyClass
 
 ## Change Log
 
+-   3.1.5 (13 Feb 2025)
+    -   Add `listAll`, `listAllPublished`, `listAllModels`, `listAllPublishedModels`, `count` and `countPublished`
 -   3.1.4 (30 Sep 2024)
     -   Add published scope (user will add to models that need it)
     -   Add `findBy`, `forUser` and `forCustomer` scopes to all models
