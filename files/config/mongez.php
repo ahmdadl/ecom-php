@@ -406,6 +406,8 @@ return [
                     'middleware' => 'authorized',
                 ]
             ],
+            // set as null to disable
+            'repository_helpers_path' => 'app\repositories_functions.php'
         ]
     ],
 

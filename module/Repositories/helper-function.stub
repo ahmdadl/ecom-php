@@ -1,0 +1,11 @@
+if (!function_exists("{{ repositoryName }}Repo")) {
+    /**
+     * get {{ repositoryName }} repository
+     *
+     * @return \App\Modules\{{ ModuleName }}\Repositories\{{ RepositoryName }}Repository
+     */
+    function {{ repositoryName }}Repo(): \App\Modules\{{ ModuleName }}\Repositories\{{ RepositoryName }}Repository
+    {
+        return repo("{{ repositoryName }}");
+    }
+}

@@ -48,9 +48,9 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
                                        {--resource=}
                                        {--repository=}
                                        ' . EngezGeneratorCommand::DATA_TYPES_OPTIONS
-    . EngezModel::MODEL_OPTIONS
-    . EngezController::CONTROLLER_OPTIONS
-    . EngezGeneratorCommand::TABLE_INDEXES_OPTIONS;
+        . EngezModel::MODEL_OPTIONS
+        . EngezController::CONTROLLER_OPTIONS
+        . EngezGeneratorCommand::TABLE_INDEXES_OPTIONS;
 
     /**
      * The console command description.
@@ -160,6 +160,9 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 
         $this->info('Creating repository file');
         $this->createRepository();
+
+        $this->info('Adding repository helper function');
+        $this->addRepositoryHelper();
 
         if (!$this->hasParentModule()) {
             $this->createServiceProvider();
@@ -321,7 +324,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
         $this->call(
             'engez:seeder',
             $repositoryOptions
-        // $this->withDataTypes($repositoryOptions)
+            // $this->withDataTypes($repositoryOptions)
         );
     }
 
@@ -603,5 +606,54 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
         return $this->hasParentModule() ? $this->plural(
             $this->studly($this->option('parent'))
         ) : $this->getModule();
+    }
+
+    /**
+     * Add repository helper function
+     *
+     * @return void
+     */
+    protected function addRepositoryHelper(): void
+    {
+        try {
+            $replacements = [
+                '{{ ModuleName }}' => $moduleName = $this->getModule(),
+                '{{ repositoryName }}' => $repoName = $this->camel($this->plural($moduleName)),
+                '{{ RepositoryName }}' => $this->plural($moduleName),
+            ];
+
+            $content = $this->replaceStub('Repositories/helper-function', $replacements);
+
+            $helperFunctionsPath = base_path($relativePath = config('mongez.console.builder.repository_helpers_path'));
+
+            if (!$relativePath) {
+                return; // disabled
+            }
+
+            $helperFunctionsContent = $this->files->get(($helperFunctionsPath));
+
+            $replacementLine = '// Auto generated providers here: DO NOT remove this line.';
+
+
+            if (!file_exists(($helperFunctionsPath))) {
+                $this->warn('file at repository_helpers_path not found, skipping adding helper function.');
+                return;
+            }
+
+            if (!Str::contains($helperFunctionsContent, $replacementLine)) return;
+
+            $replacedString = "\n" . $content . "\n$replacementLine";
+
+            if (empty($helperFunctionsContent)) {
+                $this->files->put($helperFunctionsPath, $replacedString);
+            } else {
+                $helperFunctionsContent = str_replace($replacementLine, $replacedString, $helperFunctionsContent);
+            }
+
+            $this->files->put($helperFunctionsPath, $helperFunctionsContent);
+        } catch (
+            \Exception) {
+            $this->warn('error adding repository helper, skipping.');
+        }
     }
 }
