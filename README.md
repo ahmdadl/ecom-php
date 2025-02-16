@@ -57,6 +57,7 @@ class MyClass
     -   Add `listAll`, `listAllPublished`, `listAllModels`, `listAllPublishedModels`, `count` and `countPublished`
     -   first loads collection of one item now
     -   Add helper function for repository.
+    -   Add ModuleDelete command
 -   3.1.4 (30 Sep 2024)
     -   Add published scope (user will add to models that need it)
     -   Add `findBy`, `forUser` and `forCustomer` scopes to all models
