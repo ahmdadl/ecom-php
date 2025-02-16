@@ -34,6 +34,7 @@ use HZ\Illuminate\Mongez\Console\Commands\EngezTranslation;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use HZ\Illuminate\Mongez\Console\Commands\PostmanCollection;
 use HZ\Illuminate\Mongez\Console\Commands\CloneModuleBuilder;
+use HZ\Illuminate\Mongez\Console\Commands\ModuleDelete;
 use HZ\Illuminate\Mongez\Console\Commands\MongezTestCommand;
 
 class MongezServiceProvider extends ServiceProvider
@@ -49,6 +50,7 @@ class MongezServiceProvider extends ServiceProvider
         EngezRemove::class,
         EngezMigrate::class,
         ModuleBuilder::class,
+        ModuleDelete::class,
         EngezResource::class,
         DatabaseMaker::class,
         EngezFilter::class,
