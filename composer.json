@@ -1,12 +1,7 @@
 {
-    "name": "ahmdadl/ecommerce-mongez",
+    "name": "ahmdadl/ecommerce-php",
     "description": "A Robust application handler for building neat laravel application(s).",
-    "keywords": [
-        "laravel",
-        "mongez",
-        "module",
-        "builder"
-    ],
+    "keywords": [],
     "license": "MIT",
     "version": "3.1.6",
     "require": {
