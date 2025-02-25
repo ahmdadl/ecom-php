@@ -1,5 +1,5 @@
 {
-    "name": "hassanzohdy/mongez",
+    "name": "ahmdadl/ecommerce-mongez",
     "description": "A Robust application handler for building neat laravel application(s).",
     "keywords": [
         "laravel",
@@ -10,7 +10,7 @@
     "license": "MIT",
     "version": "3.1.6",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.3",
         "cocur/slugify": "^4.0",
         "illuminate/support": ">=11.0",
         "mongodb/laravel-mongodb": "^4.8"
@@ -29,15 +29,11 @@
             "src/Helpers/functions.php"
         ]
     },
-    "files": [
-      "src/Helpers/functions.php"
-    ]
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "HZ\\Illuminate\\Mongez\\Providers\\MongezServiceProvider"
-      ]
+    "extra": {
+        "laravel": {
+            "providers": [
+                "HZ\\Illuminate\\Mongez\\Providers\\MongezServiceProvider"
+            ]
+        }
     }
-  }
 }
