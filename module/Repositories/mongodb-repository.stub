@@ -142,7 +142,7 @@ class {{ RepositoryClass }} extends MongoDBRepositoryManager implements Reposito
      * 
      * @const array  
      */
-    const WHEN_AVAILABLE_DATA = [];
+    const WHEN_AVAILABLE_DATA = true;
 
     /**
      * Only the columns added in this array will be affected by PATCH request if they were sent.

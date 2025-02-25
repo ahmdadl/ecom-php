@@ -53,6 +53,8 @@ class MyClass
 
 ## Change Log
 
+-   3.1.6 (25 Feb 2025)
+    -   Set WHEN_AVAILABLE_DATA to true in new repositories, so now no data will be updated if not passed in the request
 -   3.1.5 (16 Feb 2025)
     -   Add `listAll`, `listAllPublished`, `listAllModels`, `listAllPublishedModels`, `count` and `countPublished`
     -   first loads collection of one item now
