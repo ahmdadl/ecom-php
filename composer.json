@@ -29,11 +29,15 @@
             "src/Helpers/functions.php"
         ]
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "HZ\\Illuminate\\Mongez\\Providers\\MongezServiceProvider"
-            ]
-        }
+    "files": [
+      "src/Helpers/functions.php"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "HZ\\Illuminate\\Mongez\\Providers\\MongezServiceProvider"
+      ]
     }
+  }
 }
