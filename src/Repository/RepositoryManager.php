@@ -793,4 +793,22 @@ abstract class RepositoryManager implements RepositoryInterface
 
         return $model;
     }
+
+    /**
+     * chunk query after applying filters
+     */
+    public function chunkModels(array $options, int $count, callable $callback)
+    {
+        $this->initiateListing($options);
+
+        $this->trigger("listing", $this->query);
+
+        if ($this->select->isNotEmpty()) {
+            $this->query->select(...$this->select->list());
+        }
+
+        $chunk = $this->query->chunk($count,  $callback);
+
+        return $chunk;
+    }
 }
