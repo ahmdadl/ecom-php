@@ -422,7 +422,7 @@ trait Listable
      * @param  string|null $option
      * @return $this
      */
-    protected function where(string $column, string $option = null): self
+    protected function where(string $column, ?string $option = null): self
     {
         if (!$option) {
             $option = $column;
@@ -442,7 +442,7 @@ trait Listable
      * @param  string|null $option
      * @return $this
      */
-    protected function whereIn(string $column, string $option = null): self
+    protected function whereIn(string $column, ?string $option = null): self
     {
         if (!$option) {
             $option = $column;
@@ -462,7 +462,7 @@ trait Listable
      * @param  string|null $option
      * @return $this
      */
-    protected function whereInInt(string $column, string $option = null): self
+    protected function whereInInt(string $column, ?string $option = null): self
     {
         if (!$option) {
             $option = $column;

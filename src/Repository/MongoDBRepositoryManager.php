@@ -100,23 +100,17 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * {@inheritDoc}
      */
-    protected function setData($model, $request)
-    {
-    }
+    protected function setData($model, $request) {}
 
     /**
      * {@inheritDoc}
      */
-    protected function select()
-    {
-    }
+    protected function select() {}
 
     /**
      * {@inheritDoc}
      */
-    protected function filter()
-    {
-    }
+    protected function filter() {}
 
     /**
      * {@inheritDoc}
@@ -200,7 +194,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
      * @param  string|null $option
      * @return $this
      */
-    protected function whereBool(string $column, string $option = null): self
+    protected function whereBool(string $column, ?string $option = null): self
     {
         if (!$option) {
             $option = $column;
@@ -288,9 +282,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * {@inheritDoc}
      */
-    protected function boot()
-    {
-    }
+    protected function boot() {}
 
     /**
      * Get column name appended by table|table alias
