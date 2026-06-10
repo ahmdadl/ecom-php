@@ -2,6 +2,7 @@
 
 namespace HZ\Illuminate\Mongez\Providers;
 
+use App\Database\Query\Grammars\CustomMongoGrammar;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -36,6 +37,7 @@ use HZ\Illuminate\Mongez\Console\Commands\PostmanCollection;
 use HZ\Illuminate\Mongez\Console\Commands\CloneModuleBuilder;
 use HZ\Illuminate\Mongez\Console\Commands\ModuleDelete;
 use HZ\Illuminate\Mongez\Console\Commands\MongezTestCommand;
+use Illuminate\Support\Facades\DB;
 
 class MongezServiceProvider extends ServiceProvider
 {
@@ -106,6 +108,8 @@ class MongezServiceProvider extends ServiceProvider
         if (!Mongez::isInstalled()) {
             $this->prepareForFirstTime();
         }
+
+        DB::connection()->setQueryGrammar(new CustomMongoGrammar(DB::connection()));
     }
 
     /**
