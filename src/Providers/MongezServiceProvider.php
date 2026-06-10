@@ -2,7 +2,7 @@
 
 namespace HZ\Illuminate\Mongez\Providers;
 
-use App\Database\Query\Grammars\CustomMongoGrammar;
+use HZ\Illuminate\Mongez\Database\Query\Grammars\CustomMongoGrammar;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

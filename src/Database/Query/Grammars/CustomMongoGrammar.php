@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Database\Query\Grammars;
+namespace HZ\Illuminate\Mongez\Database\Query\Grammars;
 
 use DateInvalidTimeZoneException;
 use DateTimeInterface;
