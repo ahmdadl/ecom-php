@@ -18,6 +18,9 @@ abstract class Model extends BaseModel
         boot as traitBoot;
     }
 
+    protected $primaryKey = "id";
+    protected $keyType = "int";
+
     /**
      * The name of the "created at" column.
      *
