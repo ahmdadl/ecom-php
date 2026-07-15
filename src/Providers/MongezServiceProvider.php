@@ -109,7 +109,7 @@ class MongezServiceProvider extends ServiceProvider
             $this->prepareForFirstTime();
         }
 
-        // DB::connection()->setQueryGrammar(new CustomMongoGrammar(DB::connection()));
+        DB::connection()->setQueryGrammar(new CustomMongoGrammar(DB::connection()));
     }
 
     /**
