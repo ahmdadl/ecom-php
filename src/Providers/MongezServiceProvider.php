@@ -108,8 +108,6 @@ class MongezServiceProvider extends ServiceProvider
         if (!Mongez::isInstalled()) {
             $this->prepareForFirstTime();
         }
-
-        DB::connection()->setQueryGrammar(new CustomMongoGrammar(DB::connection()));
     }
 
     /**
