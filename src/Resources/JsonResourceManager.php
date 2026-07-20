@@ -946,9 +946,7 @@ abstract class JsonResourceManager extends JsonResource
      * @param  \Request $request
      * @return void
      */
-    protected function extend($request)
-    {
-    }
+    protected function extend($request) {}
 
     /**
      * Determine whether the current resource can be embedded in the givenparent resource
@@ -959,5 +957,14 @@ abstract class JsonResourceManager extends JsonResource
     public function canBeEmbedded(JsonResourceManager $parentResource): bool
     {
         return true;
+    }
+
+    /**
+     * access mode id column as $this->id returns _id now
+     * @return int
+     */
+    protected function id(): int
+    {
+        return $this->data['id'];
     }
 }

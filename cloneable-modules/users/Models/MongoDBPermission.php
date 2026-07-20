@@ -9,5 +9,5 @@ class Permission extends Model
     /**
      * {@inheritDoc}
      */
-    protected $collection = 'permissions';
+    protected $table = 'permissions';
 }
