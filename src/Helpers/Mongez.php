@@ -119,7 +119,7 @@ class Mongez
      */
     public static function isInstalled(): bool
     {
-        return File::isFile(static::$mongezFilePath);
+        return File::isFile(static::getMongezStorageFilePath());
     }
 
     /**
@@ -135,10 +135,11 @@ class Mongez
     }
 
     /**
-     * Reset the in-memory state of the helper
+     * Reset the request scoped state of the helper
      *
      * This is used between requests when running on Laravel Octane
-     * to make sure no state leaks from one request to another.
+     * to make sure no request state leaks from one request to another.
+     * The storage file path is kept as it is an immutable application state.
      *
      * @return void
      */
@@ -146,7 +147,6 @@ class Mongez
     {
         static::$requestLocaleCode = '';
         static::$mongezContent = null;
-        static::$mongezFilePath = null;
     }
 
     /**
@@ -156,6 +156,10 @@ class Mongez
      */
     protected static function getMongezStorageFilePath()
     {
+        if (!static::$mongezFilePath) {
+            static::$mongezFilePath = static::getMongezStorageDirectory() . '/' . static::MONGEZ_STORAGE_FILE_NAME;
+        }
+
         return static::$mongezFilePath;
     }
 
@@ -200,7 +204,7 @@ class Mongez
      */
     protected static function getStorageFileContent()
     {
-        return File::getJson(static::$mongezFilePath);
+        return File::getJson(static::getMongezStorageFilePath());
     }
 
     /**

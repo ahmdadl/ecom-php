@@ -27,7 +27,7 @@ class Events implements EventsInterface
      */
     public static function emit(...$args)
     {
-        return static::trigger(...$args);
+        return App::make(static::class)->trigger(...$args);
     }
 
     /**

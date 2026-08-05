@@ -383,7 +383,7 @@ abstract class JsonResourceManager extends JsonResource
      * @param callable $valueCallback
      * @return $this
      */
-    protected function setData(array $columns, callable $valueCallback = null): JsonResourceManager
+    protected function setData(array $columns, ?callable $valueCallback = null): JsonResourceManager
     {
         foreach ($columns as $column => $outputKey) {
             $column = is_numeric($column) ? $outputKey : $column;

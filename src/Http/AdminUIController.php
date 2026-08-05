@@ -46,8 +46,6 @@ abstract class AdminUIController
      */
     public function __construct()
     {
-        parent::__construct();
-
         if (!empty($this->controllerInfo['repository'])) {
             $this->repository = repo($this->controllerInfo['repository']);
         }

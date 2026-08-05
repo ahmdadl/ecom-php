@@ -3,7 +3,6 @@
 namespace HZ\Illuminate\Mongez\Providers;
 
 use HZ\Illuminate\Mongez\Database\Query\Grammars\CustomMongoGrammar;
-use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\CarbonImmutable;
@@ -118,7 +117,7 @@ class MongezServiceProvider extends ServiceProvider
         $carbonImmutable = $this->config['date']['immutable'] ?? true;
 
         if ($carbonImmutable) {
-            Date::use(Carbon::class);
+            Date::use(CarbonImmutable::class);
         }
     }
 
@@ -207,7 +206,7 @@ class MongezServiceProvider extends ServiceProvider
             $this->app->register(MongezOctaneServiceProvider::class);
         }
 
-        if (strtolower(config('database.driver')) === 'mysql') {
+        if (strtolower(config('database.default')) === 'mysql') {
             // manage database options
             $this->manageDatabase();
         }

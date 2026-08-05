@@ -4,6 +4,7 @@ namespace HZ\Illuminate\Mongez\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 
 class MongezRequestMiddleware
@@ -28,37 +29,100 @@ class MongezRequestMiddleware
             ]);
         }
 
-        $this->switchBetaDatabase($request);
+        $originalDatabase = $this->switchBetaDatabase($request);
 
         $this->prepareLocaleCode($request);
 
-        return $next($request);
+        try {
+            return $next($request);
+        } finally {
+            if ($originalDatabase !== null) {
+                $this->restoreDatabase($originalDatabase);
+            }
+        }
     }
 
     /**
      * Switch the default database connection if a beta header is sent
      *
+     * Returns the original database name if the connection was switched,
+     * otherwise null.
+     *
      * @param  \Illuminate\Http\Request $request
-     * @return void
+     * @return string|null
      */
     protected function switchBetaDatabase(Request $request)
     {
-        if (!($betaDBName = $request->server('HTTP_BETA'))) {
-            return;
+        $betaDBName = $request->server('HTTP_BETA');
+
+        if (!$betaDBName) {
+            return null;
         }
 
-        $defaultDatabaseDriver = config('database.default');
-        $dbConfigName = 'database.connections.' . $defaultDatabaseDriver . '.database';
+        $driver = config('database.default');
+        $connectionConfigKey = 'database.connections.' . $driver . '.database';
+        $originalDatabase = config($connectionConfigKey);
 
         if ($betaDBName === 'true') {
             $betaDBName = 'BETA';
         }
 
-        $betaDatabase = env("DB_DATABASE_$betaDBName");
+        $betaDatabase = $this->resolveBetaDatabaseName($betaDBName);
+
+        if (!$betaDatabase || $betaDatabase === $originalDatabase) {
+            return null;
+        }
 
         config([
-            $dbConfigName => $betaDatabase,
+            $connectionConfigKey => $betaDatabase,
         ]);
+
+        // discard the already resolved connection so it reconnects to the beta database
+        DB::purge($driver);
+
+        return $originalDatabase;
+    }
+
+    /**
+     * Restore the original database connection after the request is finished
+     *
+     * @param  string $originalDatabase
+     * @return void
+     */
+    protected function restoreDatabase(string $originalDatabase)
+    {
+        $driver = config('database.default');
+
+        config([
+            'database.connections.' . $driver . '.database' => $originalDatabase,
+        ]);
+
+        // discard the beta connection so the next request uses the original database
+        DB::purge($driver);
+    }
+
+    /**
+     * Resolve the beta database name from the given beta flag
+     *
+     * Only alphanumeric/underscore names are allowed to avoid
+     * injecting arbitrary environment variable names.
+     *
+     * @param  string $betaDBName
+     * @return string|null
+     */
+    protected function resolveBetaDatabaseName(string $betaDBName)
+    {
+        if (!preg_match('/^[A-Za-z0-9_]+$/', $betaDBName)) {
+            return null;
+        }
+
+        $betaDatabase = config('mongez.database.beta.' . $betaDBName);
+
+        if ($betaDatabase !== null) {
+            return $betaDatabase;
+        }
+
+        return env("DB_DATABASE_$betaDBName") ?: null;
     }
 
     /**
@@ -74,6 +138,9 @@ class MongezRequestMiddleware
         if ($localeCode) {
             app()->setLocale($localeCode);
             Mongez::setRequestLocaleCode($localeCode);
+        } else {
+            // ensure the locale doesn't leak from a previous request
+            app()->setLocale(config('app.locale'));
         }
     }
 }

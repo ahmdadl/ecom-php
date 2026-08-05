@@ -58,6 +58,11 @@ return [
             ]
         ],
         'prefix' => '',
+        // whitelist of the beta database names that can be switched
+        // to via the `HTTP_BETA` request header, the key must match
+        // the beta header value while the value is the database name
+        // i.e ['BETA' => env('DB_DATABASE_BETA')]
+        'beta' => [],
         'updatesLogModel' => HZ\Illuminate\Mongez\Models\UpdateLog::class,
         'onModel' => [
             'update' => [
