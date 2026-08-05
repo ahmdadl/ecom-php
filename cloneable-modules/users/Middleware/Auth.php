@@ -57,6 +57,17 @@ class Auth
             break;
         }
 
+        if (!$this->currentGuardian) {
+            return $next($request);
+        }
+
+        $originalConfig = [
+            'auth.defaults.guard' => config('auth.defaults.guard'),
+            'app.type' => config('app.type'),
+            'app.users-repo' => config('app.users-repo'),
+            'app.user-type' => config('app.user-type'),
+        ];
+
         config([
             'auth.defaults.guard' => $this->currentGuardian['appType'],
             'app.type' => $this->currentGuardian['appType'],
@@ -64,7 +75,11 @@ class Auth
             'app.user-type' => $this->currentGuardian['type'],
         ]);
 
-        return $this->middleware($request, $next);
+        try {
+            return $this->middleware($request, $next);
+        } finally {
+            config($originalConfig);
+        }
     }
 
     /**

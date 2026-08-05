@@ -8,8 +8,8 @@ use App\Modules\Localization\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MongoDB\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MongoDBRepositoryManager
 };
 
 class currenciesRepository extends RepositoryManager implements RepositoryInterface

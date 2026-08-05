@@ -4,7 +4,7 @@ namespace App\Modules\Users\Controllers\Site\Auth;
 
 use Mail;
 use Validator;
-use HZ\Illuminate\Mongez\Contracts\Repositories\RepositoryInterface;
+use HZ\Illuminate\Mongez\Repository\RepositoryInterface;
 use Illuminate\Http\Request;
 use HZ\Illuminate\Mongez\Http\ApiController;
 

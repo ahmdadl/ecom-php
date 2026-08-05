@@ -8,8 +8,8 @@ use App\Modules\Localization\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MYSQL\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MYSQLRepositoryManager
 };
 
 class citiesRepository extends RepositoryManager implements RepositoryInterface

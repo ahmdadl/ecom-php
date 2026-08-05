@@ -8,8 +8,8 @@ use App\Modules\Settings\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MYSQL\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MYSQLRepositoryManager
 };
 
 class settingsRepository extends RepositoryManager implements RepositoryInterface

@@ -1,7 +1,7 @@
 <?php
 namespace App\Modules\Localization\Resources;
 
-use HZ\Illuminate\Mongez\Managers\Resources\JsonResourceManager;
+use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
 
 class Currency extends JsonResourceManager 
 {

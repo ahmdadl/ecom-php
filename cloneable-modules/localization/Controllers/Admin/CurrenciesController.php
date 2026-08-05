@@ -2,7 +2,7 @@
 
 namespace App\Modules\Localization\Controllers\Admin;
 
-use use HZ\Illuminate\Mongez\Http\RestfulApiController;;
+use HZ\Illuminate\Mongez\Http\RestfulApiController;
 
 class CurrenciesController extends RestfulApiController
 {

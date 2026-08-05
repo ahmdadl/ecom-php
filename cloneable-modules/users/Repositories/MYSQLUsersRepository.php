@@ -10,8 +10,8 @@ use App\Modules\Users\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MYSQL\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MYSQLRepositoryManager
 };
 
 class UsersRepository extends RepositoryManager implements RepositoryInterface

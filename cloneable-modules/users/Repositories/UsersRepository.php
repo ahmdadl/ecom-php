@@ -9,8 +9,8 @@ use App\Modules\Users\{
     Resources\User as Resource
 };
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MongoDB\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MongoDBRepositoryManager
 };
 
 class UsersRepository extends RepositoryManager implements RepositoryInterface

@@ -8,8 +8,8 @@ use App\Modules\Localization\{
 };
 use App\Modules\Localization\Models\City;
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MongoDB\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MongoDBRepositoryManager
 };
 
 class regionsRepository extends RepositoryManager implements RepositoryInterface

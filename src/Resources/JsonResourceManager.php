@@ -192,8 +192,26 @@ abstract class JsonResourceManager extends JsonResource
      */
     public static function reset()
     {
-        static::$disabledKeys = [];
-        static::$allowedKeys = [];
+        foreach (static::subClasses() as $class) {
+            $class::$disabledKeys = [];
+            $class::$allowedKeys = [];
+        }
+    }
+
+    /**
+     * Get the resource classes that share the disabled and allowed keys state
+     *
+     * @return array
+     */
+    protected static function subClasses(): array
+    {
+        $classes = array_merge([static::class], get_declared_classes());
+
+        $classes = array_filter($classes, function ($class) {
+            return $class === static::class || is_subclass_of($class, static::class);
+        });
+
+        return array_values(array_unique($classes));
     }
 
     /**
@@ -515,7 +533,7 @@ abstract class JsonResourceManager extends JsonResource
 
         // get the localization mode
         // it cn be an object or an array of objects
-        $localizationMode = config('mognez.localizationMode', 'array');
+        $localizationMode = config('mongez.localizationMode', 'array');
 
         // the OR in the following if conditions is used as a fallback for the data that is
         // not matching the current localization mode
@@ -666,7 +684,7 @@ abstract class JsonResourceManager extends JsonResource
 
         // get the localization mode
         // it cn be an object or an array of objects
-        $localizationMode = config('mognez.localizationMode', 'array');
+        $localizationMode = config('mongez.localizationMode', 'array');
 
         // the OR in the following if conditions is used as a fallback for the data that is
         // not matching the current localization mode

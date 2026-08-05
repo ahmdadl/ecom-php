@@ -8,8 +8,8 @@ use App\Modules\Settings\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Contracts\Repositories\RepositoryInterface,
-    Managers\Database\MongoDB\RepositoryManager
+    Repository\RepositoryInterface,
+    Repository\MongoDBRepositoryManager
 };
 
 class settingsRepository extends RepositoryManager implements RepositoryInterface
