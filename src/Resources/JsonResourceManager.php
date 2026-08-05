@@ -183,6 +183,20 @@ abstract class JsonResourceManager extends JsonResource
     protected static $allowedKeys = [];
 
     /**
+     * Reset the shared disabled and allowed keys lists
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure the keys don't accumulate from one request to another.
+     *
+     * @return void
+     */
+    public static function reset()
+    {
+        static::$disabledKeys = [];
+        static::$allowedKeys = [];
+    }
+
+    /**
      * Transform the resource into an array.
      *
      * @param   \Illuminate\Http\Request  $request

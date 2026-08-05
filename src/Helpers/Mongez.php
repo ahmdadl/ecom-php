@@ -76,6 +76,12 @@ class Mongez
     public static function setRequestLocaleCode(string $requestLocaleCode)
     {
         static::$requestLocaleCode = $requestLocaleCode;
+
+        if (app()->bound('request')) {
+            $request = app('request');
+
+            $request->attributes->set('mongezRequestLocaleCode', $requestLocaleCode);
+        }
     }
 
     /**
@@ -85,7 +91,7 @@ class Mongez
      */
     public static function requestHasLocaleCode(): bool
     {
-        return static::$requestLocaleCode !== '';
+        return static::getRequestLocaleCode() !== '';
     }
 
     /**
@@ -95,6 +101,14 @@ class Mongez
      */
     public static function getRequestLocaleCode(): string
     {
+        if (app()->bound('request')) {
+            $request = app('request');
+
+            $localeCode = $request->attributes->get('mongezRequestLocaleCode', '');
+
+            if ($localeCode !== '') return $localeCode;
+        }
+
         return static::$requestLocaleCode;
     }
 
@@ -118,6 +132,21 @@ class Mongez
         File::MakeDirectory(static::getMongezStorageDirectory(), 0777);
 
         File::put(static::getMongezStorageFilePath(), json_encode(static::MONGEZ_STORAGE_FILE_DEfAULT_CONTENT, JSON_PRETTY_PRINT));
+    }
+
+    /**
+     * Reset the in-memory state of the helper
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure no state leaks from one request to another.
+     *
+     * @return void
+     */
+    public static function reset()
+    {
+        static::$requestLocaleCode = '';
+        static::$mongezContent = null;
+        static::$mongezFilePath = null;
     }
 
     /**

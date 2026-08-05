@@ -30,6 +30,20 @@ class Events implements EventsInterface
         return static::trigger(...$args);
     }
 
+    /**
+     * Reset the events and classes lists
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure no listeners or instances leak from one request to another.
+     *
+     * @return void
+     */
+    public function reset()
+    {
+        $this->eventsList = [];
+        $this->classesList = [];
+    }
+
     /** 
      * {@inheritDoc}
      */

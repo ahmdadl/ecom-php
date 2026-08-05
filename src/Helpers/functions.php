@@ -77,12 +77,7 @@ if (!function_exists('events')) {
      */
     function events(): Events
     {
-        static $events;
-        if (!$events) {
-            $events = app()->make(Events::class);
-        }
-
-        return $events;
+        return app()->make(Events::class);
     }
 }
 
@@ -110,21 +105,13 @@ if (!function_exists('repo')) {
      */
     function repo(string $repository): \HZ\Illuminate\Mongez\Repository\RepositoryInterface
     {
-        static $repos = [];
-
-        if (!empty($repos[$repository])) {
-            return $repos[$repository];
-        }
-
         $repositoryClass = config('mongez.repositories.' . $repository);
 
         if (!$repositoryClass) {
             throw new NotFoundRepositoryException(sprintf('Call to undefined repository: %s', $repository));
         }
 
-        $repositoryClass = App::make($repositoryClass);
-
-        return $repos[$repository] = $repositoryClass;
+        return App::make($repositoryClass);
     }
 }
 
@@ -285,11 +272,7 @@ if (!function_exists('localized_date')) {
      */
     function localized_date(DateTimeInterface $date, ?string $localeCode = null, int $dateType = IntlDateFormatter::FULL, int $timeType = IntlDateFormatter::SHORT): string
     {
-        static $locale;
-
-        if (!$locale) {
-            $locale = $localeCode ?: (Mongez::getRequestLocaleCode() ?: app()->getLocale());
-        }
+        $locale = $localeCode ?: (Mongez::getRequestLocaleCode() ?: app()->getLocale());
 
         if (!class_exists(IntlDateFormatter::class)) return '';
 

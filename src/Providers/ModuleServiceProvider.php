@@ -54,13 +54,6 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
     protected string $moduleBaseDirectory;
 
     /**
-     * Namespace for old modules, now the entire class path is set in routes
-     * 
-     * @var string
-     */
-    protected $namespace = '';
-
-    /**
      * {@inheritDoc}
      */
     public function boot()
@@ -118,7 +111,6 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
 
             Route::prefix($prefix . $appPath)
                 ->middleware($middleware)
-                ->namespace($this->namespace)
                 ->name($routeType . '.')
                 ->group($routeFilePath);
         }

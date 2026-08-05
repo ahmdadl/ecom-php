@@ -9,6 +9,9 @@
         "illuminate/support": "^11.0|^12.0|^13.0",
         "mongodb/laravel-mongodb": "^4.0"
     },
+    "suggest": {
+        "laravel/octane": "Required to run the package under Laravel Octane (Octane-safe state reset is registered automatically)."
+    },
     "authors": [
         {
             "name": "Hasan Zohdy",
