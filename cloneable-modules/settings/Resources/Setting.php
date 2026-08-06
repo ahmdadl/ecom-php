@@ -1,7 +1,7 @@
 <?php
 namespace App\Modules\Settings\Resources;
 
-use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
+use HZ\Illuminate\Mongez\Managers\Resources\JsonResourceManager;
 
 class Setting extends JsonResourceManager 
 {

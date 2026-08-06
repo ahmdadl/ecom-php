@@ -7,8 +7,8 @@ use App\Modules\Users\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Repository\RepositoryInterface,
-    Repository\MongoDBRepositoryManager
+    Contracts\Repositories\RepositoryInterface,
+    Managers\Database\MongoDB\RepositoryManager
 };
 
 class UsersGroupsRepository extends RepositoryManager implements RepositoryInterface

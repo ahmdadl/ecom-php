@@ -2,7 +2,7 @@
 
 namespace App\Modules\Users\Resources;
 
-use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
+use HZ\Illuminate\Mongez\Managers\Resources\JsonResourceManager;
 
 class User extends JsonResourceManager
 {

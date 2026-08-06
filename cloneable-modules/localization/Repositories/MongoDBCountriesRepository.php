@@ -8,8 +8,8 @@ use App\Modules\Localization\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Repository\RepositoryInterface,
-    Repository\MongoDBRepositoryManager
+    Contracts\Repositories\RepositoryInterface,
+    Managers\Database\MongoDB\RepositoryManager
 };
 
 class countriesRepository extends RepositoryManager implements RepositoryInterface

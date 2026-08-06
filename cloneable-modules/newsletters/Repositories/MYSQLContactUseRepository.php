@@ -8,8 +8,8 @@ use App\Modules\NewsLetters\{
 };
 
 use HZ\Illuminate\Mongez\{
-    Repository\RepositoryInterface,
-    Repository\MYSQLRepositoryManager
+    Contracts\Repositories\RepositoryInterface,
+    Managers\Database\MYSQL\RepositoryManager
 };
 
 class contactUseRepository extends RepositoryManager implements RepositoryInterface
