@@ -183,18 +183,60 @@ abstract class JsonResourceManager extends JsonResource
     protected static $allowedKeys = [];
 
     /**
+     * Baseline disabled keys captured right after boot.
+     *
+     * It holds the keys that were disabled during the application boot.
+     * When running under Laravel Octane, `reset` restores this baseline so
+     * boot-time keys survive while per-request keys are discarded.
+     *
+     * @var array
+     */
+    protected static $baseDisabledKeys = [];
+
+    /**
+     * Baseline allowed keys captured right after boot.
+     *
+     * @var array
+     */
+    protected static $baseAllowedKeys = [];
+
+    /**
+     * Cached sub classes list, as declared classes never change at runtime.
+     *
+     * @var array|null
+     */
+    protected static $subClassesCache;
+
+    /**
+     * Capture the current disabled and allowed keys as the baseline.
+     *
+     * This should be called once after the application has booted to keep
+     * the boot-time `disable` and `only` calls when the state is reset
+     * between requests on Laravel Octane.
+     *
+     * @return void
+     */
+    public static function snapshotBaseState()
+    {
+        static::$baseDisabledKeys = static::$disabledKeys;
+        static::$baseAllowedKeys = static::$allowedKeys;
+    }
+
+    /**
      * Reset the shared disabled and allowed keys lists
      *
      * This is used between requests when running on Laravel Octane
      * to make sure the keys don't accumulate from one request to another.
+     * The boot-time baseline keys are restored, while any keys added during
+     * the current request are discarded.
      *
      * @return void
      */
     public static function reset()
     {
         foreach (static::subClasses() as $class) {
-            $class::$disabledKeys = [];
-            $class::$allowedKeys = [];
+            $class::$disabledKeys = static::$baseDisabledKeys;
+            $class::$allowedKeys = static::$baseAllowedKeys;
         }
     }
 
@@ -205,13 +247,17 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected static function subClasses(): array
     {
+        if (static::$subClassesCache !== null) {
+            return static::$subClassesCache;
+        }
+
         $classes = array_merge([static::class], get_declared_classes());
 
         $classes = array_filter($classes, function ($class) {
             return $class === static::class || is_subclass_of($class, static::class);
         });
 
-        return array_values(array_unique($classes));
+        return static::$subClassesCache = array_values(array_unique($classes));
     }
 
     /**
