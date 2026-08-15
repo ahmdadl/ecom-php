@@ -152,7 +152,7 @@ trait EngezTrait
                 $index = $key;
             }
 
-            if (!Str::startsWith('--', $index)) {
+            if (!Str::startsWith($index, '--')) {
                 $index = '--' . $index;
             }
 

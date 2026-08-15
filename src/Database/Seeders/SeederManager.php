@@ -271,7 +271,7 @@ abstract class SeederManager extends Seeder
     {
         $localeCodes = config('app.locale_codes');
 
-        $localizationMode = config('mognez.localizationMode', 'array');
+        $localizationMode = config('mongez.localizationMode', 'array');
 
         foreach (static::LOCALIZED_DATA as $column) {
             $this->dataLocal = [];

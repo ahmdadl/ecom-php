@@ -297,11 +297,7 @@ trait Fillers
      */
     protected function getFileName(UploadedFile $fileObject): string
     {
-        static $keepFileName = null;
-
-        if ($keepFileName === null) {
-            $keepFileName = defined('static::UPLOADS_KEEP_FILE_NAME') ? static::UPLOADS_KEEP_FILE_NAME : config('mongez.repository.uploads.keepUploadsName', true);
-        }
+        $keepFileName = defined('static::UPLOADS_KEEP_FILE_NAME') ? static::UPLOADS_KEEP_FILE_NAME : config('mongez.repository.uploads.keepUploadsName', true);
 
         $originalName = $fileObject->getClientOriginalName();
 

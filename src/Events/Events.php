@@ -21,13 +21,55 @@ class Events implements EventsInterface
     protected $classesList = [];
 
     /**
+     * Baseline events list captured right after boot.
+     *
+     * It holds the listeners that were registered during the application
+     * boot (config events + any boot-time `subscribe` calls). When running
+     * under Laravel Octane, `reset` restores this baseline so boot-time
+     * listeners survive while per-request listeners are discarded.
+     *
+     * @var array
+     */
+    protected $baseEventsList = [];
+
+    /**
      * An alias to trigger method
      * 
      * @see $this->trigger
      */
     public static function emit(...$args)
     {
-        return static::trigger(...$args);
+        return App::make(static::class)->trigger(...$args);
+    }
+
+    /**
+     * Capture the current events list as the baseline.
+     *
+     * This should be called once after the application has booted to keep
+     * the boot-time registered listeners when the state is reset between
+     * requests on Laravel Octane.
+     *
+     * @return void
+     */
+    public function snapshotBaseState()
+    {
+        $this->baseEventsList = $this->eventsList;
+    }
+
+    /**
+     * Reset the events and classes lists
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure no listeners or instances leak from one request to another.
+     * The boot-time baseline listeners are restored, while any listeners added
+     * during the current request are discarded.
+     *
+     * @return void
+     */
+    public function reset()
+    {
+        $this->eventsList = $this->baseEventsList;
+        $this->classesList = [];
     }
 
     /** 

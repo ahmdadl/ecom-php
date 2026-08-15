@@ -6,8 +6,11 @@
     "require": {
         "php": ">=8.4",
         "cocur/slugify": "^4.0",
-        "illuminate/support": "^11.0|^12.0|^13.0",
+        "laravel/framework": "^11.0",
         "mongodb/laravel-mongodb": "^4.0"
+    },
+    "suggest": {
+        "laravel/octane": "Required to run the package under Laravel Octane (Octane-safe state reset is registered automatically)."
     },
     "authors": [
         {
@@ -29,5 +32,15 @@
                 "HZ\\Illuminate\\Mongez\\Providers\\MongezServiceProvider"
             ]
         }
+    },
+    "config": {
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.3"
     }
 }
