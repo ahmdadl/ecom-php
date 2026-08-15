@@ -33,7 +33,6 @@ use HZ\Illuminate\Mongez\Console\Commands\EngezRepository;
 use HZ\Illuminate\Mongez\Console\Commands\EngezTranslation;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use HZ\Illuminate\Mongez\Console\Commands\PostmanCollection;
-use HZ\Illuminate\Mongez\Console\Commands\CloneModuleBuilder;
 use HZ\Illuminate\Mongez\Console\Commands\ModuleDelete;
 use HZ\Illuminate\Mongez\Console\Commands\MongezTestCommand;
 use HZ\Illuminate\Mongez\Http\Middleware\MongezRequestMiddleware;
@@ -61,7 +60,6 @@ class MongezServiceProvider extends ServiceProvider
         EngezController::class,
         EngezRepository::class,
         EngezTranslation::class,
-        CloneModuleBuilder::class,
         PostmanCollection::class,
         MongezTestCommand::class,
         EngezTest::class,
@@ -272,7 +270,7 @@ class MongezServiceProvider extends ServiceProvider
             $mixinObject = new $mixin;
             $original::mixin($mixinObject);
 
-            // if the original class is the query builder
+            // if the original class MongezServiceProvider the query builder
             // then we will inject same macro in the eloquent builder
             if ($original == QueryBuilder::class) {
                 foreach (get_class_methods($mixinObject) as $method) {

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "but": {
+      "source": "gaboe/opencode-gitbutler",
+      "sourceType": "github",
+      "skillPath": "skill/gitbutler/SKILL.md",
+      "computedHash": "5745a31408fcbd80acfe36febd60f4d794d3cb1a9c01cf8006ffefb22063f982"
+    }
+  }
+}
