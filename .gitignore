@@ -1,3 +1,4 @@
 .vscode
 vendor
 composer.lock
+.opencode/plugin/debug.log
