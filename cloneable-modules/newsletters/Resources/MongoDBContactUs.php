@@ -11,7 +11,7 @@ class ContactUs extends JsonResourceManager
      * @const array
      */
     const DATA = [
-        'id', 
+        'nid',
         'name', 
         'email', 
         'phoneNumber', 

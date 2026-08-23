@@ -36,7 +36,7 @@ trait Associatable
      * @param   string $searchingColumn
      * @return Model
      */
-    public function reassociate($modelInfo, string $column, string $searchingColumn = 'id'): Model
+    public function reassociate($modelInfo, string $column, string $searchingColumn = 'nid'): Model
     {
         $documents = $this->{$column} ?? [];
 
@@ -80,7 +80,7 @@ trait Associatable
      * @param string $searchBy
      * @return Model
      */
-    public function disassociate($modelInfo, string $column, string $searchBy = 'id'): Model
+    public function disassociate($modelInfo, string $column, string $searchBy = 'nid'): Model
     {
         $array = $this->{$column} ?? [];
 

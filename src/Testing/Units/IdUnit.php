@@ -11,7 +11,7 @@ class IdUnit extends IntUnit
     /**
      * {@inheritDoc}
      */
-    const NAME = 'id';
+    const NAME = 'nid';
 
     /**
      * {@inheritdoc}

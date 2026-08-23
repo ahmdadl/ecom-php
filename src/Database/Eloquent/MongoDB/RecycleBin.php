@@ -16,7 +16,7 @@ trait RecycleBin
 
         $trashTable = static::trashTable();
 
-        $primaryId = $this->id;
+        $primaryId = $this->nid;
 
         DB::table($trashTable)->insert([
             'primaryId' => $primaryId,
@@ -72,7 +72,7 @@ trait RecycleBin
             // re-insert the record again
             $record->save();
             // remove it from the trashed table
-            $restoredIds[] = $record->id;
+            $restoredIds[] = $record->nid;
         }
 
         DB::table(static::trashTable())->whereIn('primaryId', $restoredIds)->delete();

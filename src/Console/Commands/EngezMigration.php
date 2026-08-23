@@ -140,7 +140,7 @@ class EngezMigration extends EngezGeneratorCommand implements EngezInterface
             // migration type create | table
             '{{ type }}' => $this->migrationType,
             // primary key
-            '{{ primaryKey }}' => $this->optionHasValue('primary') ? $this->option('primary') : 'id',
+            '{{ primaryKey }}' => $this->optionHasValue('primary') ? $this->option('primary') : 'nid',
             // columns
             '{{ columns }}' => $this->stubData($columnsList),
             // indexes

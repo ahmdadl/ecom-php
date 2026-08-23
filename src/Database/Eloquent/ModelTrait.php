@@ -75,13 +75,21 @@ trait ModelTrait
     }
 
     /**
-     * Get model id, if no id yet then return next id
+     * Get model nid, if no nid yet then return next id
      * 
      * @return int
      */
+    public function getNid(): int
+    {
+        return $this->nid ?? static::getNextId();
+    }
+
+    /**
+     * @deprecated use getNid() instead
+     */
     public function getId(): int
     {
-        return $this->id ?? static::getNextId();
+        return $this->getNid();
     }
 
     /**
@@ -151,7 +159,7 @@ trait ModelTrait
             if ($updatesLogModel) {
                 $updatesLogModel::create([
                     'table' => $model->getTableName(),
-                    'id' => $model->id,
+                    'nid' => $model->nid,
                     'data' => json_encode($model->getAttributes(), JSON_UNESCAPED_SLASHES),
                 ]);
             }

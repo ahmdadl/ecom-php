@@ -960,11 +960,22 @@ abstract class JsonResourceManager extends JsonResource
     }
 
     /**
-     * access mode id column as $this->id returns _id now
+     * access the nid column as $this->id returns _id now
+     *
      * @return int
      */
     protected function id(): int
     {
-        return $this->data['id'];
+        return $this->data['nid'];
+    }
+
+    /**
+     * access the nid column
+     *
+     * @return int
+     */
+    protected function nid(): int
+    {
+        return $this->data['nid'];
     }
 }

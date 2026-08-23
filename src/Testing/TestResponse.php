@@ -219,7 +219,7 @@ class TestResponse extends BaseTestResponse
      */
     public function getLastInsertId(): int
     {
-        return (int) Arr::get($this->toArray(), 'data.record.id');
+        return (int) Arr::get($this->toArray(), 'data.record.nid');
     }
 
     /**

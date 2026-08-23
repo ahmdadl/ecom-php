@@ -2,7 +2,6 @@
 
 namespace HZ\Illuminate\Mongez\Providers;
 
-use HZ\Illuminate\Mongez\Database\Query\Grammars\CustomMongoGrammar;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -308,7 +307,7 @@ class MongezServiceProvider extends ServiceProvider
             $mixinObject = new $mixin;
             $original::mixin($mixinObject);
 
-            // if the original class is the query builder
+            // if the original class MongezServiceProvider the query builder
             // then we will inject same macro in the eloquent builder
             if ($original == QueryBuilder::class) {
                 foreach (get_class_methods($mixinObject) as $method) {

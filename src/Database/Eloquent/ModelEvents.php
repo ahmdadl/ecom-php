@@ -338,7 +338,7 @@ trait ModelEvents
         $options = static::getOptionsArray($options);
 
         collect($options)->each(function ($option) {
-            $modelOptions['searchingColumn'] = Str::contains('.id', $option[0]) ? $option[0] : "{$option[0]}.id";
+            $modelOptions['searchingColumn'] = Str::contains('.nid', $option[0]) ? $option[0] : "{$option[0]}.nid";
 
             switch (count($option)) {
                 case 1:
@@ -391,12 +391,12 @@ trait ModelEvents
      */
     public static function getCreateRelatedModels(Model $model, array $options)
     {
-        $searchingId = isset($model->{$options['searchingColumn']}) ? (int) $model->{$options['searchingColumn']}['id'] ?:
+        $searchingId = isset($model->{$options['searchingColumn']}) ? (int) $model->{$options['searchingColumn']}['nid'] ?:
             array_map(function ($item) {
-                return  (int) $item['id'];
+                return  (int) $item['nid'];
             }, $model->{$options['searchingColumn']} ?: []) : null;
 
-        return static::$modelClass::query()->whereIn('id', (array) $searchingId)->get();
+        return static::$modelClass::query()->whereIn('nid', (array) $searchingId)->get();
     }
 
     /**
@@ -408,6 +408,6 @@ trait ModelEvents
      */
     public static function getRelatedModels(Model $model, array $options)
     {
-        return static::$modelClass::query()->where($options['searchingColumn'], $model->id)->get();
+        return static::$modelClass::query()->where($options['searchingColumn'], $model->nid)->get();
     }
 }

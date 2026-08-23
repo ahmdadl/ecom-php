@@ -18,7 +18,7 @@ abstract class Model extends BaseModel
         boot as traitBoot;
     }
 
-    protected $primaryKey = "id";
+    protected $primaryKey = "nid";
     protected $keyType = "int";
 
     /**
@@ -78,7 +78,7 @@ abstract class Model extends BaseModel
      * This is a combination of ON_MODEL_CREATE & ON_MODEL_UPDATE & ON_MODEL_DELETE_UNSET
      * Define list of other models that will be affected on creating|updating|deleting
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -92,7 +92,7 @@ abstract class Model extends BaseModel
      * unlike MODEL_LINKS it will just unset the embedded document.
      * Define list of other models that will be affected on creating|updating|deleting
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -107,7 +107,7 @@ abstract class Model extends BaseModel
      * i.e [Country::class => 'cities'] current model is city, city is in Country model in `cities` key
      * Once the city model is created it will be pushed to Country model in `cities`
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -119,7 +119,7 @@ abstract class Model extends BaseModel
      * Define list of other models that will be affected
      * as the current model is sub-document to it when it gets created
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -131,7 +131,7 @@ abstract class Model extends BaseModel
      * Define list of other models that will be affected as the current object is part of array
      * as the current model is sub-document to it when it gets created
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id'], 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -290,8 +290,8 @@ abstract class Model extends BaseModel
         // before creating, we will check if the created_by column has value
         // if so, then we will update the column for the current user id
         static::creating(function ($model) {
-            if (!$model->id) {
-                $model->id = static::nextId();
+            if (!$model->nid) {
+                $model->nid = static::nextId();
             }
         });
 
@@ -412,7 +412,7 @@ abstract class Model extends BaseModel
         $info = !empty(static::SHARED_INFO) ? $this->pluck(static::SHARED_INFO)
             : $this->getAttributes();
 
-        unset($info['_id']);
+        unset($info['_id'], $info['id']);
 
         $this->adjustDateInSharedInfo($info);
 
@@ -463,7 +463,7 @@ abstract class Model extends BaseModel
      */
     public static function find($id)
     {
-        return static::where('id', (int) $id)->first();
+        return static::where('nid', (int) $id)->first();
     }
 
     /**

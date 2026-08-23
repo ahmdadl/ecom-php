@@ -20,7 +20,7 @@ trait Deletable
 
         if (!$model) return false;
 
-        if ($this->trigger("deleting", $model, $model->id) === false) return false;
+        if ($this->trigger("deleting", $model, $model->nid) === false) return false;
 
         // delete uploaded files
         foreach (static::UPLOADS as $file) {
@@ -37,9 +37,9 @@ trait Deletable
 
         $model->delete();
 
-        if ($this->isCacheable()) $this->forgetCache($model->id);
+        if ($this->isCacheable()) $this->forgetCache($model->nid);
 
-        $this->trigger("delete", $model, $model->id);
+        $this->trigger("delete", $model, $model->nid);
 
         return true;
     }

@@ -11,7 +11,7 @@ class {{ ModelName }} extends Model
      * This is a combination of ON_MODEL_CREATE & ON_MODEL_UPDATE & ON_MODEL_DELETE_UNSET
      * Define list of other models that will be affected on creating|updating|deleting
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -25,7 +25,7 @@ class {{ ModelName }} extends Model
      * unlike MODEL_LINKS it will just unset the embedded document.
      * Define list of other models that will be affected on creating|updating|deleting
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -40,7 +40,7 @@ class {{ ModelName }} extends Model
      * i.e [Country::class => 'cities'] current model is city, city is in Country model in `cities` key
      * Once the city model is created it will be pushed to Country model in `cities`
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -52,7 +52,7 @@ class {{ ModelName }} extends Model
      * Define list of other models that will be affected
      * as the current model is sub-document to it when it gets created
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id']', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid']', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -64,7 +64,7 @@ class {{ ModelName }} extends Model
      * Define list of other models that will be affected as the current object is part of array
      * as the current model is sub-document to it when it gets created
      *
-     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['id'], 'columnName', 'sharedInfo']
+     * @example ModelClass::class => searchingColumn will be converted to ['searchingColumn['nid'], 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, creatingColumn]
      * @example ModelClass::class => [searchingColumn, creatingColumn, sharedInfoMethod]
      *
@@ -76,7 +76,7 @@ class {{ ModelName }} extends Model
      * Define list of other models that will be affected
      * as the current model is sub-document to it when it gets updated
      *  
-     * @example ModelClass::class => columnName will be converted to ['columnName.id', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => columnName will be converted to ['columnName.nid', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, updatingColumn]
      * @example ModelClass::class => [searchingColumn, updatingColumn, sharedInfoMethod]
      * 
@@ -88,7 +88,7 @@ class {{ ModelName }} extends Model
      * Define list of other models that will be affected as the current object is part of array
      * as the current model is sub-document to it when it gets updated
      *  
-     * @example ModelClass::class => columnName will be converted to ['columnName.id', 'columnName', 'sharedInfo']
+     * @example ModelClass::class => columnName will be converted to ['columnName.nid', 'columnName', 'sharedInfo']
      * @example ModelClass::class => [searchingColumn, updatingColumn]
      * @example ModelClass::class => [searchingColumn, updatingColumn, sharedInfoMethod]
      * 
@@ -100,7 +100,7 @@ class {{ ModelName }} extends Model
      * Define list of other models that will clear the column from its records
      * A 1-1 relation
      *  
-     * Do not add the id, it will be appended automatically
+     * Do not add the nid, it will be appended automatically
      * 
      * @example ModelClass::class => searchingColumn: string
      *
@@ -111,7 +111,7 @@ class {{ ModelName }} extends Model
     /**
      * Define list of the models that have the current model as embedded document and pull it from the array
      *  A 1-n relation
-     * Do not add the id, it will be appended automatically
+     * Do not add the nid, it will be appended automatically
      * 
      * @example ModelClass::class => searchingColumn: string
      * 
@@ -124,7 +124,7 @@ class {{ ModelName }} extends Model
      * when this model is deleted
      * For example when a city is deleted, all related regions shall be deleted as well
      * 
-     * Do not add the id, it will be appended automatically
+     * Do not add the nid, it will be appended automatically
      * 
      * @example Region::class => 'city'
      * @example ModelClass::class => searchingColumn: string

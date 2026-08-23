@@ -234,7 +234,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
                 $method = 'sharedInfo';
             }
 
-            $records = $documentModelClass::whereIn('id', $ids)->get();
+            $records = $documentModelClass::whereIn('nid', $ids)->get();
 
             $records = $records->map(function ($record) use ($method) {
                 return $record->$method();
@@ -244,8 +244,8 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
             if (count($ids) > 1) {
                 $recordsValues = array_flip($ids);
                 usort($records, function ($recordA, $recordB) use ($recordsValues) {
-                    if ($recordsValues[$recordA['id']] === $recordsValues[$recordB['id']]) return 0;
-                    if ($recordsValues[$recordA['id']] < $recordsValues[$recordB['id']]) return -1;
+                    if ($recordsValues[$recordA['nid']] === $recordsValues[$recordB['nid']]) return 0;
+                    if ($recordsValues[$recordA['nid']] < $recordsValues[$recordB['nid']]) return -1;
 
                     return 1;
                 });

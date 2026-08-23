@@ -15,7 +15,7 @@ class ContactUs extends Model
     public function sharedInfo(): array
     {
         return [
-            'id' => $this->id,
+            'nid' => $this->nid,
             'name' => $this->name,
             'email' => $this->email,
             'phoneNumber' => $this->phoneNumber,

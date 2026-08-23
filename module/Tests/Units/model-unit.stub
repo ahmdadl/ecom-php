@@ -14,7 +14,7 @@ class {{ className }} extends ObjectUnit
     public function beforeValidation(): void
     {
         $this->setUnits([
-            'id' => 'id',
+            'nid' => 'nid',
             'published' => 'bool',
         ]);
     }

@@ -109,7 +109,7 @@ class UsersRepository extends RepositoryManager implements RepositoryInterface
      */
     public function updateUserGroup(UserGroup $usersGroup)
     {
-        User::where('group.id', $usersGroup->id)->update([
+        User::where('group.nid', $usersGroup->nid)->update([
             'group' => $usersGroup->sharedInfo(),
         ]);
     }
