@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HZ\Illuminate\Mongez\Helpers;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 
 class Mongez
@@ -76,6 +78,33 @@ class Mongez
     public static function setRequestLocaleCode(string $requestLocaleCode)
     {
         static::$requestLocaleCode = $requestLocaleCode;
+    }
+
+    /**
+     * Detect and apply the request locale from the incoming request.
+     *
+     * This must run on every request (via middleware or an Octane listener)
+     * so that long-running workers do not leak the previous request's locale.
+     * When no locale is present the stored code is reset to avoid carrying
+     * over state from a prior request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    public static function setLocaleFromRequest(Request $request): void
+    {
+        $localeCode = $request->header('LOCALE-CODE')
+            ?: ($request->input('localeCode') ?: $request->input('acceptLanguage'));
+
+        if ($localeCode) {
+            App::setLocale($localeCode);
+            static::setRequestLocaleCode($localeCode);
+            return;
+        }
+
+        // Reset so a request without a locale does not inherit the previous
+        // request's locale in persistent workers (e.g. Laravel Octane).
+        static::setRequestLocaleCode('');
     }
 
     /**
