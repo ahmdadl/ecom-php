@@ -1,6 +1,6 @@
 .vscode
 vendor
 composer.lock
-.opencode/plugin/debug.log
+.opencode/
 .phpunit.result.cache
 .phpunit.cache
