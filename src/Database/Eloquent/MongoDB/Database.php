@@ -15,7 +15,7 @@ class Database
     {
         $collections = [];
 
-        $collectionList = DB::connection()->getMongoDB()->listCollections();
+        $collectionList = DB::connection()->getDatabase()->listCollections();
 
         foreach ($collectionList as $collection) {
             $collections[] = $collection->getName();
