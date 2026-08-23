@@ -338,18 +338,22 @@ abstract class Model extends BaseModel
 
         $collection = static::tableName();
 
-        $ids = DB::table('ids');
+        // The ids collection documents hold their counter value in an `id` field,
+        // but mongodb/laravel-mongodb v5 aliases root-level `id` fields to `_id`
+        // on query builder writes, which would corrupt those documents or fail on
+        // immutable _id, so the counter is written directly through the driver.
+        $idsCollection = (new static)->getConnection()->getMongoDB()->selectCollection('ids');
 
         if (!$lastId) {
-            $ids->insert([
+            $idsCollection->insertOne([
                 'collection' => $collection,
                 'id' => static::$initialId ?: mt_rand(100000, 999999),
             ]);
         } else {
-            // dd($ids->where('collection', $collection)->get());
-            $ids->where('collection', $collection)->update([
-                'id' => $newId
-            ]);
+            $idsCollection->updateOne(
+                ['collection' => $collection],
+                ['$set' => ['id' => $newId]]
+            );
         }
 
         return $newId;

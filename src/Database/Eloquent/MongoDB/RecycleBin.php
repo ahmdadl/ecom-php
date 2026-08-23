@@ -38,13 +38,13 @@ trait RecycleBin
         $records = DB::table(static::trashTable())->pluck('record');
 
         return $records->map(function ($record) {
-            return new static($record);
+            return new static((array) $record);
         });
     }
 
     /**
      * Find the deleted record for the given id
-     * 
+     *
      * @param  int $id
      * @return static
      */
@@ -54,7 +54,10 @@ trait RecycleBin
 
         if (!$record) return null;
 
-        return new static($record['record']);
+        // mongodb/laravel-mongodb v5 returns documents as stdClass objects
+        $recordData = is_array($record) ? $record['record'] : $record->record;
+
+        return new static((array) $recordData);
     }
 
     /**
