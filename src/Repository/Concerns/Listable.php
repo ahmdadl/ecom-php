@@ -556,7 +556,7 @@ trait Listable
 
                 if (!$record) return null;
 
-                $this->setCache($$cacheKey, $record->toArray());
+                $this->setCache($cacheKey, $record->toArray());
             } else {
                 $record = $this->newModel($record);
             }
