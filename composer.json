@@ -23,11 +23,22 @@
             "src/Helpers/functions.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "HZ\\Illuminate\\Mongez\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit"
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "HZ\\Illuminate\\Mongez\\Providers\\MongezServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^11.0"
     }
 }

@@ -2,3 +2,5 @@
 vendor
 composer.lock
 .opencode/plugin/debug.log
+.phpunit.result.cache
+.phpunit.cache
