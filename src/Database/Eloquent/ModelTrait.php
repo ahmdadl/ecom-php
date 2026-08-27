@@ -183,4 +183,18 @@ trait ModelTrait
 
         return parent::setUpdatedAt($value);
     }
+
+    /**
+     * Reset the model static state.
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure the update time state doesn't leak from one request
+     * to another.
+     *
+     * @return void
+     */
+    public static function resetStaticState()
+    {
+        static::$disableUpdateTime = false;
+    }
 }

@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace HZ\Illuminate\Mongez\Helpers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 
 class Mongez
@@ -78,33 +76,12 @@ class Mongez
     public static function setRequestLocaleCode(string $requestLocaleCode)
     {
         static::$requestLocaleCode = $requestLocaleCode;
-    }
 
-    /**
-     * Detect and apply the request locale from the incoming request.
-     *
-     * This must run on every request (via middleware or an Octane listener)
-     * so that long-running workers do not leak the previous request's locale.
-     * When no locale is present the stored code is reset to avoid carrying
-     * over state from a prior request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     */
-    public static function setLocaleFromRequest(Request $request): void
-    {
-        $localeCode = $request->header('LOCALE-CODE')
-            ?: ($request->input('localeCode') ?: $request->input('acceptLanguage'));
+        if (app()->bound('request')) {
+            $request = app('request');
 
-        if ($localeCode) {
-            App::setLocale($localeCode);
-            static::setRequestLocaleCode($localeCode);
-            return;
+            $request->attributes->set('mongezRequestLocaleCode', $requestLocaleCode);
         }
-
-        // Reset so a request without a locale does not inherit the previous
-        // request's locale in persistent workers (e.g. Laravel Octane).
-        static::setRequestLocaleCode('');
     }
 
     /**
@@ -114,7 +91,7 @@ class Mongez
      */
     public static function requestHasLocaleCode(): bool
     {
-        return static::$requestLocaleCode !== '';
+        return static::getRequestLocaleCode() !== '';
     }
 
     /**
@@ -124,6 +101,14 @@ class Mongez
      */
     public static function getRequestLocaleCode(): string
     {
+        if (app()->bound('request')) {
+            $request = app('request');
+
+            $localeCode = $request->attributes->get('mongezRequestLocaleCode', '');
+
+            if ($localeCode !== '') return $localeCode;
+        }
+
         return static::$requestLocaleCode;
     }
 
@@ -134,7 +119,7 @@ class Mongez
      */
     public static function isInstalled(): bool
     {
-        return File::isFile(static::$mongezFilePath);
+        return File::isFile(static::getMongezStorageFilePath());
     }
 
     /**
@@ -150,12 +135,31 @@ class Mongez
     }
 
     /**
+     * Reset the request scoped state of the helper
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure no request state leaks from one request to another.
+     * The storage file path is kept as it is an immutable application state.
+     *
+     * @return void
+     */
+    public static function reset()
+    {
+        static::$requestLocaleCode = '';
+        static::$mongezContent = null;
+    }
+
+    /**
      * Get mongez file path.
      *
      * @return string
      */
     protected static function getMongezStorageFilePath()
     {
+        if (!static::$mongezFilePath) {
+            static::$mongezFilePath = static::getMongezStorageDirectory() . '/' . static::MONGEZ_STORAGE_FILE_NAME;
+        }
+
         return static::$mongezFilePath;
     }
 
@@ -200,7 +204,7 @@ class Mongez
      */
     protected static function getStorageFileContent()
     {
-        return File::getJson(static::$mongezFilePath);
+        return File::getJson(static::getMongezStorageFilePath());
     }
 
     /**

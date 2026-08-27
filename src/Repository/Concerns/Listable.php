@@ -86,6 +86,19 @@ trait Listable
     }
 
     /**
+     * Reset the current used resource
+     *
+     * This is used between requests when running on Laravel Octane
+     * to make sure the resource doesn't leak from one request to another.
+     *
+     * @return void
+     */
+    public static function resetCurrentResource()
+    {
+        static::$currentDefaultResource = '';
+    }
+
+    /**
      * Get current used resource class Listable
      * 
      * @return string

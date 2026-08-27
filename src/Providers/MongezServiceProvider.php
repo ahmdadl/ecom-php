@@ -2,7 +2,7 @@
 
 namespace HZ\Illuminate\Mongez\Providers;
 
-use Carbon\Carbon;
+use HZ\Illuminate\Mongez\Database\Query\Grammars\CustomMongoGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\CarbonImmutable;
@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use HZ\Illuminate\Mongez\Console\Commands\PostmanCollection;
 use HZ\Illuminate\Mongez\Console\Commands\ModuleDelete;
 use HZ\Illuminate\Mongez\Console\Commands\MongezTestCommand;
+use HZ\Illuminate\Mongez\Http\Middleware\MongezRequestMiddleware;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Support\Facades\DB;
 
 class MongezServiceProvider extends ServiceProvider
@@ -79,19 +81,15 @@ class MongezServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->initializeLocalization();
+        // load the package translation files
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'mongez');
 
         $this->registerCustomValidationRules();
 
         $this->makeCarbonImmutable();
 
         if (!$this->app->runningInConsole()) {
-            if ($this->app->request->method() == 'OPTIONS') {
-                die(json_encode([
-                    'success' => true,
-                    'mongez' => true,
-                ]));
-            }
+            $this->app->make(HttpKernel::class)->pushMiddleware(MongezRequestMiddleware::class);
 
             return;
         }
@@ -117,7 +115,7 @@ class MongezServiceProvider extends ServiceProvider
         $carbonImmutable = $this->config['date']['immutable'] ?? true;
 
         if ($carbonImmutable) {
-            Date::use(Carbon::class);
+            Date::use(CarbonImmutable::class);
         }
     }
 
@@ -132,36 +130,6 @@ class MongezServiceProvider extends ServiceProvider
 
         foreach ($rules as $rule => $class) {
             Validator::extend($rule, is_string($class) ? $class . '@passes' : $class[0] . '@' . $class[1]);
-        }
-    }
-
-    /**
-     * Initialize localization and prepare locale code
-     *
-     * @return void
-     */
-    private function initializeLocalization()
-    {
-        $this->prepareLocaleCode();
-
-        // load the package translation files
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'mongez');
-    }
-
-    /**
-     * Prepare locale code
-     *
-     * @return void
-     */
-    private function prepareLocaleCode()
-    {
-        $request = $this->app->request;
-
-        $localeCode = $request->header('LOCALE-CODE') ?: ($request->input('localeCode') ?: $request->input('acceptLanguage'));
-
-        if ($localeCode) {
-            $this->app->setLocale($localeCode);
-            Mongez::setRequestLocaleCode($localeCode);
         }
     }
 
@@ -212,24 +180,6 @@ class MongezServiceProvider extends ServiceProvider
     {
         $this->publishes([$this->configPath() => config_path('mongez.php')]);
 
-        // beta database
-        $request = request();
-
-        if ($betaDBName = $request->server('HTTP_BETA')) {
-            $defaultDatabaseDriver = config('database.default');
-            $dbConfigName = 'database.connections.' . $defaultDatabaseDriver . '.database';
-
-            if ($betaDBName === 'true') {
-                $betaDBName = 'BETA';
-            }
-
-            $betaDatabase = env("DB_DATABASE_$betaDBName");
-
-            config([
-                $dbConfigName => $betaDatabase,
-            ]);
-        }
-
         $this->config = config('mongez');
 
         //
@@ -237,9 +187,9 @@ class MongezServiceProvider extends ServiceProvider
             ini_set('serialize_precision', $this->config['serialize_precision']);
         }
 
-        // register the repositories as singletones, only one instance in the entire application
+        // register the repositories as scoped, only one instance per request
         foreach ($this->config('repositories', []) as $repositoryClass) {
-            $this->app->singleton($repositoryClass);
+            $this->app->scoped($repositoryClass);
         }
 
         $this->app->singleton(Events::class);
@@ -249,7 +199,12 @@ class MongezServiceProvider extends ServiceProvider
 
         $this->registerEventsListeners();
 
-        if (strtolower(config('database.driver')) === 'mysql') {
+        // register Octane listeners to keep the package state isolated between requests
+        if (class_exists(\Laravel\Octane\Events\RequestReceived::class)) {
+            $this->app->register(MongezOctaneServiceProvider::class);
+        }
+
+        if (strtolower(config('database.default')) === 'mysql') {
             // manage database options
             $this->manageDatabase();
         }
@@ -284,9 +239,19 @@ class MongezServiceProvider extends ServiceProvider
      */
     protected function registerEventsListeners()
     {
-        $events = $this->app->make(Events::class);
+        static::registerConfigEventsListeners();
+    }
 
-        foreach ($this->config('events', []) as $eventName => $eventListeners) {
+    /**
+     * Register the config events listeners
+     *
+     * @return void
+     */
+    public static function registerConfigEventsListeners()
+    {
+        $events = app(Events::class);
+
+        foreach (config('mongez.events', []) as $eventName => $eventListeners) {
             $eventListeners = (array) $eventListeners;
             foreach ($eventListeners as $eventListener) {
                 $events->subscribe($eventName, $eventListener);
