@@ -1,3 +1,6 @@
 .vscode
 vendor
 composer.lock
+.opencode/
+.phpunit.result.cache
+.phpunit.cache

@@ -14,7 +14,7 @@ class UserUnit extends ObjectUnit
         parent::init();
 
         $this->setUnits([
-            'id' => (new IdUnit)->equal(53),
+            'nid' => (new IdUnit)->equal(53),
             'published' => 'bool',
             'group' => ['bool', 'nullable', 'canBeEmpty'],
             'name' => 'string',

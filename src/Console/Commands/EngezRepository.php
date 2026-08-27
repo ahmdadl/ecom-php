@@ -98,17 +98,17 @@ class EngezRepository extends EngezGeneratorCommand implements EngezInterface
             '{{ ModuleName }}' => $moduleName,
             // repository class
             '{{ RepositoryClass }}' => $this->repositoryClassName,
-            // model class name
+            // model class EngezRepository
             '{{ ModelName }}' => $this->modelClass($this->optionHasValue('model') ? $this->option('model') : $moduleName),
-            // filter class name
+            // filter class EngezRepository
             '{{ FilterName }}' => $this->filterClass($this->optionHasValue('filter') ? $this->option('filter') : $moduleName),
-            // resource class name
+            // resource class EngezRepository
             '{{ ResourceName }}' => $this->resourceClass($this->optionHasValue('resource') ? $this->option('resource') : $moduleName),
             // Repository Short Name
             '{{ repositoryName }}' => $this->repositoryName,
         ];
 
-        $this->setSearchFilters('inInt', ['id']);
+        $this->setSearchFilters('inInt', ['nid']);
 
         $publishedColumn = config('mongez.repository.publishedColumn');
 

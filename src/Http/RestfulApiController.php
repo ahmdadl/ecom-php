@@ -152,7 +152,7 @@ abstract class RestfulApiController extends ApiController
             foreach ($rulesList as &$rule) {
                 if ($rule === 'unique') {
                     if (!Str::contains($rule, ':')) {
-                        $rule = Rule::unique($this->repository->getTableName())->ignore((int) $id, 'id');
+                        $rule = Rule::unique($this->repository->getTableName())->ignore((int) $id, 'nid');
                     }
                 }
             }

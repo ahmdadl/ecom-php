@@ -148,7 +148,7 @@ abstract class SeederManager extends Seeder
     }
 
     /**
-     * get model class from repository
+     * get model class SeederManager repository
      *
      * @return Illuminate\Database\Eloquent\Model
      */
@@ -323,7 +323,7 @@ abstract class SeederManager extends Seeder
 
             $model = (new $seeder)->generate();
 
-            $this->data->$column = $model->id;
+            $this->data->$column = $model->nid;
         }
     }
 
@@ -345,7 +345,7 @@ abstract class SeederManager extends Seeder
             for ($i = 0; $i < $this->faker->numberBetween(2, 6); $i++) {
                 $model = (new $seeder)->generate();
 
-                $ids[] = $model->id;
+                $ids[] = $model->nid;
             }
 
             $this->data->$column = $ids;

@@ -104,7 +104,7 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
 
         // Add shared info constant in mongodb driver
         if ($this->isMongoDB()) {
-            $sharedColumns = $this->optionHasValue('share') ? $this->option('share') : 'id';
+            $sharedColumns = $this->optionHasValue('share') ? $this->option('share') : 'nid';
 
             $data[] = $this->replaceStub('Models/shared-info', [
                 '{{ columns }}' => $this->stubStringAsArray($sharedColumns),
@@ -170,7 +170,7 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
     {
         $defaultContent = [
             '_id' => "objectId",
-            'id' => 'int',
+            'nid' => 'int',
         ];
 
         $path = $this->modulePath("Database/migrations");
@@ -179,7 +179,7 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
 
         $stringData = explode(',', $this->option('string')) ?? [];
 
-        unset($stringData['id'], $stringData['_id']);
+        unset($stringData['nid'], $stringData['id'], $stringData['_id']);
 
         $stringData = array_fill_keys($stringData, 'string');
 

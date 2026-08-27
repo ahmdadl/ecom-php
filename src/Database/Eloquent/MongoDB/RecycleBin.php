@@ -16,7 +16,7 @@ trait RecycleBin
 
         $trashTable = static::trashTable();
 
-        $primaryId = $this->id;
+        $primaryId = $this->nid;
 
         DB::table($trashTable)->insert([
             'primaryId' => $primaryId,
@@ -38,13 +38,13 @@ trait RecycleBin
         $records = DB::table(static::trashTable())->pluck('record');
 
         return $records->map(function ($record) {
-            return new static($record);
+            return new static((array) $record);
         });
     }
 
     /**
      * Find the deleted record for the given id
-     * 
+     *
      * @param  int $id
      * @return static
      */
@@ -54,7 +54,10 @@ trait RecycleBin
 
         if (!$record) return null;
 
-        return new static($record['record']);
+        // mongodb/laravel-mongodb v5 returns documents as stdClass objects
+        $recordData = is_array($record) ? $record['record'] : $record->record;
+
+        return new static((array) $recordData);
     }
 
     /**
@@ -72,7 +75,7 @@ trait RecycleBin
             // re-insert the record again
             $record->save();
             // remove it from the trashed table
-            $restoredIds[] = $record->id;
+            $restoredIds[] = $record->nid;
         }
 
         DB::table(static::trashTable())->whereIn('primaryId', $restoredIds)->delete();

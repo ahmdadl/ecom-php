@@ -33,7 +33,7 @@ class {{ className }} extends ApiTestCase
 
         $created{{ model }}Response = $this->callFrom($adminCreated{{ model }}Test->testSuccessCreate{{ model }}());
 
-        ${{ model }}Id = $created{{ model }}Response->body()->data->record->id;
+        ${{ model }}Id = $created{{ model }}Response->body()->data->record->nid;
 
         $response = $this->delete('admin/{{ ModuleRoute }}/' . ${{ model }}Id);
 
@@ -59,7 +59,7 @@ class {{ className }} extends ApiTestCase
 
         $created{{ model }}Response = $this->callFrom($adminCreated{{ model }}Test->testSuccessCreate{{ model }}());
 
-        ${{ model }}Id = $created{{ model }}Response->body()->data->record->id;
+        ${{ model }}Id = $created{{ model }}Response->body()->data->record->nid;
 
         $response = $this->delete('admin/{{ ModuleRoute }}/' . ${{ model }}Id);
 

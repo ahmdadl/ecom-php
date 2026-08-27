@@ -50,7 +50,7 @@ trait Listable
     /**
      * {@inheritDoc}
      */
-    public function has($value, string $column = 'id'): bool
+    public function has($value, string $column = 'nid'): bool
     {
         if (is_numeric($value)) {
             $value = (float) $value;
@@ -99,7 +99,7 @@ trait Listable
     }
 
     /**
-     * Get current used resource class name
+     * Get current used resource class Listable
      * 
      * @return string
      */
@@ -250,7 +250,7 @@ trait Listable
      */
     public function publish($id, $publishState)
     {
-        $this->getQuery()->where('id', (int) $id)->update([
+        $this->getQuery()->where('nid', (int) $id)->update([
             $this->getPublishedColumn() => (bool) $publishState
         ]);
     }
@@ -533,7 +533,7 @@ trait Listable
      */
     public function get(int $id)
     {
-        return $this->getBy('id', (int) $id);
+        return $this->getBy('nid', (int) $id);
     }
 
     /**
@@ -548,7 +548,7 @@ trait Listable
             return $id;
         }
 
-        return $this->getByModel('id', (int) $id);
+        return $this->getByModel('nid', (int) $id);
     }
 
     /**

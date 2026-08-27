@@ -23,6 +23,22 @@ trait ModelEvents
     public static string $sharedInfoMethod = 'sharedInfo';
 
     /**
+     * Reset the temporary static state used during model events.
+     *
+     * The model class, options and shared info method are mutated while
+     * handling create/update/delete events. If not cleared they would leak
+     * into subsequent requests on persistent workers (e.g. Laravel Octane).
+     *
+     * @return void
+     */
+    public static function resetState(): void
+    {
+        static::$modelClass = '';
+        static::$modelOptions = [];
+        static::$sharedInfoMethod = 'sharedInfo';
+    }
+
+    /**
      * Handle model create events.
      *
      * @param $model
@@ -338,7 +354,7 @@ trait ModelEvents
         $options = static::getOptionsArray($options);
 
         collect($options)->each(function ($option) {
-            $modelOptions['searchingColumn'] = Str::contains('.id', $option[0]) ? $option[0] : "{$option[0]}.id";
+            $modelOptions['searchingColumn'] = Str::contains('.nid', $option[0]) ? $option[0] : "{$option[0]}.nid";
 
             switch (count($option)) {
                 case 1:
@@ -391,12 +407,12 @@ trait ModelEvents
      */
     public static function getCreateRelatedModels(Model $model, array $options)
     {
-        $searchingId = isset($model->{$options['searchingColumn']}) ? (int) $model->{$options['searchingColumn']}['id'] ?:
+        $searchingId = isset($model->{$options['searchingColumn']}) ? (int) $model->{$options['searchingColumn']}['nid'] ?:
             array_map(function ($item) {
-                return  (int) $item['id'];
+                return  (int) $item['nid'];
             }, $model->{$options['searchingColumn']} ?: []) : null;
 
-        return static::$modelClass::query()->whereIn('id', (array) $searchingId)->get();
+        return static::$modelClass::query()->whereIn('nid', (array) $searchingId)->get();
     }
 
     /**
@@ -408,6 +424,6 @@ trait ModelEvents
      */
     public static function getRelatedModels(Model $model, array $options)
     {
-        return static::$modelClass::query()->where($options['searchingColumn'], $model->id)->get();
+        return static::$modelClass::query()->where($options['searchingColumn'], $model->nid)->get();
     }
 }

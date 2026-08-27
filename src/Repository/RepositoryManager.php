@@ -252,11 +252,11 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * Set the default order by for the repository
-     * i.e ['id', 'DESC']
+     * i.e ['nid', 'DESC']
      *
      * @const array
      */
-    const ORDER_BY = ['id', 'DESC'];
+    const ORDER_BY = ['nid', 'DESC'];
 
     /**
      * Filter by columns used with `list` method only
@@ -510,7 +510,7 @@ abstract class RepositoryManager implements RepositoryInterface
     }
 
     /**
-     * create get an instance for the given class name
+     * create get an instance for the given class RepositoryManager
      * 
      * @param  string $className
      * @return mixed
@@ -720,7 +720,7 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $this->saveActionType = '';
 
-        if (static::USING_CACHE) $this->setCache($model->id, $model);
+        if (static::USING_CACHE) $this->setCache($model->nid, $model);
     }
 
     /**

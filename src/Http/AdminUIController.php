@@ -142,7 +142,7 @@ abstract class AdminUIController
         $returnOnStore = $this->controllerInfo['returnOn']['store'] ?? config('mongez.admin.returnOn.store', 'single-record');
 
         if ($returnOnStore == 'single-record') {
-            return $this->show($model->id, $request);
+            return $this->show($model->nid, $request);
         } elseif ($returnOnStore == 'all-records') {
             return $this->index($request);
         } else {
@@ -232,7 +232,7 @@ abstract class AdminUIController
             foreach ($rulesList as &$rule) {
                 if ($rule == 'unique') {
                     if (!Str::contains($rule, ':')) {
-                        $rule = Rule::unique($this->repository->getTableName())->ignore((int) $id, 'id');
+                        $rule = Rule::unique($this->repository->getTableName())->ignore((int) $id, 'nid');
                     }
                 }
             }

@@ -27,6 +27,6 @@ trait HasPublishedScope
      */
     public function findPublished(Builder $query, int $id, string $status = 'published'): void
     {
-        $query->where($status, true)->where('id', $id);
+        $query->where($status, true)->where('nid', $id);
     }
 }

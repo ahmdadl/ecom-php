@@ -94,9 +94,9 @@ class EngezResource extends EngezGeneratorCommand implements EngezInterface
 
                 if ($type === 'int') {
                     if ($typeValue === true) {
-                        $typeValue = 'id';
+                        $typeValue = 'nid';
                     } else {
-                        $typeValue .= ',id';
+                        $typeValue .= ',nid';
                     }
                 }
 

@@ -19,6 +19,6 @@ trait GeneralScopes
      */
     public function scopeFor(Builder $query, int $id, string $key = 'user'): void
     {
-        $query->where("{$key}.id", $id);
+        $query->where("{$key}.nid", $id);
     }
 }
