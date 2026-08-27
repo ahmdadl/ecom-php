@@ -23,6 +23,22 @@ trait ModelEvents
     public static string $sharedInfoMethod = 'sharedInfo';
 
     /**
+     * Reset the temporary static state used during model events.
+     *
+     * The model class, options and shared info method are mutated while
+     * handling create/update/delete events. If not cleared they would leak
+     * into subsequent requests on persistent workers (e.g. Laravel Octane).
+     *
+     * @return void
+     */
+    public static function resetState(): void
+    {
+        static::$modelClass = '';
+        static::$modelOptions = [];
+        static::$sharedInfoMethod = 'sharedInfo';
+    }
+
+    /**
      * Handle model create events.
      *
      * @param $model

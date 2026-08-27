@@ -6,6 +6,7 @@ use HZ\Illuminate\Mongez\Events\Events;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
+use HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
 use Laravel\Octane\Events\RequestReceived;
 use Laravel\Octane\Events\RequestTerminated;
@@ -54,6 +55,8 @@ class MongezOctaneServiceProvider extends ServiceProvider
         $this->resetRepositoriesState();
 
         $this->resetModelsState();
+
+        ModelEvents::resetState();
     }
 
     /**
