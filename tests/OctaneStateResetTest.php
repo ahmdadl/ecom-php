@@ -12,28 +12,36 @@ class OctaneStateResetTest extends TestCase
 {
     protected function setUp(): void
     {
-        // make sure the static state is clean before each test
-        JsonResourceManager::reset();
+        $ref = new \ReflectionClass(JsonResourceManager::class);
+        $ref->setStaticPropertyValue('baseDisabledKeys', []);
+        $ref->setStaticPropertyValue('baseAllowedKeys', []);
+        $ref->setStaticPropertyValue('disabledKeys', []);
+        $ref->setStaticPropertyValue('allowedKeys', []);
+        $ref->setStaticPropertyValue('subClassesCache', null);
+    }
+
+    protected function tearDown(): void
+    {
+        $ref = new \ReflectionClass(JsonResourceManager::class);
+        $ref->setStaticPropertyValue('baseDisabledKeys', []);
+        $ref->setStaticPropertyValue('baseAllowedKeys', []);
+        $ref->setStaticPropertyValue('disabledKeys', []);
+        $ref->setStaticPropertyValue('allowedKeys', []);
+        $ref->setStaticPropertyValue('subClassesCache', null);
+        parent::tearDown();
     }
 
     public function testJsonResourceManagerResetPreservesBootKeys(): void
     {
-        // boot-time registration
         JsonResourceManager::disable('boot_disabled');
         JsonResourceManager::only('boot_allowed');
-
         JsonResourceManager::snapshotBaseState();
-
-        // per-request registration
         JsonResourceManager::disable('request_disabled');
-
         JsonResourceManager::reset();
-
         $this->assertSame(
             ['boot_disabled'],
             $this->staticProperty(JsonResourceManager::class, 'disabledKeys')
         );
-
         $this->assertSame(
             ['boot_allowed'],
             $this->staticProperty(JsonResourceManager::class, 'allowedKeys')
@@ -43,42 +51,29 @@ class OctaneStateResetTest extends TestCase
     public function testEventsResetPreservesBootListeners(): void
     {
         $events = new Events();
-
-        // boot-time registration
         $events->subscribe('boot.event', 'Some\BootListener@handle');
-
         $events->snapshotBaseState();
-
-        // per-request registration
         $events->subscribe('request.event', 'Some\RequestListener@handle');
-
         $events->reset();
-
         $this->assertSame(
             ['Some\BootListener@handle'],
             $this->instanceProperty($events, 'eventsList')['boot.event']
         );
-
         $this->assertArrayNotHasKey('request.event', $this->instanceProperty($events, 'eventsList'));
     }
 
     public function testMongezResetClearsRequestLocale(): void
     {
         Mongez::setRequestLocaleCode('ar');
-
         Mongez::reset();
-
         $this->assertFalse(Mongez::requestHasLocaleCode());
     }
 
     public function testModelStaticStateReset(): void
     {
         ModelStub::setDisableUpdateTime(true);
-
         $this->assertTrue(ModelStub::$disableUpdateTime);
-
         ModelStub::resetStaticState();
-
         $this->assertFalse(ModelStub::$disableUpdateTime);
     }
 
