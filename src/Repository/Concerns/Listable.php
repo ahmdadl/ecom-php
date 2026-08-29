@@ -9,12 +9,17 @@ use HZ\Illuminate\Mongez\Repository\Select;
 use Illuminate\Http\Resources\Json\JsonResource;
 use HZ\Illuminate\Mongez\Database\Filters\FilterManager;
 
+/**
+ * @phpstan-require-extends \HZ\Illuminate\Mongez\Repository\RepositoryManager
+ *
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
 trait Listable
 {
     /**
      * Select Helper Object
      *
-     * @var \HZ\Illuminate\Mongez\Helpers\Repository\Select
+     * @var \HZ\Illuminate\Mongez\Repository\Select
      */
     protected $select;
 
@@ -117,8 +122,7 @@ trait Listable
      * Please use the `get` method to get full details about the record
      *
      * @param  int $id
-     * @param  array $otherOptions
-     * @return mixed
+     * @return TModel|null
      */
     public function find(int $id)
     {
@@ -129,7 +133,7 @@ trait Listable
      * Get list of models for the given options
      *
      * @param  array $options
-     * @return Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listModels(array $options)
     {
@@ -190,9 +194,9 @@ trait Listable
      * Get publish Model
      *
      * @param int $id
-     * @return Model|null
+     * @return TModel|null
      */
-    public function getPublishedModel($id): ?Model
+    public function getPublishedModel($id)
     {
         $model = $this->getModel($id);
 
@@ -205,7 +209,7 @@ trait Listable
      * Get publish item
      *
      * @param int $id
-     * @return Resource|null
+     * @return \Illuminate\Http\Resources\Json\JsonResource|null
      */
     public function getPublished($id)
     {
@@ -296,7 +300,7 @@ trait Listable
     /**
      * Wrap the given model to its resource
      *
-     * @param \Model $model
+     * @param \Illuminate\Database\Eloquent\Model|array $model
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function wrap($model): JsonResource
@@ -313,7 +317,7 @@ trait Listable
      * Wrap the given collection into collection of resources
      *
      * @param \Illuminate\Support\Collection|array $collection
-     * @return \Illuminate\Http\Resources\Json\JsonResource
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection|array
      */
     public function wrapMany($collection)
     {
@@ -417,11 +421,11 @@ trait Listable
 
     /**
      * Get only one record based on the given options
-     * 
+     *
      * @param array $options
-     * @return Model|null
+     * @return TModel|null
      */
-    public function first(array $options): ?Model
+    public function first(array $options)
     {
         $options['limit'] = 1;
 
@@ -491,8 +495,8 @@ trait Listable
     /**
      * Adjust records that were fetched from database
      *
-     * @param \Illuminate\Support\Collection $records
-     * @return \Illuminate\Support\Collection
+     * @param \Illuminate\Support\Collection<int, \Illuminate\Database\Eloquent\Model> $records
+     * @return \Illuminate\Support\Collection<int, mixed>
      */
     protected function records(Collection $records): Collection
     {
@@ -538,9 +542,9 @@ trait Listable
 
     /**
      * Get model for the given id
-     * 
-     * @param  int|array|Model $id
-     * @return mixed
+     *
+     * @param  int|array|\Illuminate\Database\Eloquent\Model $id
+     * @return TModel|null
      */
     public function getModel($id)
     {
@@ -584,10 +588,10 @@ trait Listable
 
     /**
      * Get the current model by the given column name and value
-     * 
+     *
      * @param  string $column
      * @param  mixed value
-     * @return mixed
+     * @return TModel|null
      */
     public function getByModel($column, $value)
     {

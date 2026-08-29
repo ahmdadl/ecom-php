@@ -2,6 +2,11 @@
 
 namespace HZ\Illuminate\Mongez\Repository;
 
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ * @extends RepositoryManager<TModel>
+ * @implements RepositoryInterface<TModel>
+ */
 abstract class MYSQLRepositoryManager extends RepositoryManager implements RepositoryInterface
 {
     /**
@@ -125,7 +130,7 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
     /**
      * Set localized data automatically from the LOCALIZED_DATA array
      *
-     * @param  \Model $model
+     * @param  TModel $model
      * @param  \Request $request
      * @return void
      */

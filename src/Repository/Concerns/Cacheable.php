@@ -3,7 +3,7 @@
 namespace HZ\Illuminate\Mongez\Repository\Concerns;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Contracts\Cache\Store as CacheStorage;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 trait Cacheable
 {
@@ -20,14 +20,14 @@ trait Cacheable
 
     /**
      * Set record to redis cache
-     * 
+     *
      * @param string $key
      * @param mixed $value
-     * @return void  
+     * @return void
      */
     public function setCache(string $key, $value)
     {
-        return $this->driver()->put($this->getCacheKey($key), $value);
+        $this->driver()->put($this->getCacheKey($key), $value);
     }
 
     /**
@@ -44,11 +44,10 @@ trait Cacheable
 
     /**
      * Get cache driver
-     * 
-     * @return string cache drive 
-     * @return CacheStorage
+     *
+     * @return \Illuminate\Contracts\Cache\Repository
      */
-    protected function driver(): CacheStorage
+    protected function driver(): CacheRepository
     {
         return Cache::store(config('mongez.repository.cache.driver'));
     }

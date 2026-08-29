@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Services\Images\ImageResize;
 
+/**
+ * @phpstan-require-extends \HZ\Illuminate\Mongez\Repository\RepositoryManager
+ *
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
 trait Fillers
 {
     /**
@@ -56,7 +61,7 @@ trait Fillers
     /**
      * Set data automatically from the DATA array
      *
-     * @param  \Model $model
+     * @param  TModel $model
      * @return void
      */
     protected function setAutoData($model)
@@ -98,8 +103,7 @@ trait Fillers
     /**
      * Set string data automatically from the DATA array
      *
-     * @param  \Model $model
-     * @param  \Request $request
+     * @param  TModel $model
      * @return void
      */
     protected function setStringData($model)
@@ -126,8 +130,7 @@ trait Fillers
     /**
      * Set main data automatically from the DATA array
      *
-     * @param  \Model $model
-     * @param  \Request $request
+     * @param  TModel $model
      * @return void
      */
     protected function setMainData($model)
@@ -154,8 +157,7 @@ trait Fillers
     /**
      * Set localized data automatically from the LOCALIZED_DATA array
      *
-     * @param  \Model $model
-     * @param  \Request $request
+     * @param  TModel $model
      * @return void
      */
     protected function setLocalizedData($model)
@@ -174,8 +176,7 @@ trait Fillers
     /**
      * Set Arrayble data automatically from the DATA array
      *
-     * @param  \Model $model
-     * @param  \Request $request
+     * @param  TModel $model
      * @return void
      */
     protected function setArraybleData($model)
@@ -198,7 +199,7 @@ trait Fillers
     /**
      * Set uploads data automatically from the DATA array
      *
-     * @param  \Model $model
+     * @param  TModel $model
      * @param  array|null $columns
      * @return void
      */
@@ -280,18 +281,24 @@ trait Fillers
 
     /**
      * Upload the given file and return the new path
-     * 
+     *
      * @param  UploadedFile $file
      * @return string
      */
-    public function uploadFile($file)
+    public function uploadFile($file): string
     {
-        return $file->storeAs($this->storageDirectory ?: $this->getUploadsStorageDirectoryName(), $this->getFileName($file));
+        $path = $file->storeAs($this->storageDirectory ?: $this->getUploadsStorageDirectoryName(), $this->getFileName($file));
+
+        if ($path === false) {
+            throw new \RuntimeException('Unable to store the uploaded file');
+        }
+
+        return $path;
     }
 
     /**
      * Get file name
-     * 
+     *
      * @param UploadedFile $fileObject
      * @return string
      */
@@ -301,7 +308,7 @@ trait Fillers
 
         $originalName = $fileObject->getClientOriginalName();
 
-        $extension = File::extension($originalName) ?: $fileObject->guessExtension();
+        $extension = File::extension($originalName) ?: (string) $fileObject->guessExtension();
 
         $fileName = false === $keepFileName ? Str::random(40) . '.' . $extension : $this->adjustFileName($originalName);
 
@@ -310,17 +317,17 @@ trait Fillers
 
     /**
      * Adjust the given file name
-     * 
+     *
      * @param  string $fileName
      * @return string
      */
-    private function adjustFileName($fileName)
+    private function adjustFileName(string $fileName): string
     {
         $fileName = preg_replace('/(\-+)/', '-', str_replace([
             '-', '(', ')', '%', '#', ' ',
-        ], '-', $fileName));
+        ], '-', $fileName)) ?? $fileName;
 
-        return preg_replace('/\-\./', '.', $fileName);
+        return preg_replace('/\-\./', '.', $fileName) ?? $fileName;
     }
 
     /**
@@ -406,8 +413,8 @@ trait Fillers
     /**
      * Set date data
      *
-     * @param  Model $model
-     * @param  Request $request
+     * @param  TModel $model
+     * @param  array|null $columns
      * @return void
      */
     protected function setDateData($model, $columns = null)
@@ -434,7 +441,7 @@ trait Fillers
     /**
      * Cast specific data automatically to int from the DATA array
      *
-     * @param  \Model $model
+     * @param  TModel $model
      * @return void
      */
     protected function setIntData($model)
@@ -453,7 +460,7 @@ trait Fillers
     /**
      * Cast specific data automatically to float from the DATA array
      *
-     * @param  \Model $model
+     * @param  TModel $model
      * @return void
      */
     protected function setFloatData($model)
@@ -472,7 +479,7 @@ trait Fillers
     /**
      * Cast specific data automatically to bool from the DATA array
      *
-     * @param  \Model $model
+     * @param  TModel $model
      * @return void
      */
     protected function setBoolData($model)
@@ -495,8 +502,8 @@ trait Fillers
 
     /**
      * Set the given key/value to the model
-     * 
-     * @param  Model $model
+     *
+     * @param  TModel $model
      * @param  string $key
      * @param  mixed $value
      * @return void
@@ -508,8 +515,8 @@ trait Fillers
 
     /**
      * Set boolean value
-     * 
-     * @param  Model $model
+     *
+     * @param  TModel $model
      * @param  string $key
      * @param  mixed $value
      * @return void
@@ -521,8 +528,8 @@ trait Fillers
 
     /**
      * Set int value
-     * 
-     * @param  Model $model
+     *
+     * @param  TModel $model
      * @param  string $key
      * @param  mixed $value
      * @return void
@@ -534,8 +541,8 @@ trait Fillers
 
     /**
      * Set float value
-     * 
-     * @param  Model $model
+     *
+     * @param  TModel $model
      * @param  string $key
      * @param  mixed $value
      * @return void

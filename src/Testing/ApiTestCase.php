@@ -226,28 +226,16 @@ abstract class ApiTestCase extends TestCase
         return $response;
     }
 
-    // /**
-    //  * Create the test response instance from the given response.
-    //  *
-    //  * @param  \Illuminate\Http\Response  $response
-    //  * @return \Illuminate\Testing\TestResponse
-    //  */
-    // protected function createTestResponse($response, $request)
-    // {
-    //     // $testResponse = TestResponse::fromBaseResponse($response);
-
-    //     // $testResponse->setTestSuit($this);
-
-    //     // return tap($testResponse, function ($response) {
-    //     //     $response->withExceptions(
-    //     //         $this->app->bound(LoggedExceptionCollection::class)
-    //     //             ? $this->app->make(LoggedExceptionCollection::class)
-    //     //             : new LoggedExceptionCollection()
-    //     //     );
-    //     // });
-
-    //     return $response;
-    // }
+    /**
+     * Create the test response instance from the given response.
+     *
+     * @param  \Illuminate\Http\Response  $response
+     * @return \HZ\Illuminate\Mongez\Testing\TestResponse
+     */
+    protected function createTestResponse($response, $request)
+    {
+        return TestResponse::fromBaseResponse($response);
+    }
 
     /**
      * Prepare the given uri

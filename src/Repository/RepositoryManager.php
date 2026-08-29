@@ -19,6 +19,10 @@ use HZ\Illuminate\Mongez\Repository\RepositoryInterface;
 use HZ\Illuminate\Mongez\Traits\WithRepositoryAndService;
 use HZ\Illuminate\Mongez\Translation\Traits\Translatable;
 
+/**
+ * @template TModel of Model
+ * @implements RepositoryInterface<TModel>
+ */
 abstract class RepositoryManager implements RepositoryInterface
 {
     /**
@@ -30,11 +34,13 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Data Saving Fillers
      */
+    /** @use Fillers<TModel> */
     use Fillers;
 
     /**
      * Deleting
      */
+    /** @use Deletable<TModel> */
     use Deletable;
 
     /**
@@ -45,6 +51,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Listable
      */
+    /** @use Listable<TModel> */
     use Listable;
 
     /**
@@ -71,7 +78,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Model name
      *
-     * @const string
+     * @var class-string<TModel>
      */
     const MODEL = '';
 
@@ -332,7 +339,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Query Builder Object
      *
-     * @var \Illuminate\Database\Query\Builder
+     * @var \Illuminate\Database\Eloquent\Builder|null
      */
     protected $query;
 
@@ -354,7 +361,7 @@ abstract class RepositoryManager implements RepositoryInterface
      * Old model object
      * Works with update method only
      *
-     * @var Model
+     * @var TModel|null
      */
     protected $oldModel;
 
@@ -489,7 +496,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Get the query handler
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getQuery()
     {
@@ -500,12 +507,14 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Get new model object
      *
-     * @return Model
+     * @param  array $data
+     * @return TModel
      */
     public function newModel($data = [])
     {
         $modelName = static::MODEL;
 
+        /** @var TModel */
         return new $modelName($data);
     }
 
@@ -525,6 +534,7 @@ abstract class RepositoryManager implements RepositoryInterface
      */
     public function create($data)
     {
+        /** @var TModel $model */
         $model = $this->newModel();
 
         $this->saveActionType = static::CREATE_ACTION;
@@ -580,10 +590,10 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * PATCH request handler
-     * 
-     * @param int|Model $id
-     * @param array $data
-     * @return Model $model
+     *
+     * @param int|\Illuminate\Database\Eloquent\Model $id
+     * @param array|Request $data
+     * @return TModel|null
      */
     public function patch($id, $data)
     {
@@ -629,9 +639,10 @@ abstract class RepositoryManager implements RepositoryInterface
      * If the given id exists then we will retrieve an existing record
      * otherwise, create new model
      *
-     * @param  string $model
+     * @template TFindModel of \Illuminate\Database\Eloquent\Model
+     * @param  class-string<TFindModel> $model
      * @param  int $id
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return TFindModel
      */
     protected function findOrCreate(string $model, int $id): Model
     {
@@ -645,7 +656,7 @@ abstract class RepositoryManager implements RepositoryInterface
      *
      * In simple words, add common fields between create and update using this method
      *
-     * @parm   \Illuminate\Database\Eloquent\Model $model
+     * @param  TModel $model
      * @param  \Illuminate\Http\Request $request
      * @return void
      */
@@ -654,7 +665,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Update record for the given model
      *
-     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  TModel $model
      * @param  array $columns
      * @return void
      */
@@ -680,7 +691,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Set the given data to the given model `without` saving it
      *
-     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  TModel $model
      * @param  array $columns
      * @return void
      */
@@ -703,7 +714,8 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Saving triggers
      *
-     * @param object $model
+     * @param TModel $model
+     * @param TModel|null $oldModel
      * @return void
      */
     protected function save($model, $oldModel = null)
@@ -741,7 +753,7 @@ abstract class RepositoryManager implements RepositoryInterface
      */
     public function __call($method, $args)
     {
-        if (method_exists($this->query, $method)) {
+        if ($this->query && method_exists($this->query, $method)) {
             return $this->query->$method(...$args);
         }
 
@@ -755,10 +767,10 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Increment the given mode|id by the given value
      *
-     * @param  int|Model $model
+     * @param  int|TModel $model
      * @param  string $column
      * @param  int $incrementBy
-     * @return Model|null
+     * @return TModel|null
      */
     public function increment($model, string $column, int $incrementBy = 1)
     {
@@ -768,7 +780,9 @@ abstract class RepositoryManager implements RepositoryInterface
 
         if (!$model) return null;
 
-        $model->increment($column, $incrementBy)->save();
+        $model->increment($column, $incrementBy);
+
+        $model->save();
 
         return $model;
     }
@@ -776,10 +790,10 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Decrement the given mode|id by the given value
      *
-     * @param  int|Model $model
+     * @param  int|TModel $model
      * @param  string $column
      * @param  int $decrementBy
-     * @return Model|null
+     * @return TModel|null
      */
     public function decrement($model, string $column, int $decrementBy = 1)
     {
@@ -789,7 +803,9 @@ abstract class RepositoryManager implements RepositoryInterface
 
         if (!$model) return null;
 
-        $model->decrement($column, $decrementBy)->save();
+        $model->decrement($column, $decrementBy);
+
+        $model->save();
 
         return $model;
     }

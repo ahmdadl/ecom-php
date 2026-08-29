@@ -4,6 +4,9 @@ namespace HZ\Illuminate\Mongez\Tests\Fixtures;
 
 use HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager;
 
+/**
+ * @extends MongoDBRepositoryManager<Product>
+ */
 class ProductsRepository extends MongoDBRepositoryManager
 {
     /**

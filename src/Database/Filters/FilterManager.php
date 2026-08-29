@@ -10,7 +10,7 @@ class FilterManager
     /**
      * Query Builder Object
      *
-     * @var \Illuminate\Database\Query\Builder
+     * @var \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public $query;
 
@@ -28,10 +28,10 @@ class FilterManager
      */
     public $filterBy = [];
 
-    /** 
+    /**
      * Set required data for filters
-     * 
-     * @param \Illuminate\Database\Query\Builder $query
+     *
+     * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder $query
      * @param array  $options
      * @param array  $filterBy
      */

@@ -32,7 +32,8 @@
         }
     },
     "scripts": {
-        "test": "@php vendor/bin/phpunit"
+        "test": "@php vendor/bin/phpunit",
+        "phpstan": "@php vendor/bin/phpstan analyse --memory-limit=1G"
     },
     "extra": {
         "laravel": {
@@ -50,6 +51,7 @@
     },
     "require-dev": {
         "orchestra/testbench": "^11.0",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^13.3"
     }
 }

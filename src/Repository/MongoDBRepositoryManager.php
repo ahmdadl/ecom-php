@@ -5,6 +5,11 @@ namespace HZ\Illuminate\Mongez\Repository;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Aggregate\Aggregate;
 
+/**
+ * @template TModel of Model
+ * @extends RepositoryManager<TModel>
+ * @implements RepositoryInterface<TModel>
+ */
 abstract class MongoDBRepositoryManager extends RepositoryManager implements RepositoryInterface
 {
     /**
@@ -71,7 +76,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
     /**
      * Get shared info data for the given options
-     * 
+     *
      * @param array $options
      * @param string $sharedInfoMethod
      * @return array
@@ -126,8 +131,8 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
     /**
      * Set location data
-     * 
-     * @param  Model $model
+     *
+     * @param  TModel $model
      * @return void
      */
     protected function setLocationData($model)
@@ -148,8 +153,8 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * Set document data to column
      *
-     * @param  \Model $model
-     * @return void     
+     * @param  TModel $model
+     * @return void
      */
     protected function setDocumentData($model)
     {
@@ -210,8 +215,8 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * Set Multi documents data to column value.
      *
-     * @param  \Model $model
-     * @return void     
+     * @param  TModel $model
+     * @return void
      */
     protected function setMultiDocumentData($model)
     {

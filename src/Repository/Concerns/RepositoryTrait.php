@@ -10,7 +10,7 @@ trait RepositoryTrait
      * Get repositories dynamically
      *
      * @param string $key
-     * @return \HZ\Illuminate\Mongez\Contracts\RepositoryInterface|mixed 
+     * @return \HZ\Illuminate\Mongez\Repository\RepositoryInterface|mixed|null
      */
     public function __get($key)
     {

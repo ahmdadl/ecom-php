@@ -2,6 +2,11 @@
 
 namespace HZ\Illuminate\Mongez\Repository\Concerns;
 
+/**
+ * @phpstan-require-extends \HZ\Illuminate\Mongez\Repository\RepositoryManager
+ *
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
 trait Deletable
 {
     /**

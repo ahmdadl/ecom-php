@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HZ\Illuminate\Mongez\Testing;
 
-use HZ\Illuminate\Mongez\Traits\Testing\WithCreatingRequests;
+use HZ\Illuminate\Mongez\Testing\Traits\WithCreatingRequests;
 
 abstract class BaseAdminDeleteTest extends BaseCrudAdminTest
 {

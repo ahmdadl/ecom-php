@@ -8,10 +8,10 @@ abstract class AdminApiTestCase extends ApiTestCase
 {
     /**
      * If marked as true, a bearer token will be passed with Bearer in the Authorization Header
-     * 
-     * @var bool
+     *
+     * @var bool|null
      */
-    protected bool $isAuthenticated = true;
+    protected ?bool $isAuthenticated = true;
 
     /**
      * Add Prefix to all routes
