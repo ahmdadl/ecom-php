@@ -12,7 +12,7 @@ trait Deletable
     /**
      * Dependency tables of deleting
      *
-     * @param array
+     * @var array<int|string, mixed>
      */
     protected $deleteDependenceTables = [];
 
@@ -25,7 +25,7 @@ trait Deletable
 
         if (!$model) return false;
 
-        if ($this->trigger("deleting", $model, $model->nid) === false) return false;
+        if ($this->trigger("deleting", $model, $model->getKey()) === false) return false;
 
         // delete uploaded files
         foreach (static::UPLOADS as $file) {
@@ -42,9 +42,9 @@ trait Deletable
 
         $model->delete();
 
-        if ($this->isCacheable()) $this->forgetCache($model->nid);
+        if ($this->isCacheable()) $this->forgetCache($model->getKey());
 
-        $this->trigger("delete", $model, $model->nid);
+        $this->trigger("delete", $model, $model->getKey());
 
         return true;
     }
@@ -63,6 +63,11 @@ trait Deletable
      * Get model deleting depended tables
      *
      * @return array
+     */
+    /**
+     * Get model deleting depended tables
+     *
+     * @return array<int|string, mixed>
      */
     public function getDeleteDependencies(): array
     {

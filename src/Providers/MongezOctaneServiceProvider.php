@@ -15,6 +15,23 @@ use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
 class MongezOctaneServiceProvider extends ServiceProvider
 {
     /**
+     * Cached list of declared classes that use the ModelTrait.
+     *
+     * @var array
+     */
+    protected static array $modelClasses = [];
+
+    /**
+     * Number of declared classes when the model classes list was last built.
+     *
+     * Declared classes never decrease within a worker process, so an equal
+     * count means the cached list is still complete.
+     *
+     * @var int
+     */
+    protected static int $declaredClassesCount = -1;
+
+    /**
      * Register the Octane listeners that keep the package state
      * isolated between HTTP requests.
      *
@@ -93,9 +110,35 @@ class MongezOctaneServiceProvider extends ServiceProvider
      */
     protected function resetModelsState()
     {
+        $this->discoverModelClasses();
+
+        foreach (static::$modelClasses as $class) {
+            $class::resetStaticState();
+        }
+    }
+
+    /**
+     * Build a cached list of declared classes that use the ModelTrait.
+     *
+     * Scanning all declared classes with `class_uses_recursive` on every
+     * request is expensive when the application loads many classes, so the
+     * list is built once and only rebuilt when new classes get declared
+     * (models may be autoloaded lazily after the first request).
+     *
+     * @return void
+     */
+    protected function discoverModelClasses()
+    {
+        $declaredClassesCount = count(get_declared_classes());
+
+        if ($declaredClassesCount === static::$declaredClassesCount) return;
+
+        static::$declaredClassesCount = $declaredClassesCount;
+        static::$modelClasses = [];
+
         foreach (get_declared_classes() as $class) {
             if (in_array(ModelTrait::class, class_uses_recursive($class), true)) {
-                $class::resetStaticState();
+                static::$modelClasses[] = $class;
             }
         }
     }

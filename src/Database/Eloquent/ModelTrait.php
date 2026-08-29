@@ -44,6 +44,40 @@ trait ModelTrait
     }
 
     /**
+     * Increment a column's value on the model.
+     *
+     * Widened to public so repositories may call it from outside the model.
+     *
+     * {@inheritdoc}
+     *
+     * @param  string $column
+     * @param  int $amount
+     * @param  array $extra
+     * @return int
+     */
+    public function increment($column, $amount = 1, array $extra = [])
+    {
+        return parent::increment($column, $amount, $extra);
+    }
+
+    /**
+     * Decrement a column's value on the model.
+     *
+     * Widened to public so repositories may call it from outside the model.
+     *
+     * {@inheritdoc}
+     *
+     * @param  string $column
+     * @param  int $amount
+     * @param  array $extra
+     * @return int
+     */
+    public function decrement($column, $amount = 1, array $extra = [])
+    {
+        return parent::decrement($column, $amount, $extra);
+    }
+
+    /**
      * An alias method to `getAttributes` method
      * 
      * @return array

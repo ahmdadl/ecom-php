@@ -34,8 +34,8 @@ trait Fillers
     /**
      * Get request object with data
      *
-     * @param  Request|array $data
-     * @return Request
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
+     * @return \Illuminate\Http\Request
      */
     protected function getRequestWithData($data): Request
     {
@@ -46,7 +46,7 @@ trait Fillers
             // Merge files
             foreach ($data as $key => $file) {
                 if ($file instanceof UploadedFile) {
-                    $request->addFile($key, $file);
+                    $request->files->set($key, $file);
                 }
             }
         } else {
@@ -87,13 +87,13 @@ trait Fillers
 
     /**
      * Check if all request inputs are in patchable array
-     * 
-     * @param  \Request $request
+     *
+     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
     protected function checkPatchable($request): bool
     {
-        foreach ($request as $column => $input) {
+        foreach ($request->all() as $column => $input) {
             if (!in_array($column, static::PATCHABLE_DATA)) return false;
         }
 
@@ -117,7 +117,7 @@ trait Fillers
 
             if ($input === 'password') {
                 if ($password = $this->input('password')) {
-                    $model->password = bcrypt($password);
+                    $model->setAttribute('password', bcrypt($password));
                 }
 
                 continue;
@@ -144,7 +144,7 @@ trait Fillers
 
             if ($column === 'password') {
                 if ($password = $this->input('password')) {
-                    $model->password = bcrypt($password);
+                    $model->setAttribute('password', bcrypt($password));
                 }
 
                 continue;
@@ -200,7 +200,7 @@ trait Fillers
      * Set uploads data automatically from the DATA array
      *
      * @param  TModel $model
-     * @param  array|null $columns
+     * @param  array<int|string, mixed>|null $columns
      * @return void
      */
     protected function upload($model, $columns = null)
@@ -209,7 +209,7 @@ trait Fillers
             $columns = static::UPLOADS;
         }
 
-        $this->storageDirectory = $this->getUploadsStorageDirectoryName() . '/' . $model->getId();
+        $this->storageDirectory = $this->getUploadsStorageDirectoryName() . '/' . $model->getKey();
 
         foreach ((array) $columns as $name => $column) {
             $options = [
@@ -332,10 +332,11 @@ trait Fillers
 
     /**
      * Merge the given files with the old uploaded ones
-     * 
-     * @param  array $files
+     *
+     * @param  array<int|string, mixed> $files
      * @param  string $column
-     * @return array
+     * @param  TModel $model
+     * @return array<int|string, mixed>
      */
     private function mergeOldAndNewFiles(array $files, $column, $model)
     {
@@ -360,9 +361,9 @@ trait Fillers
     /**
      * Create File options
      *
-     * @param string $uploadedFile
-     * @param array  $options
-     * @return
+     * @param  string $uploadedFile
+     * @param  array<int|string, mixed> $options
+     * @return array<int|string, mixed>
      */
     protected function fileOptions($uploadedFile, $options)
     {
@@ -414,7 +415,7 @@ trait Fillers
      * Set date data
      *
      * @param  TModel $model
-     * @param  array|null $columns
+     * @param  array<int|string, mixed>|null $columns
      * @return void
      */
     protected function setDateData($model, $columns = null)

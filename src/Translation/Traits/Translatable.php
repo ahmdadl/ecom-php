@@ -20,13 +20,16 @@ trait Translatable
             $parent = get_parent_class($this);
 
             if ($parent !== false && method_exists($parent, '__call')) {
-                return call_user_func_array([$parent, '__call'], $args);
+                /** @var callable $callback */
+                $callback = [$parent, '__call'];
+
+                return call_user_func_array($callback, $args);
             }
 
             return null;
         }
 
-        $moduleName = Str::replaceFirst('trans', $method);
+        $moduleName = Str::replaceFirst('trans', '', $method);
 
         $fileName = array_shift($args);
 

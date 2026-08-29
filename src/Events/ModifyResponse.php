@@ -2,6 +2,8 @@
 
 namespace HZ\Illuminate\Mongez\Events;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class ModifyResponse
 {
     /**
@@ -9,7 +11,7 @@ class ModifyResponse
      */
     public function modifyResponse($response, $statusCode)
     {
-        if ($statusCode == 200) {
+        if (in_array($statusCode, [Response::HTTP_OK, Response::HTTP_CREATED])) {
             $response = [
                 'data' => $response,
             ];

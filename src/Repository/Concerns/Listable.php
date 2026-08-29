@@ -63,7 +63,10 @@ trait Listable
 
         $model = static::MODEL;
 
-        return (new $model)->where($column, $value)->exists();
+        /** @var TModel $modelInstance */
+        $modelInstance = new $model;
+
+        return $modelInstance->newQuery()->where($column, $value)->exists();
     }
 
     /**
@@ -262,13 +265,13 @@ trait Listable
     /**
      * Set pagination info from pagination data
      *
-     * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator $data
+     * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, mixed> $data
      * @return void
      */
-    protected function setPaginateInfo($data)
+    protected function setPaginateInfo(\Illuminate\Contracts\Pagination\LengthAwarePaginator $data): void
     {
         $this->paginationInfo = [
-            'currentResults' => $data->count(),
+            'currentResults' => $data->total(),
             'totalRecords' => $data->total(),
             'numberOfPages' => $data->lastPage(),
             'itemsPerPage' => $data->perPage(),
@@ -365,7 +368,7 @@ trait Listable
     /**
      * @param array<string, mixed> $orderBy
      */
-    protected function orderBy(array $orderBy)
+    protected function orderBy(array $orderBy): void
     {
         if (empty($orderBy)) return;
 
@@ -501,7 +504,7 @@ trait Listable
         if ($this->query === null) return $this;
 
         if ($optionValue = $this->option($option)) {
-            $this->query->whereInInt($column, array_map('intval', (array) $optionValue));
+            $this->query->whereIn($column, array_map('intval', (array) $optionValue));
         }
 
         return $this;
@@ -613,7 +616,10 @@ trait Listable
     {
         $model = static::MODEL;
 
-        $query = (new $model)->where($column, $value);
+        /** @var TModel $modelInstance */
+        $modelInstance = new $model;
+
+        $query = $modelInstance->newQuery()->where($column, $value);
 
         $this->trigger('fetching', $query);
 

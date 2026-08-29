@@ -78,7 +78,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Model name
      *
-     * @var class-string<TModel>
+     * @var class-string<TModel>|string
      */
     const MODEL = '';
 
@@ -300,21 +300,21 @@ abstract class RepositoryManager implements RepositoryInterface
      * i.e if the TABLE_ALIAS is not empty, then this property will be the value of the TABLE_ALIAS
      * otherwise it will be the value of the TABLE constant
      *
-     * @const string
+     * @var string|null
      */
     protected $table;
 
     /**
      * The base event name that will be used
      *
-     * @const string
+     * @var string
      */
     protected $eventName;
 
     /**
      * User data
      *
-     * @cont mixed
+     * @var mixed
      */
     protected $user;
 
@@ -339,7 +339,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Query Builder Object
      *
-     * @var \Illuminate\Database\Eloquent\Builder|null
+     * @var \Illuminate\Database\Eloquent\Builder<TModel>
      */
     protected $query;
 
@@ -370,7 +370,8 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Constructor
      *
-     * @param \Illuminate\Http\Request
+     * @param \Illuminate\Http\Request $request
+     * @param Events $events
      */
     public function __construct(Request $request, Events $events)
     {
@@ -408,7 +409,7 @@ abstract class RepositoryManager implements RepositoryInterface
      * Trigger the given event related to current repository
      *
      * @param  string $events
-     * @param ...$values
+     * @param  mixed ...$values
      * @return mixed
      */
     public function trigger(string $events, ...$values)
@@ -433,6 +434,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * {@inheritDoc}
      *
+     * @param array<string,mixed> $options
      * @return Collection<int, TModel>
      */
     public function list(array $options): Collection
@@ -443,7 +445,7 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $paginate = $this->option('paginate', static::PAGINATE);
 
-        if ($this->request->paginate === 'false') {
+        if ($this->request->input('paginate') === 'false') {
             $paginate = false;
         }
 
@@ -492,13 +494,20 @@ abstract class RepositoryManager implements RepositoryInterface
      */
     public function getTableName(): string
     {
-        return static::TABLE ?: (static::MODEL)::getTableName();
+        if (static::TABLE) {
+            return static::TABLE;
+        }
+
+        /** @var \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model $model */
+        $model = $this->newModel();
+
+        return $model->getTableName();
     }
 
     /**
      * Get the query handler
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<TModel>
      */
     public function getQuery()
     {
@@ -509,7 +518,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Get new model object
      *
-     * @param  array $data
+     * @param  array<string,mixed> $data
      * @return TModel
      */
     public function newModel($data = [])
@@ -533,6 +542,9 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
+     * @return TModel
      */
     public function create($data)
     {
@@ -554,8 +566,9 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * Create new record and wrap it into resource
-     * 
-     * @param  array|Request $data
+     *
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
+     * @return \Illuminate\Http\Resources\Json\JsonResource|array<string, mixed>
      */
     public function createWrap($data)
     {
@@ -566,6 +579,10 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @param  int|\Illuminate\Database\Eloquent\Model $id
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
+     * @return TModel|null
      */
     public function update($id, $data)
     {
@@ -594,7 +611,7 @@ abstract class RepositoryManager implements RepositoryInterface
      * PATCH request handler
      *
      * @param int|\Illuminate\Database\Eloquent\Model $id
-     * @param array|Request $data
+     * @param \Illuminate\Http\Request|array<string, mixed> $data
      * @return TModel|null
      */
     public function patch($id, $data)
@@ -628,7 +645,8 @@ abstract class RepositoryManager implements RepositoryInterface
      * Update the record and wrap it into resource
      * 
      * @param  int $id
-     * @param  array|Request $data
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
+     * @return \Illuminate\Http\Resources\Json\JsonResource|array<string, mixed>|null
      */
     public function updateWrap(int $id, $data)
     {
@@ -648,7 +666,7 @@ abstract class RepositoryManager implements RepositoryInterface
      */
     protected function findOrCreate(string $model, int $id): Model
     {
-        return $model::find($id) ?: new $model;
+        return $model::query()->find($id) ?: new $model;
     }
 
     /**
@@ -673,10 +691,24 @@ abstract class RepositoryManager implements RepositoryInterface
     abstract protected function column(string $column): string;
 
     /**
+     * Handle the given arrayable value before storing
+     *
+     * @param  array $value
+     * @return mixed
+     */
+    /**
+     * Handle the given arrayable value before storing
+     *
+     * @param  array<int|string, mixed> $value
+     * @return mixed
+     */
+    abstract protected function handleArrayableValue(array $value): mixed;
+
+    /**
      * Update record for the given model
      *
      * @param  TModel $model
-     * @param  array $columns
+     * @param  array<int|string, mixed> $columns
      * @return void
      */
     protected function updateModel(Model $model, array $columns): void
@@ -702,7 +734,7 @@ abstract class RepositoryManager implements RepositoryInterface
      * Set the given data to the given model `without` saving it
      *
      * @param  TModel $model
-     * @param  array $columns
+     * @param  array<string, mixed> $columns
      * @return void
      */
     protected function setModelData(Model $model, array $columns): void
@@ -742,7 +774,9 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $this->saveActionType = '';
 
-        if (static::USING_CACHE) $this->setCache($model->nid, $model);
+        if (static::USING_CACHE) {
+            $this->setCache((string) $model->getKey(), $model);
+        }
     }
 
     /**
@@ -758,7 +792,7 @@ abstract class RepositoryManager implements RepositoryInterface
      * Call query builder methods dynamically
      *
      * @param  string $method
-     * @param  array $args
+     * @param  array<int, mixed> $args
      * @return mixed
      */
     public function __call($method, $args)
@@ -790,9 +824,9 @@ abstract class RepositoryManager implements RepositoryInterface
 
         if (!$model) return null;
 
-        $model->increment($column, $incrementBy);
+        $model->{$column} = ($model->{$column} ?? 0) + $incrementBy;
 
-        $model->save();
+        $model->newQuery()->whereKey($model->getKey())->increment($column, $incrementBy);
 
         return $model;
     }
@@ -813,15 +847,18 @@ abstract class RepositoryManager implements RepositoryInterface
 
         if (!$model) return null;
 
-        $model->decrement($column, $decrementBy);
+        $model->{$column} = ($model->{$column} ?? 0) - $decrementBy;
 
-        $model->save();
+        $model->newQuery()->whereKey($model->getKey())->decrement($column, $decrementBy);
 
         return $model;
     }
 
     /**
      * chunk query after applying filters
+     *
+     * @param  array<string, mixed> $options
+     * @return bool
      */
     public function chunkModels(array $options, int $count, callable $callback)
     {

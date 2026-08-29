@@ -34,7 +34,6 @@ trait Cacheable
      * Forget from cache by key  
      * 
      * @param string $key
-     * @param mixed $value
      * @return void  
      */
     public function forgetCache(string $key)

@@ -58,7 +58,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
      * @param array $value
      * @return mixed
      */
-    protected function handleArrayableValue(array $value)
+    protected function handleArrayableValue(array $value): mixed
     {
         return $value;
     }

@@ -122,7 +122,7 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
      * @param array $value
      * @return mixed
      */
-    protected function handleArrayableValue(array $value)
+    protected function handleArrayableValue(array $value): mixed
     {
         return json_encode($value);
     }

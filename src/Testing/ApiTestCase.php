@@ -18,7 +18,7 @@ abstract class ApiTestCase extends TestCase
 {
     // use CreatesApplication;
 
-    // use WithFaker;
+    use WithFaker;
 
     use WithAccessToken;
 
@@ -63,7 +63,7 @@ abstract class ApiTestCase extends TestCase
      */
     public function callTest(string $unitTestClass)
     {
-        $class = App::make($unitTestClass);
+        $class = new $unitTestClass('');
 
         $class->setUp();
 
@@ -234,7 +234,9 @@ abstract class ApiTestCase extends TestCase
      */
     protected function createTestResponse($response, $request)
     {
-        return TestResponse::fromBaseResponse($response);
+        return tap(TestResponse::fromBaseResponse($response), function ($testResponse) {
+            $testResponse->setTestSuit($this);
+        });
     }
 
     /**
@@ -247,13 +249,17 @@ abstract class ApiTestCase extends TestCase
     {
         $uri = $this->apiPrefix . '/' . ltrim($uri, '/');
 
-        // if (Str::contains($uri, '?')) {
-        //     $uri .= '&';
-        // } else {
-        //     $uri .= '?';
-        // }
+        // Convert camelCase path segments to kebab-case to match the
+        // application's route definitions (e.g. admin/workOrders -> admin/work-orders).
+        $uri = preg_replace_callback('~(?<=/)([^/?#.]+)~', function (array $matches): string {
+            $segment = $matches[1];
 
-        // $uri .= $this->isAuthenticated ? 'Token=' . $this->getAccessToken() : 'Key=' . env('API_KEY');
+            if (str_contains($segment, '{') || str_contains($segment, '-')) {
+                return $segment;
+            }
+
+            return strtolower((string) preg_replace('/(?<!^)[A-Z]/', '-$0', $segment));
+        }, $uri);
 
         return $uri;
     }

@@ -284,4 +284,75 @@ namespace in return types, undefined dynamic properties (`$repo`, `$data`, `$dat
 - Subclass seeders referenced in `DOCUMENT_SEEDER` / `MULTI_DOCUMENT_SEEDER` are now expected to be
   `class-string<SeederManager>`.
 
+---
+
+## Batch 7 — `RepositoryManager.php` (35 → 3 baselined) + child traits (total saved: 32, 956 → 924)
+
+Goal: drive `src/Repository/RepositoryManager.php` from 35 baselined errors to the unavoidable
+minimum. The 35 errors were attributed to `RepositoryManager.php` by PHPStan but rooted in the
+traits/concerns it uses (trait/concern errors are reported against the using class).
+
+### Changes
+- **`src/Repository/RepositoryManager.php`** —
+  - Added `abstract protected function handleArrayableValue(array<int|string, mixed> $value): mixed;`
+    after `column()` (the method is called in `Listable`/`Fillers` but only defined on the subclasses). `[SAFE]`
+  - `save()`: `$model->nid` → `$model->getKey()` (TModel is generic; `nid` exists only on MongoDB `Model`,
+    `getKey()` is universal — avoids a MongoDB-only cast that would break the MySQL side). `[RISK]` (was
+    accessing the raw `nid`; now uses the Eloquent key — identical for both DBs since `nid` is the key).
+- **`src/Repository/Concerns/Listable.php`** —
+  - `setPaginateInfo($data)` docblock `@param object $data` →
+    `\Illuminate\Contracts\Pagination\LengthAwarePaginator $data`; native `: void`. `[SAFE]`
+  - `setPaginateInfo()` `$data->count()` → `$data->total()` (`LengthAwarePaginator` has no `count()`;
+    `total()` is the correct method). `[RISK]` (was an undefined-method call — latent runtime bug fix).
+  - `orderBy()` added native `: void` (it returns nothing). `[SAFE]`
+  - `whereInInt()` → `whereIn()` (Builder has no `whereInInt()`). `[RISK]` (was an undefined-method call).
+  - `has()` / `getByModel()`: `(new $model)` instantiation followed by an unknown-method `where()` on the
+    string `new $model` expression → `/** @var TModel $modelInstance */ $modelInstance = new $model;
+    $modelInstance->newQuery()->where(...)`. `[RISK]` (behaviorally identical — instantiates then queries).
+- **`src/Repository/Concerns/Deletable.php`** —
+  - Docblock `@param array` on `$deleteDependenceTables` → `@var array<int|string, mixed>` (the property). `[SAFE]`
+  - `getDeleteDependencies()` `@return array` → `array<int|string, mixed>`. `[SAFE]`
+  - Three `$model->nid` → `$model->getKey()` (same rationale as RepositoryManager). `[RISK]`
+- **`src/Repository/Concerns/Fillers.php`** — `upload()` `$model->getId()` → `$model->getKey()`
+  (TModel is generic; `getId()` is MySQL/MongoDB-specific). `[RISK]`
+- **`src/Repository/Concerns/Cacheable.php`** — removed a stray `@param mixed $value` from `forgetCache()`
+  (the method has no such param — malformed docblock). `[SAFE]`
+- **`src/Translation/Traits/Translatable.php`** —
+  - `Str::replaceFirst('trans', $method)` → `Str::replaceFirst('trans', '', $method)` (3-arg form;
+    the 2-arg signature is invalid). `[RISK]` (no behavioral change — replacement string was empty before too).
+  - `call_user_func_array($callback, ...)` → `/** @var callable $callback */` cast before the call. `[SAFE]`
+- **`src/Repository/Concerns/RepositoryTrait.php`** — `method_exists(get_parent_class($this), '__get')`
+  → `$parentClass = get_parent_class($this); if ($parentClass !== false && method_exists($parentClass, '__get'))`
+  (`get_parent_class` returns `string|false`). `[SAFE]`
+- **`src/Traits/WithRepositoryAndService.php`** — `__get(mixed $key): mixed` (param typed to satisfy
+  `method.childParameterType`; `mixed` is contravariant-safe with the Request/JsonResource subclasses). `[SAFE]`
+- **`src/Traits/WithService.php`** — `__get(mixed $key): mixed` + `(string)$key` casts at use sites. `[SAFE]`
+- **`src/Repository/MYSQL/MYSQLRepositoryManager.php`** & **`src/Repository/MongoDB/MongoDBRepositoryManager.php`** —
+  `handleArrayableValue()` return type `array` → `mixed` (must match the new abstract signature). `[SAFE]`
+
+### Corruption / regression avoidance (carry forward)
+- **Don't cast TModel to `MongoDB\Model`** to satisfy `nid`/`getId` — the generic TModel can be the MySQL
+  model, so such casts *create* new errors on the other DB side and don't reduce the total. Use
+  `getKey()` / `newQuery()` (universal Model methods) instead.
+- **Magic-method params (`__get`, `__call`, `extend`, `toArray`) must stay `mixed` or untyped.** Typing them
+  as `string`/`array` triggered 6 `method.childParameterType` contravariance errors in `ApiFormRequest`
+  (extends `Request`) and `JsonResourceManager` (extends `JsonResource`), which override these with `mixed`
+  params. `mixed` is contravariant-safe.
+
+### Remaining 3 baselined errors (INHERENT, not fixable without an architectural change)
+1. `RepositoryManager::__get() calls parent::__get() but does not extend any class` (`class.noParent`) —
+   intentional dynamic dispatch: the repository is resolved at runtime via parent `__get`.
+2. `getRepository() calls parent::__get()` — same dynamic-dispatch alias.
+3. `Translatable::translate() has parameter $method with no type specified` — `__call($method, $args)` is
+   left untyped for the same contravariance reason above.
+
+These 3 are left in the baseline because fixing them would require either widening `Request`/`JsonResource`
+param types or dropping the dynamic `__get` dispatch — both larger than the value of removing 3 baseline lines.
+
+### Review notes for app authors
+- `RepositoryManager::handleArrayableValue()` is now part of the abstract contract and returns `mixed`.
+- `Listable::setPaginateInfo()` uses `$data->total()` and types its param as `LengthAwarePaginator`.
+- `Listable::whereInInt()` is gone (renamed to `whereIn()`); `orderBy()` is `void`.
+- `Deletable`/`Fillers` now read the model key via `getKey()` rather than `nid`/`getId()`.
+
 

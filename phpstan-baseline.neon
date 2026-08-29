@@ -1267,6 +1267,12 @@ parameters:
 			path: src/Database/Eloquent/MYSQL/Model.php
 
 		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MYSQL\\Model\:\:decrement\(\) has parameter \$extra with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Database/Eloquent/MYSQL/Model.php
+
+		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MYSQL\\Model\:\:except\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1274,6 +1280,12 @@ parameters:
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MYSQL\\Model\:\:except\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Database/Eloquent/MYSQL/Model.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MYSQL\\Model\:\:increment\(\) has parameter \$extra with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Database/Eloquent/MYSQL/Model.php
@@ -1531,6 +1543,12 @@ parameters:
 			path: src/Database/Eloquent/MongoDB/Model.php
 
 		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\:\:decrement\(\) has parameter \$extra with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Database/Eloquent/MongoDB/Model.php
+
+		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\:\:delete\(\) should return bool\|null but return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
@@ -1629,6 +1647,12 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\:\:handleUpdated\(\) has parameter \$model with no type specified\.$#'
 			identifier: missingType.parameter
+			count: 1
+			path: src/Database/Eloquent/MongoDB/Model.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\:\:increment\(\) has parameter \$extra with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: src/Database/Eloquent/MongoDB/Model.php
 
@@ -1977,12 +2001,6 @@ parameters:
 		-
 			message: '#^Call to an undefined static method Illuminate\\Database\\Seeder\:\:__get\(\)\.$#'
 			identifier: staticMethod.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Database/Seeders/SeederManager.php
 
@@ -2455,38 +2473,8 @@ parameters:
 			path: src/Http/ApiController.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__get\(\) has parameter \$key with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:badRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:getService\(\) has parameter \$key with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Parameter \#1 \$callback of function call_user_func_array expects callable\(\)\: mixed, array\{class\-string, ''__call''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: src/Http/ApiController.php
 
@@ -2523,24 +2511,6 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:withCommonRules\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Parameter \#1 \$callback of function call_user_func_array expects callable\(\)\: mixed, array\{class\-string, ''__call''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: src/Http/ApiFormRequest.php
 
@@ -2595,12 +2565,6 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\UIController\:\:success\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/UIController.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Http/UIController.php
 
@@ -2739,12 +2703,6 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ViewController\:\:success\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ViewController.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/Http/ViewController.php
 
@@ -3217,24 +3175,6 @@ parameters:
 			path: src/Providers/MongezServiceProvider.php
 
 		-
-			message: '#^Call to an undefined static method TModel of Illuminate\\Database\\Eloquent\\Model\:\:getTableName\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/Repository/MYSQLRepositoryManager.php
-
-		-
-			message: '#^Cannot call method whereNotNull\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/MYSQLRepositoryManager.php
-
-		-
-			message: '#^Cannot call method whereNull\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/MYSQLRepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MYSQLRepositoryManager\:\:handleArrayableValue\(\) has parameter \$value with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3247,14 +3187,8 @@ parameters:
 			path: src/Repository/MYSQLRepositoryManager.php
 
 		-
-			message: '#^Cannot call method where\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
-			message: '#^Cannot call method whereLocationNear\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\>\:\:whereLocationNear\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Repository/MongoDBRepositoryManager.php
 
@@ -3367,126 +3301,6 @@ parameters:
 			path: src/Repository/RepositoryInterface.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Http\\Request\:\:\$paginate\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Access to an undefined property TModel of Illuminate\\Database\\Eloquent\\Model\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 4
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Access to an undefined property TModel of Illuminate\\Database\\Eloquent\\Model\:\:\$password\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<TModel of Illuminate\\Database\\Eloquent\\Model\>\:\:handleArrayableValue\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\LengthAwarePaginator\:\:count\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:whereInInt\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Http\\Request\:\:addFile\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method TModel of Illuminate\\Database\\Eloquent\\Model\:\:getId\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method TModel of Illuminate\\Database\\Eloquent\\Model\:\:where\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined static method TFindModel of Illuminate\\Database\\Eloquent\\Model\:\:find\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined static method TModel of Illuminate\\Database\\Eloquent\\Model\:\:getTableName\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to method resize\(\) on an unknown class HZ\\Illuminate\\Mongez\\Services\\Images\\ImageResize\.$#'
-			identifier: class.notFound
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to protected method decrement\(\) of class Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: method.protected
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to protected method increment\(\) of class Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: method.protected
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method chunk\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method count\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method get\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method limit\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method paginate\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method select\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:__get\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not extend any class\.$#'
 			identifier: class.noParent
 			count: 1
@@ -3499,284 +3313,8 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Instantiated class HZ\\Illuminate\\Mongez\\Services\\Images\\ImageResize not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Iterating over an object of an unknown class Request\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:__call\(\) has parameter \$args with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:__get\(\) has parameter \$key with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:chunkModels\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:chunkModels\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:createWrap\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:createWrap\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:fileOptions\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:fileOptions\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getDeleteDependencies\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getQuery\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getRequestWithData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getService\(\) has parameter \$key with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:list\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:mergeOldAndNewFiles\(\) has parameter \$files with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:mergeOldAndNewFiles\(\) has parameter \$model with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:mergeOldAndNewFiles\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:newModel\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:orderBy\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:patch\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:setDateData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:setModelData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:setPaginateInfo\(\) has parameter \$data with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:translate\(\) has parameter \$method with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:trigger\(\) has parameter \$values with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:update\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:updateModel\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:updateWrap\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:updateWrap\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:upload\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(\\Illuminate\\Http\\Request\)\: Unexpected token "\\n     ", expected variable at offset 68 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(array\)\: Unexpected token "\\n     ", expected variable at offset 67 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$value$#'
-			identifier: parameter.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @return has invalid value \(\)\: Unexpected token "\\n     ", expected type at offset 117 on line 6$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @var for constant HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:MODEL with type class\-string\<TModel of Illuminate\\Database\\Eloquent\\Model\> is incompatible with value ''''\.$#'
-			identifier: classConstant.phpDocType
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Parameter \#1 \$callback of function call_user_func_array expects callable\(\)\: mixed, array\{class\-string, ''__call''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Parameter \#1 \$query of class HZ\\Illuminate\\Mongez\\Database\\Filters\\FilterManager constructor expects Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Query\\Builder, Illuminate\\Database\\Eloquent\\Builder\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Parameter \$request of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:checkPatchable\(\) has invalid type Request\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$deleteDependenceTables has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$eventName has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$query with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$table has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$user has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -3817,22 +3355,178 @@ parameters:
 			path: src/Repository/Select.php
 
 		-
-			message: '#^Parameter \#1 \$callback of function call_user_func_array expects callable\(\)\: mixed, array\{class\-string, ''__call''\} given\.$#'
-			identifier: argument.type
+			message: '#^Call to static method make\(\) on an unknown class Image\.$#'
+			identifier: class.notFound
 			count: 1
-			path: src/Resources/JsonResourceManager.php
+			path: src/Services/Images/BaseImage.php
 
 		-
-			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
-			identifier: argument.type
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Images\\BaseImage\:\:getImageObject\(\) with return type void returns mixed but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: src/Services/Images/BaseImage.php
+
+		-
+			message: '#^Property HZ\\Illuminate\\Mongez\\Services\\Images\\BaseImage\:\:\$imageObject has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Services/Images/BaseImage.php
+
+		-
+			message: '#^Result of method HZ\\Illuminate\\Mongez\\Services\\Images\\BaseImage\:\:getImageObject\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: src/Services/Images/BaseImage.php
+
+		-
+			message: '#^Call to static method put\(\) on an unknown class File\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Services/Images/ImageResize.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Images\\ImageResize\:\:resize\(\) has parameter \$quality with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/Images/ImageResize.php
+
+		-
+			message: '#^PHPDoc tag @param references unknown parameter\: \$waterImagePath$#'
+			identifier: parameter.notFound
+			count: 1
+			path: src/Services/Images/ImageWatermark.php
+
+		-
+			message: '#^Result of method HZ\\Illuminate\\Mongez\\Services\\Images\\BaseImage\:\:getImageObject\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: src/Services/Images/ImageWatermark.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Contracts\\Services\\Payments\\PaymentMethodInterface\:\:confirm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Services/PaymentMethodInterface.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Contracts\\Services\\Payments\\PaymentMethodInterface\:\:initiate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Services/PaymentMethodInterface.php
+
+		-
+			message: '#^Call to method getStatusCode\(\) on an unknown class HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\Response\.$#'
+			identifier: class.notFound
+			count: 4
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Call to static method create\(\) on an unknown class HZ\\Illuminate\\Mongez\\Models\\Services\\Payments\\CardRegistration\.$#'
+			identifier: class.notFound
 			count: 2
-			path: src/Resources/JsonResourceManager.php
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
 
 		-
-			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
-			identifier: arguments.count
+			message: '#^Call to static method create\(\) on an unknown class HZ\\Illuminate\\Mongez\\Models\\Services\\ServiceLog\.$#'
+			identifier: class.notFound
 			count: 1
-			path: src/Resources/JsonResourceManager.php
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Call to static method where\(\) on an unknown class HZ\\Illuminate\\Mongez\\Models\\Services\\Payments\\CardRegistration\.$#'
+			identifier: class.notFound
+			count: 3
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Cannot access property \$id on array\|object\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Cannot access property \$result on array\|object\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Instantiated class HZ\\Illuminate\\Mongez\\Exceptions\\Services\\Payments\\InvalidPaymentMethodException not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:log\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:query\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:query\(\) should return array but returns HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayResponse\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:send\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:send\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^PHPDoc tag @throws with type HZ\\Illuminate\\Mongez\\Exceptions\\Services\\Payments\\InvalidPaymentMethodException is not subtype of Throwable$#'
+			identifier: throws.notThrowable
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Property HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:\$response \(HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\Response\) does not accept Psr\\Http\\Message\\ResponseInterface\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Property HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:\$response has unknown class HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\Response as its type\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Property HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:\$settings type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Throwing object of an unknown class HZ\\Illuminate\\Mongez\\Exceptions\\Services\\Payments\\InvalidPaymentMethodException\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayResponse\:\:__construct\(\) has parameter \$responseData with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayResponse.php
+
+		-
+			message: '#^Property HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayResponse\:\:\$responseData type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayResponse.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Testing\\AdminApiTestCase\:\:fullData\(\) return type has no value type specified in iterable type array\.$#'
@@ -4717,7 +4411,19 @@ parameters:
 			path: tests/OctaneStateResetTest.php
 
 		-
+			message: '#^HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:decrement\(\) calls parent\:\:decrement\(\) but HZ\\Illuminate\\Mongez\\Tests\\ModelStub does not extend any class\.$#'
+			identifier: class.noParent
+			count: 1
+			path: tests/OctaneStateResetTest.php
+
+		-
 			message: '#^HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:getTable\(\) calls parent\:\:getTable\(\) but HZ\\Illuminate\\Mongez\\Tests\\ModelStub does not extend any class\.$#'
+			identifier: class.noParent
+			count: 1
+			path: tests/OctaneStateResetTest.php
+
+		-
+			message: '#^HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:increment\(\) calls parent\:\:increment\(\) but HZ\\Illuminate\\Mongez\\Tests\\ModelStub does not extend any class\.$#'
 			identifier: class.noParent
 			count: 1
 			path: tests/OctaneStateResetTest.php
@@ -4731,6 +4437,12 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:boot\(\) has no return type specified\.$#'
 			identifier: missingType.return
+			count: 1
+			path: tests/OctaneStateResetTest.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:decrement\(\) has parameter \$extra with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: tests/OctaneStateResetTest.php
 
@@ -4749,6 +4461,12 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:getTable\(\) has no return type specified\.$#'
 			identifier: missingType.return
+			count: 1
+			path: tests/OctaneStateResetTest.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Tests\\ModelStub\:\:increment\(\) has parameter \$extra with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
 			count: 1
 			path: tests/OctaneStateResetTest.php
 

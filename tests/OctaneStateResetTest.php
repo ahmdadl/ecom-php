@@ -7,6 +7,7 @@ use HZ\Illuminate\Mongez\Events\Events;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
 use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
+use HZ\Illuminate\Mongez\Providers\MongezOctaneServiceProvider;
 
 class OctaneStateResetTest extends TestCase
 {
@@ -77,9 +78,62 @@ class OctaneStateResetTest extends TestCase
         $this->assertFalse(ModelStub::$disableUpdateTime);
     }
 
+    public function testModelClassesDiscoveryIsCachedUntilNewClassesAreDeclared(): void
+    {
+        $this->resetOctaneProviderStaticState();
+
+        $provider = new MongezOctaneServiceProvider(\Mockery::mock(\Illuminate\Contracts\Foundation\Application::class));
+
+        $this->discoverModelClasses($provider);
+
+        $classes = $this->octaneProviderStaticProperty('modelClasses');
+
+        $this->assertContains(ModelStub::class, $classes);
+        $this->assertSame(
+            count(get_declared_classes()),
+            $this->octaneProviderStaticProperty('declaredClassesCount')
+        );
+
+        // a lazily declared model class is picked up on the next discovery
+        $lazyClass = 'LazyOctaneStub_' . uniqid();
+
+        eval(sprintf(
+            'namespace HZ\Illuminate\Mongez\Tests; class %s { use \HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait; }',
+            $lazyClass
+        ));
+
+        $this->discoverModelClasses($provider);
+
+        $this->assertContains(
+            'HZ\Illuminate\Mongez\Tests\\' . $lazyClass,
+            $this->octaneProviderStaticProperty('modelClasses')
+        );
+
+        $this->resetOctaneProviderStaticState();
+    }
+
+    protected function discoverModelClasses(MongezOctaneServiceProvider $provider): void
+    {
+        $method = new \ReflectionMethod(MongezOctaneServiceProvider::class, 'discoverModelClasses');
+        $method->invoke($provider);
+    }
+
+    protected function octaneProviderStaticProperty(string $property)
+    {
+        return (new \ReflectionClass(MongezOctaneServiceProvider::class))->getStaticProperties()[$property];
+    }
+
+    protected function resetOctaneProviderStaticState(): void
+    {
+        $ref = new \ReflectionClass(MongezOctaneServiceProvider::class);
+
+        $ref->setStaticPropertyValue('modelClasses', []);
+        $ref->setStaticPropertyValue('declaredClassesCount', -1);
+    }
+
     protected function staticProperty(string $class, string $property)
     {
-        return (new \ReflectionClass($class))->getStaticPropertyValue($property);
+        return (new \ReflectionClass($class))->getStaticProperties()[$property];
     }
 
     protected function instanceProperty(object $object, string $property)
