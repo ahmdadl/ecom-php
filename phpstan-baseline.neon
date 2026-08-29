@@ -1975,146 +1975,14 @@ parameters:
 			path: src/Database/Filters/MongoDBFilter.php
 
 		-
-			message: '#^Access to an undefined property Faker\\Factory\:\:\$safeEmail\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:\$data\.$#'
-			identifier: property.notFound
-			count: 14
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:\$dataLocal\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:\$repo\.$#'
-			identifier: property.notFound
-			count: 3
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:boolean\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:dateTimeThisYear\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:name\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:numberBetween\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:randomFloat\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:randomNumber\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method Faker\\Factory\:\:text\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Call to an undefined method object\:\:generate\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Database/Seeders/SeederManager.php
-
-		-
 			message: '#^Call to an undefined static method Illuminate\\Database\\Seeder\:\:__get\(\)\.$#'
 			identifier: staticMethod.notFound
 			count: 1
 			path: src/Database/Seeders/SeederManager.php
 
 		-
-			message: '#^Constant HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:DOCUMENT_SEEDER type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Constant HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:LOCALIZED_DATA type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Constant HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:MULTI_DOCUMENT_SEEDER type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:generate\(\) has invalid return type HZ\\Illuminate\\Mongez\\Database\\Seeders\\Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:getConst\(\) has parameter \$constName with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:model\(\) has invalid return type HZ\\Illuminate\\Mongez\\Database\\Seeders\\Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:model\(\) should return HZ\\Illuminate\\Mongez\\Database\\Seeders\\Illuminate\\Database\\Eloquent\\Model but returns object\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(object \$this\-\>data\)\: Unexpected token "\$this", expected variable at offset 78 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$const$#'
-			identifier: parameter.notFound
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
 			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:\$faker \(Faker\\Factory\) does not accept Faker\\Generator\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: src/Database/Seeders/SeederManager.php
 
@@ -4190,6 +4058,12 @@ parameters:
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Testing\\ApiTestCase\:\:post\(\) should return HZ\\Illuminate\\Mongez\\Testing\\TestResponse but returns Illuminate\\Testing\\TestResponse\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Testing/ApiTestCase.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Testing\\ApiTestCase\:\:prepareUri\(\) should return string but returns string\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Testing/ApiTestCase.php

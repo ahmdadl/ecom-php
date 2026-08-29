@@ -241,4 +241,47 @@ Goal: type the resource manager so PHPStan stops flagging untyped arrays, untype
   resource output shape is still correct.
 - `setDate()` `$options` is now explicitly `array`.
 
+---
+
+## Batch #6 — `src/Database/Seeders/SeederManager.php` (38 → 0)
+
+Goal: type the seeder manager so PHPStan stops flagging untyped properties, a wrong relative `Model`
+namespace in return types, undefined dynamic properties (`$repo`, `$data`, `$dataLocal`), a wrong
+`Faker` docblock type that cascaded 9 errors, malformed docblocks, and an `object::generate()` call.
+
+### Changes (all in `src/Database/Seeders/SeederManager.php`)
+- **Class `@property` additions** `[SAFE]`:
+  - `$repo` → `RepositoryManager<\Illuminate\Database\Eloquent\Model>`
+  - `$data` → `\stdClass` (it is `new \stdClass()` at L107)
+  - `$dataLocal` → `array<int|string, mixed>` (it is `[]` and assigned as an array)
+- **`$faker` property `@var`** `Faker\Generator` → `Generator` `[SAFE/RISK]`. This file has
+  `use Faker\Factory as Faker;` so a docblock `Faker\Generator` would resolve to the *nonexistent*
+  `Faker\Factory\Generator`. The unqualified imported `Generator` (`use Faker\Generator;`) is correct.
+  This single fix cascaded to resolve all 9 `$this->faker->safeEmail()/name()/...` errors. `[RISK]` only
+  in that a wrong type was previously silently accepted.
+- **Constants** `@var array` →
+  - `DOCUMENT_SEEDER` / `MULTI_DOCUMENT_SEEDER` → `array<string, class-string<SeederManager>>`
+    (so `(new $seeder)->generate()` resolves to a SeederManager). `[SAFE]`
+  - `LOCALIZED_DATA` → `array<string, mixed>`. `[SAFE]`
+- **`generate()` / `model()`** return type `Illuminate\Database\Eloquent\Model` (relative — resolved to the
+  wrong namespace `HZ\...\Database\Seeders\Illuminate\Database\Eloquent\Model`) →
+  `\Illuminate\Database\Eloquent\Model`. `[SAFE]`
+- **`setAutoData()`** removed a malformed `@param object $this->data` (the method has no `$data` param). `[SAFE]`
+- **`getConst($constName)`** docblock `@param string $const` (wrong param name) → `@param string $constName`. `[SAFE]`
+- **nid access**: `generate()` / `model()` return the base `\Illuminate\Database\Eloquent\Model`; added inline
+  `/** @var \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model $model */` before `(new $seeder)->generate()`
+  (L330) and in the multi-document loop so `$model->nid` resolves (MongoDB `Model` has `@property int|null $nid`
+  from batch #1). Also `/** @var class-string<SeederManager> $seeder */` after the constant offset access. `[SAFE]`
+
+### CRITICAL gotcha learned (carry forward)
+- If a file has `use Faker\Factory as Faker;`, a docblock `Faker\Generator` resolves to
+  `Faker\Factory\Generator` (nonexistent). Use the unqualified imported `Generator`.
+
+### Review notes for app authors
+- `SeederManager::$repo` is now typed as `RepositoryManager<\Illuminate\Database\Eloquent\Model>` and
+  `$data` as `\stdClass`; `$dataLocal` as an array.
+- `generate()` / `model()` return `\Illuminate\Database\Eloquent\Model` (fully qualified).
+- Subclass seeders referenced in `DOCUMENT_SEEDER` / `MULTI_DOCUMENT_SEEDER` are now expected to be
+  `class-string<SeederManager>`.
+
 

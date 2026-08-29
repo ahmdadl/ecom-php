@@ -9,13 +9,18 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Repository\Concerns\RepositoryTrait;
 
+/**
+ * @property \HZ\Illuminate\Mongez\Repository\RepositoryManager<\Illuminate\Database\Eloquent\Model> $repo
+ * @property \stdClass $data
+     * @property array<int|string,mixed> $dataLocal
+ */
 abstract class SeederManager extends Seeder
 {
     use RepositoryTrait;
     /**
      * Repository name
      *
-     * @var \Faker\Factory
+     * @var Generator
      */
     protected $faker;
 
@@ -38,7 +43,7 @@ abstract class SeederManager extends Seeder
      * [columnName => demoSeeder::class]
      * column Name must be the same name in the DOCUMENT_DATA
      *
-     * @var array
+     * @var array<string, class-string<SeederManager>>
      */
     protected const DOCUMENT_SEEDER = [];
 
@@ -47,14 +52,14 @@ abstract class SeederManager extends Seeder
      * [columnName => demoSeeder::class]
      * column Name must be the same name in the MULTI_DOCUMENT_DATA
      *
-     * @var array
+     * @var array<string, class-string<SeederManager>>
      */
     protected const MULTI_DOCUMENT_SEEDER = [];
 
     /**
      * localization keys
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected const LOCALIZED_DATA = [];
 
@@ -100,7 +105,7 @@ abstract class SeederManager extends Seeder
     /**
      * Create new record
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function generate()
     {
@@ -127,7 +132,6 @@ abstract class SeederManager extends Seeder
     /**
      * set automatically data from repository
      *
-     * @param object $this->data
      * @return void
      */
     protected function setAutoData()
@@ -150,19 +154,20 @@ abstract class SeederManager extends Seeder
     /**
      * get model class SeederManager repository
      *
-     * @return Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Database\Eloquent\Model
      */
     public function model()
     {
         $model = $this->getConst('MODEL');
 
+        /** @var \Illuminate\Database\Eloquent\Model $model */
         return new $model;
     }
 
     /**
      * Get value of constants from repository
      *
-     * @param string $const
+     * @param string $constName
      * @return mixed
      */
     public function getConst($constName)
@@ -321,6 +326,8 @@ abstract class SeederManager extends Seeder
 
             $seeder = static::DOCUMENT_SEEDER[$column];
 
+            /** @var class-string<SeederManager> $seeder */
+            /** @var \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model $model */
             $model = (new $seeder)->generate();
 
             $this->data->$column = $model->nid;
@@ -340,9 +347,12 @@ abstract class SeederManager extends Seeder
 
             $seeder = static::MULTI_DOCUMENT_SEEDER[$column];
 
+            /** @var class-string<SeederManager> $seeder */
+            /** @var \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model $model */
             $ids = [];
 
             for ($i = 0; $i < $this->faker->numberBetween(2, 6); $i++) {
+                /** @var \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model $model */
                 $model = (new $seeder)->generate();
 
                 $ids[] = $model->nid;
