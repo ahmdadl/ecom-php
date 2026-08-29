@@ -43,19 +43,18 @@ class Aggregate
 
     /**
      * Group By the given column
-     * 
+     *
      * @param ...string $columns
-     * @return Pipeline
      */
     public function groupBy(...$columns): Pipeline
     {
         $columnsList = [];
 
-        if (count($columns) == 1 && $columns[0] === null) {
+        if (count($columns) === 1 && $columns[0] === null) {
             $columnsList = null;
         } else {
             foreach ($columns as $column) {
-                list($name) = explode('.', $column);
+                [$name] = explode('.', $column);
 
                 $columnsList[$name] = "$$column";
             }
@@ -65,10 +64,9 @@ class Aggregate
     }
 
     /**
-     * Group By day 
-     * 
+     * Group By day
+     *
      * @param string $column
-     * @return Pipeline
      */
     public function groupByDay($column): Pipeline
     {
@@ -78,10 +76,9 @@ class Aggregate
     }
 
     /**
-     * Group By full date 
-     * 
+     * Group By full date
+     *
      * @param string $column
-     * @return Pipeline
      */
     public function groupByDate($column): Pipeline
     {
@@ -96,9 +93,8 @@ class Aggregate
 
     /**
      * Group By month
-     * 
+     *
      * @param string $column
-     * @return Pipeline
      */
     public function groupByMonth($column): Pipeline
     {
@@ -111,9 +107,8 @@ class Aggregate
 
     /**
      * Group By week
-     * 
+     *
      * @param string $column
-     * @return Pipeline
      */
     public function groupByWeek($column): Pipeline
     {
@@ -126,9 +121,8 @@ class Aggregate
 
     /**
      * Group By year
-     * 
+     *
      * @param string $column
-     * @return Pipeline
      */
     public function groupByYear($column): Pipeline
     {
@@ -151,19 +145,6 @@ class Aggregate
             'date' => '$' . $column,
             'timezone' => date_default_timezone_get(),
         ];
-
-        $properColumn = $column . '_proper_date';
-
-        $this->pipeline('project')->data([
-            $properColumn => [
-                '$dateToParts' => [
-                    'date' => '$' . $column,
-                    'timezone' => date_default_timezone_get(),
-                ]
-            ],
-        ]);
-
-        return '$' . $properColumn;
     }
 
     /**
@@ -180,12 +161,10 @@ class Aggregate
     }
 
     /**
-     * Where like clause 
-     * 
-     * @param string $column 
+     * Where like clause
+     *
      * @param mixed $value
-     * @param string $likeOperator
-     * @return Pipeline 
+     * @return Pipeline
      */
     public function whereLike(string $column, $value, string $likeOperator = '')
     {
@@ -216,7 +195,7 @@ class Aggregate
 
         $columnsList = [];
 
-        $columnsList[$column] = strtolower($order) == 'asc' ? 1 : -1;
+        $columnsList[$column] = strtolower($order) === 'asc' ? 1 : -1;
 
         $pipeline->data($columnsList);
 
@@ -226,10 +205,8 @@ class Aggregate
     /**
      * Unwind the field list
      *
-     * @param string  $path
      * @param string  $includeArrayIndex
-     * @param boolean $preserveNullAndEmptyArrays
-     * 
+     *
      * @return Pipeline
      */
     public function unwind(string $path, $includeArrayIndex = null, bool $preserveNullAndEmptyArrays = false)
@@ -242,8 +219,7 @@ class Aggregate
      *
      * @param string  $path
      * @param string  $includeArrayIndex
-     * @param boolean $preserveNullAndEmptyArrays
-     * 
+     *
      * @return Pipeline
      */
     public function extract($path, $includeArrayIndex = null, bool $preserveNullAndEmptyArrays = false)
@@ -305,9 +281,8 @@ class Aggregate
 
     /**
      * Select items
-     * 
+     *
      * @param array ...$columns
-     * @return Pipeline
      */
     public function select(...$columns): Pipeline
     {
@@ -316,9 +291,8 @@ class Aggregate
 
     /**
      * Select items
-     * 
+     *
      * @param array ...$columns
-     * @return Pipeline
      */
     public function project(): Pipeline
     {
@@ -327,9 +301,6 @@ class Aggregate
 
     /**
      * Create new pipeline
-     * 
-     * @param  string $pipelineName
-     * @return Pipeline
      */
     public function pipeline(string $pipelineName): Pipeline
     {
@@ -397,8 +368,6 @@ class Aggregate
 
     /**
      * Get aggregate framework utilities
-     * 
-     * @return AggregateUtils
      */
     public function utils(): AggregateUtils
     {

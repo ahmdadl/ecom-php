@@ -9,9 +9,8 @@ trait Cacheable
 {
     /**
      * Get record from redis cache
-     * 
-     * @param string $key
-     * @return mixed  
+     *
+     * @return mixed 
      */
     public function getCache(string $key)
     {
@@ -21,7 +20,6 @@ trait Cacheable
     /**
      * Set record to redis cache
      *
-     * @param string $key
      * @param mixed $value
      * @return void
      */
@@ -31,10 +29,9 @@ trait Cacheable
     }
 
     /**
-     * Forget from cache by key  
-     * 
-     * @param string $key
-     * @return void  
+     * Forget from cache by key 
+     *
+     * @return void 
      */
     public function forgetCache(string $key)
     {
@@ -43,8 +40,6 @@ trait Cacheable
 
     /**
      * Get cache driver
-     *
-     * @return \Illuminate\Contracts\Cache\Repository
      */
     protected function driver(): CacheRepository
     {
@@ -53,9 +48,6 @@ trait Cacheable
 
     /**
      * Get cache key
-     * 
-     * @param  string $key
-     * @return string
      */
     protected function getCacheKey(string $key): string
     {
@@ -64,8 +56,6 @@ trait Cacheable
 
     /**
      * Determine if caching is enabled
-     * 
-     * @return bool
      */
     protected function isCachable(): bool
     {

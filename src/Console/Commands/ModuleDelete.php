@@ -104,8 +104,6 @@ class ModuleDelete extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Delete module directory
-     *
-     * @return void
      */
     protected function removeModuleDirectory(): void
     {
@@ -115,9 +113,8 @@ class ModuleDelete extends EngezGeneratorCommand implements EngezInterface
     }
 
     /**
-     * Remove module repository from config 
+     * Remove module repository from config
      *
-     * @return void
      */
     protected function unsetModuleRepository(): void
     {
@@ -140,8 +137,6 @@ class ModuleDelete extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Delete repository helper function
-     *
-     * @return void
      */
     protected function removeRepositoryHelper(): void
     {
@@ -178,8 +173,6 @@ class ModuleDelete extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Remove Module seeder from base seeders
-     *
-     * @return void
      */
     protected function removeFromBaseSeedersClass(): void
     {

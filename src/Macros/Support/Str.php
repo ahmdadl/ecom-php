@@ -17,8 +17,6 @@ class Str
      */
     public static function removeFirst()
     {
-        return function (string $needle, string $object): string {
-            return static::replaceFirst($needle, '', $object);
-        };
+        return fn(string $needle, string $object): string => static::replaceFirst($needle, '', $object);
     }
 }

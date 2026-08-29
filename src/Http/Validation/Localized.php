@@ -8,24 +8,12 @@ use Illuminate\Validation\Validator;
 
 class Localized
 {
-    /**
-     * @var array
-     */
     protected array $localeCodes = [];
 
-    /**
-     * @var array
-     */
     protected array $localizedValue;
 
-    /**
-     * @var string
-     */
     protected string $textAttribute = 'text';
 
-    /**
-     * @var string
-     */
     protected string $localeCodeAttribute = 'localeCode';
 
     /**
@@ -33,9 +21,6 @@ class Localized
      */
     private Validator $validator;
 
-    /**
-     * @var string
-     */
     private string $message = '';
 
     /**
@@ -52,8 +37,6 @@ class Localized
      * @param  string $attribute
      * @param  mixed $value
      * @param  array $parameters
-     * @param  Validator $validator
-     * @return bool
      */
     public function passes($attribute, $value, $parameters, Validator $validator): bool
     {
@@ -91,10 +74,8 @@ class Localized
 
     /**
      * Validate the given value as array
-     * 
+     *
      * @param  mixed  $value
-     * @param  string  $attribute
-     * @return bool
      */
     private function validateValue($value, string $attribute): bool
     {
@@ -110,8 +91,6 @@ class Localized
     /**
      * Validate `text` key exists in localized value.
      * Validate `text` key is string in localized value.
-     *
-     * @return bool
      */
     private function validateText(): bool
     {
@@ -139,8 +118,6 @@ class Localized
      * Validate `localeCode` key exists in localized value.
      * Validate `localeCode` key is string in localized value.
      * Validate `localeCode` key is in `config/mongez.localeCodes` values.
-     *
-     * @return bool
      */
     private function validateLocaleCode(): bool
     {

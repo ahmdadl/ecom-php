@@ -215,14 +215,14 @@ abstract class Model extends BaseModel
      *
      * @var int|null
      */
-    protected static $autoIncrementIdBy = null;
+    protected static $autoIncrementIdBy;
 
     /**
      * Set the initial id value when collection is being created for first
      *
      * @var int|null
      */
-    protected static $initialId = null;
+    protected static $initialId;
 
     /**
      * Determine whether to trigger events or not on model create|update|delete
@@ -233,8 +233,6 @@ abstract class Model extends BaseModel
 
     /**
      * Cached table name
-     * 
-     * @var string
      */
     protected static string $tableName = '';
 
@@ -269,7 +267,6 @@ abstract class Model extends BaseModel
     /**
      * Determine if current model can trigger the given event type
      *
-     * @param  string $eventType
      * @return boolean
      */
     public function canTrigger(string $eventType)
@@ -330,8 +327,6 @@ abstract class Model extends BaseModel
 
     /**
      * Create and return new id for the current model
-     *
-     * @return int
      */
     public static function nextId(): int
     {
@@ -364,8 +359,6 @@ abstract class Model extends BaseModel
 
     /**
      * Get next id
-     *
-     * @return int
      */
     public static function getNextId(): int
     {
@@ -374,8 +367,6 @@ abstract class Model extends BaseModel
 
     /**
      * Get last insert id of the given collection name
-     *
-     * @return  int
      */
     public static function lastInsertId(): int
     {
@@ -411,8 +402,6 @@ abstract class Model extends BaseModel
 
     /**
      * This method should return the info of the document that will be stored in another document, default to full info
-     *
-     * @return array
      */
     public function sharedInfo(): array
     {
@@ -447,7 +436,6 @@ abstract class Model extends BaseModel
      * Get shared info plus the given columns
      *
      * @param ...string $columns
-     * @return array
      */
     public function sharedInfoWith(...$columns): array
     {
@@ -458,7 +446,6 @@ abstract class Model extends BaseModel
      * Get shared info except the given columns
      *
      * @param ...string $columns
-     * @return array
      */
     public function sharedInfoExcept(...$columns): array
     {

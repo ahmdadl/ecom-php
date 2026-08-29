@@ -8,8 +8,6 @@ class ErrorKeyValueUnit extends ObjectUnit
 {
     /**
      * Error key name
-     * 
-     * @var string
      */
     protected string $errorKeyName = '';
 
@@ -32,9 +30,6 @@ class ErrorKeyValueUnit extends ObjectUnit
 
     /**
      * Set the error key name
-     * 
-     * @param  string $errorKeyName
-     * @return self
      */
     public function setErrorKeyName(string $errorKeyName): self
     {

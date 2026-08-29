@@ -5,26 +5,21 @@ namespace HZ\Illuminate\Mongez\Console;
 use Illuminate\Support\Facades\App;
 use Illuminate\Filesystem\Filesystem;
 
-class Stub
+class Stub implements \Stringable
 {
+    public $content;
     /**
      * Stub Path
-     *
-     * @var string
      */
     protected string $path;
 
     /**
      * File Manager
-     * 
-     * @var \Illuminate\Filesystem\Filesystem
      */
     protected Filesystem $files;
 
     /**
      * Constructor
-     *
-     * @param string $path
      */
     public function __construct(string $path)
     {
@@ -42,9 +37,6 @@ class Stub
 
     /**
      * Replace the given data
-     * 
-     * @param array $replacements
-     * @return $this
      */
     public function replace(array $replacements): Stub
     {
@@ -59,9 +51,8 @@ class Stub
 
     /**
      * Mutate the given array to string
-     * 
+     *
      * @param string|array $data
-     * @return string
      */
     public function stringAsArray($data): string
     {
@@ -69,9 +60,7 @@ class Stub
             $data = explode(',', $data);
         }
 
-        $flattenVData = join(', ', array_map(function ($value) {
-            return "'" . $value . "'";
-        }, $data));
+        $flattenVData = implode(', ', array_map(fn($value) => "'" . $value . "'", $data));
 
         return '[' . $flattenVData . ']';
     }
@@ -80,9 +69,6 @@ class Stub
     /**
      * Return proper value for data that will be replaced
      * If the given data is empty, then return tab indent with double slash
-     * 
-     * @param  array $data
-     * @return string
      */
     public function data(array $data): string
     {
@@ -91,9 +77,6 @@ class Stub
 
     /**
      * Add tab indent then append the given text
-     * 
-     * @param string $text
-     * @return string
      */
     public function tabWith(string $text): string
     {
@@ -102,10 +85,6 @@ class Stub
 
     /**
      * Remove the given text line
-     * 
-     * @param string $lineText
-     * @param bool $firstMatchedLineOnly
-     * @return $this
      */
     public function removeLine(string $lineText, bool $firstMatchedLineOnly = true): Stub
     {
@@ -130,9 +109,6 @@ class Stub
 
     /**
      * Append the given content after php tag
-     * 
-     * @param string $content
-     * @return $this
      */
     public function appendAfterPHPTag(string $content): Stub
     {
@@ -141,10 +117,6 @@ class Stub
 
     /**
      * Add the given content after the given search line
-     * 
-     * @param string $searchLineText
-     * @param bool $newContent
-     * @return $this
      */
     public function appendAfter(string $searchLineText, string $newContent): Stub
     {
@@ -152,9 +124,7 @@ class Stub
 
         $lines = explode(PHP_EOL, $this->content);
 
-        $lines = array_map(function ($line) {
-            return rtrim($line, "\r");
-        }, $lines);
+        $lines = array_map(fn($line) => rtrim($line, "\r"), $lines);
 
         foreach ($lines as $line) {
             $content .= $line . PHP_EOL;
@@ -171,11 +141,6 @@ class Stub
 
     /**
      * Determine if the given two lines are matched
-     * 
-     * @param  string $lineOne
-     * @param  string $lineTwo
-     * @param  bool $removeWhiteSpaces
-     * @return bool
      */
     protected function areMatchedLines(string $lineOne, string $lineTwo, bool $removeWhiteSpaces = true): bool
     {
@@ -188,9 +153,6 @@ class Stub
 
     /**
      * Remove whitespace tab indents and line break from the given text
-     * 
-     * @param string $text
-     * @return string
      */
     protected function trim(string $text): string
     {
@@ -201,8 +163,7 @@ class Stub
 
     /**
      * Save the content to the given path
-     * 
-     * @param string $path
+     *
      * @return void
      */
     public function saveTo(string $path)
@@ -230,8 +191,8 @@ class Stub
     /**
      * {@inherit}
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->content;
+        return (string) $this->content;
     }
 }

@@ -16,8 +16,6 @@ class MongezOctaneServiceProvider extends ServiceProvider
 {
     /**
      * Cached list of declared classes that use the ModelTrait.
-     *
-     * @var array
      */
     protected static array $modelClasses = [];
 
@@ -26,8 +24,6 @@ class MongezOctaneServiceProvider extends ServiceProvider
      *
      * Declared classes never decrease within a worker process, so an equal
      * count means the cached list is still complete.
-     *
-     * @var int
      */
     protected static int $declaredClassesCount = -1;
 

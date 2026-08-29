@@ -25,29 +25,21 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Request Body
-     * 
-     * @var array
      */
     protected array $requestBody;
 
     /**
      * Request method
-     * 
-     * @var string
      */
     protected string $requestMethod;
 
     /**
      * Request route
-     * 
-     * @var string
      */
     protected string $route;
 
     /**
      * Response shape
-     * 
-     * @var array
      */
     protected array $setResponseShape;
 
@@ -67,9 +59,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Set request route
-     * 
-     * @param  string $route
-     * @return $this
      */
     public function setRoute(string $route): self
     {
@@ -79,9 +68,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Set request method
-     * 
-     * @param  string $requestMethod
-     * @return $this
      */
     public function setRequestMethod(string $requestMethod): self
     {
@@ -91,9 +77,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Set request body
-     * 
-     * @param  array $requestBody
-     * @return $this
      */
     public function setRequestBody(array $requestBody): self
     {
@@ -103,8 +86,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get request route
-     * 
-     * @return string
      */
     public function getRoute(): string
     {
@@ -113,8 +94,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get request method
-     * 
-     * @return string
      */
     public function getRequestMethod(): string
     {
@@ -123,8 +102,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get request body
-     * 
-     * @return array
      */
     public function getRequestBody(): array
     {
@@ -133,8 +110,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get response object
-     * 
-     * @return \Illuminate\Http\Response
      */
     public function getResponse(): Response
     {
@@ -143,8 +118,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get response status code
-     * 
-     * @return int
      */
     public function getStatusCode(): int
     {
@@ -153,9 +126,8 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Set test case
-     * 
-     * @param  TestCase $testCase
-     * @return void 
+     *
+     * @return void
      */
     public function setTestSuit(TestCase $testCase)
     {
@@ -164,8 +136,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get response status code
-     * 
-     * @return int
      */
     public function statusCode(): int
     {
@@ -194,8 +164,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get response as array
-     * 
-     * @return array
      */
     public function toArray(): array
     {
@@ -204,8 +172,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Get response as object
-     * 
-     * @return object
      */
     public function toObject(): object
     {
@@ -214,8 +180,6 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Try to get last insert id
-     * 
-     * @return int
      */
     public function getLastInsertId(): int
     {
@@ -283,7 +247,7 @@ class TestResponse extends BaseTestResponse
         $responseSchema->setValue($this->toArray())->validate();
 
         if (!$responseSchema->isValid()) {
-            $errors = (new ErrorsMessagesParser($responseSchema->errorsList()))->parse();
+            $errors = new ErrorsMessagesParser($responseSchema->errorsList())->parse();
 
             $message = $this->color('Response Schema Failed:', 'red', ['bold']) . PHP_EOL;
 

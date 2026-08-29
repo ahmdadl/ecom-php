@@ -44,8 +44,7 @@ class FilterManager
 
     /**
      * Filter by the given classes
-     * 
-     * @param array $filterClasses
+     *
      * @return void
      */
     public function filter(array $filterClasses)
@@ -109,7 +108,7 @@ class FilterManager
                 }
             }
 
-            if (!empty($requestedColumns)) {
+            if ($requestedColumns !== []) {
                 $options['columns'] = $requestedColumns;
             }
 

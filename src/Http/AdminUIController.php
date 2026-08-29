@@ -54,7 +54,6 @@ abstract class AdminUIController
     /**
      * Get List of records
      *
-     * @param   \Illuminate\Http\Request $request
      * @return string
      */
     public function index(Request $request)
@@ -70,9 +69,7 @@ abstract class AdminUIController
 
     /**
      * Render the given view path
-     * 
-     * @param string $viewPath
-     * @param  array $data
+     *
      * @return string
      */
     protected function render(string $viewPath, array $data = [])
@@ -82,9 +79,6 @@ abstract class AdminUIController
 
     /**
      * Get  options
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
      */
     protected function listOptions(Request $request): array
     {
@@ -112,8 +106,7 @@ abstract class AdminUIController
 
     /**
      * Get value from controller info
-     * 
-     * @param  string $key 
+     *
      * @return mixed
      */
     protected function controllerInfo(string $key)
@@ -124,7 +117,6 @@ abstract class AdminUIController
     /**
      * Store a newly created resource in storage.
      *
-     * @param   \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -140,14 +132,14 @@ abstract class AdminUIController
         $model = $this->repository->create($request);
 
         $returnOnStore = $this->controllerInfo['returnOn']['store'] ?? config('mongez.admin.returnOn.store', 'single-record');
-
         if ($returnOnStore == 'single-record') {
-            return $this->show($model->nid, $request);
-        } elseif ($returnOnStore == 'all-records') {
-            return $this->index($request);
-        } else {
-            return redirect()->back();
+            return $this->show($model->nid);
         }
+
+        if ($returnOnStore == 'all-records') {
+            return $this->index($request);
+        }
+        return redirect()->back();
     }
 
     /**
@@ -160,7 +152,7 @@ abstract class AdminUIController
     {
         if ($this->repository->deleteHasDependence()) {
             $deletingValidationErrors = $this->validateBeforeDeleting($this->repository->getDeleteDependencies(), $id);
-            if (!empty($deletingValidationErrors)) {
+            if ($deletingValidationErrors !== []) {
                 return $this->badRequest($deletingValidationErrors);
             }
         }
@@ -212,7 +204,6 @@ abstract class AdminUIController
     /**
      * Update the specified resource in storage.
      *
-     * @param   \Illuminate\Http\Request  $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
@@ -247,22 +238,20 @@ abstract class AdminUIController
         $this->repository->update($id, $request);
 
         $returnOnUpdate = $this->controllerInfo['returnOn']['update'] ?? config('mongez.admin.returnOn.update', 'single-record');
-
         if ($returnOnUpdate == 'single-record') {
-            return $this->show($id, $request);
-        } elseif ($returnOnUpdate == 'all-records') {
-            return $this->index($request);
-        } else {
-            return $this->success();
+            return $this->show($id);
         }
+
+        if ($returnOnUpdate == 'all-records') {
+            return $this->index($request);
+        }
+        return $this->success();
     }
 
     /**
      * Make custom validation for update
      *
      * @param  int $id
-     * @param   \Illuminate\Http\Request $request
-     * @return array
      */
     protected function updateValidation($id, Request $request): array
     {
@@ -274,7 +263,6 @@ abstract class AdminUIController
      *
      * @param int $id
      * @param mixed $request
-     * @return array
      */
     protected function storeValidation($request): array
     {

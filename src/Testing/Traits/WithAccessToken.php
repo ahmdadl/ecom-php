@@ -11,22 +11,16 @@ trait WithAccessToken
 {
     /**
      * Generated Access Token
-     * 
-     * @var string
      */
     protected static string $accessToken = '';
 
     /**
      * Get api key
-     * 
-     * @var string
      */
     protected static string $apiKey = '';
 
     /**
      * Get access token
-     * 
-     * @return string
      */
     public function getAccessToken(): string
     {
@@ -52,8 +46,6 @@ trait WithAccessToken
 
     /**
      * Get api key
-     * 
-     * @return string
      */
     protected function getApiKey(): string
     {
@@ -62,8 +54,6 @@ trait WithAccessToken
 
     /**
      * Get access token settings
-     * 
-     * @return array
      */
     protected function accessTokenSettings(): array
     {

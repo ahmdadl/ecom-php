@@ -10,20 +10,14 @@ trait Messageable
 {
     /**
      * Get colored key
-     * 
-     * @return string
      */
     public function color(string $text, string $color = '', array $options = []): string
     {
-        return (new Color($color, '', $options))->apply($text);
+        return new Color($color, '', $options)->apply($text);
     }
 
     /**
      * Get a message to be displayed
-     * 
-     * @param  string $message
-     * @param  string $color
-     * @return string
      */
     protected function message(string $message, string $color = ''): string
     {
@@ -32,8 +26,7 @@ trait Messageable
 
     /**
      * Print the given message
-     * 
-     * @param string $message
+     *
      * @return void
      */
     protected function instantMessage(string $message, string $color = '')

@@ -58,23 +58,17 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * test name
-     *
-     * @var string
      */
     protected string $testName;
 
     /**
      * test type
      * Available Values: site|admin|all
-     *
-     * @var string
      */
     protected string $testType;
 
     /**
      * The path of the generated test
-     *
-     * @var string
      */
     protected string $testPath;
 
@@ -174,12 +168,11 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
     /**
      * Create a test for the given type
      *
-     * @param  string $testType
      * @return void
      */
     private function createTest(string $testType)
     {
-        if ($testType == 'admin') {
+        if ($testType === 'admin') {
             $files = EngezTest::ADMIN_TEST_FILES;
         }else{
             $files = EngezTest::CUSTOMER_TEST_FILES;
@@ -211,7 +204,7 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
             // create the file
             $testStub = 'Tests/' . $capitalizeTestType . '/' . $file . '-test';
 
-            $this->putFile($this->testPath, $this->replaceStub($testStub, $replaces), 'Test');
+            $this->putFile($this->testPath, $this->replaceStub($testStub, $replaces));
         }
     }
 
@@ -240,14 +233,12 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
         // create the file
         $testStub = 'Tests/Units/model-unit';
 
-        $this->putFile($this->testPath, $this->replaceStub($testStub, $replaces), 'Unit');
+        $this->putFile($this->testPath, $this->replaceStub($testStub, $replaces));
     }
 
     /**
      * Determine if current generated test is admin test
      * This is true when type is admin or all
-     *
-     * @return bool
      */
     protected function isAdminTest(): bool
     {
@@ -257,8 +248,6 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
     /**
      * Determine if current generated test is site test
      * This is true when type is site or all
-     *
-     * @return bool
      */
     protected function isSiteTest(): bool
     {

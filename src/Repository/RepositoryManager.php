@@ -322,8 +322,6 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Save action type
      * Can be used with the `setData` method to determine the action type
-     * 
-     * @var string
      */
     public string $saveActionType = '';
 
@@ -369,9 +367,6 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * Constructor
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param Events $events
      */
     public function __construct(Request $request, Events $events)
     {
@@ -408,15 +403,12 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Trigger the given event related to current repository
      *
-     * @param  string $events
      * @param  mixed ...$values
      * @return mixed
      */
     public function trigger(string $events, ...$values)
     {
-        $repositoryEvents = array_map(function ($event) {
-            return "repository.{$event}";
-        }, explode(' ', $events));
+        $repositoryEvents = array_map(fn($event) => "repository.{$event}", explode(' ', $events));
 
         $returningValueFromRepositoryEvent = $this->events->trigger(implode(' ', $repositoryEvents), $this, ...$values);
 
@@ -424,9 +416,7 @@ abstract class RepositoryManager implements RepositoryInterface
             return $returningValueFromRepositoryEvent;
         }
 
-        $events = array_map(function ($event) {
-            return "{$this->eventName}.{$event}";
-        }, explode(' ', $events));
+        $events = array_map(fn($event) => "{$this->eventName}.{$event}", explode(' ', $events));
 
         return $this->events->trigger(implode(' ', $events), ...$values);
     }
@@ -454,7 +444,7 @@ abstract class RepositoryManager implements RepositoryInterface
 
             $itemPerPage = (int) $this->option(
                 'itemsPerPage',
-                $this->option('limit', static::ITEMS_PER_PAGE !== null ? static::ITEMS_PER_PAGE : config('mongez.repository.pagination.itemsPerPage'))
+                $this->option('limit', static::ITEMS_PER_PAGE ?? config('mongez.repository.pagination.itemsPerPage'))
             );
 
             $selectedColumns = !empty($this->select->list()) ? $this->select->list() : ['*'];
@@ -481,7 +471,7 @@ abstract class RepositoryManager implements RepositoryInterface
         $results = $this->trigger("list", $records);
 
         if ($results instanceof Collection) {
-            $records = $results;
+            return $results;
         }
 
         return $records;
@@ -489,8 +479,6 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * Get table name of the primary model of the repo
-     *
-     * @return string
      */
     public function getTableName(): string
     {
@@ -525,14 +513,12 @@ abstract class RepositoryManager implements RepositoryInterface
     {
         $modelName = static::MODEL;
 
-        /** @var TModel */
         return new $modelName($data);
     }
 
     /**
      * create get an instance for the given class RepositoryManager
-     * 
-     * @param  string $className
+     *
      * @return mixed
      */
     protected function make(string $className)
@@ -643,8 +629,7 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * Update the record and wrap it into resource
-     * 
-     * @param  int $id
+     *
      * @param  \Illuminate\Http\Request|array<string, mixed> $data
      * @return \Illuminate\Http\Resources\Json\JsonResource|array<string, mixed>|null
      */
@@ -661,7 +646,6 @@ abstract class RepositoryManager implements RepositoryInterface
      *
      * @template TFindModel of \Illuminate\Database\Eloquent\Model
      * @param  class-string<TFindModel> $model
-     * @param  int $id
      * @return TFindModel
      */
     protected function findOrCreate(string $model, int $id): Model
@@ -677,16 +661,12 @@ abstract class RepositoryManager implements RepositoryInterface
      * In simple words, add common fields between create and update using this method
      *
      * @param  TModel $model
-     * @param  \Illuminate\Http\Request $request
      * @return void
      */
     abstract protected function setData($model, Request $request);
 
     /**
      * Get the actual column name for the given column in the underlying store.
-     *
-     * @param  string $column
-     * @return string
      */
     abstract protected function column(string $column): string;
 
@@ -700,7 +680,6 @@ abstract class RepositoryManager implements RepositoryInterface
      * Handle the given arrayable value before storing
      *
      * @param  array<int|string, mixed> $value
-     * @return mixed
      */
     abstract protected function handleArrayableValue(array $value): mixed;
 
@@ -709,7 +688,6 @@ abstract class RepositoryManager implements RepositoryInterface
      *
      * @param  TModel $model
      * @param  array<int|string, mixed> $columns
-     * @return void
      */
     protected function updateModel(Model $model, array $columns): void
     {
@@ -735,7 +713,6 @@ abstract class RepositoryManager implements RepositoryInterface
      *
      * @param  TModel $model
      * @param  array<string, mixed> $columns
-     * @return void
      */
     protected function setModelData(Model $model, array $columns): void
     {
@@ -745,7 +722,6 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Remove the given file path from storage
      *
-     * @param  string $path
      * @return mixed
      */
     public function unlink(string $path)
@@ -812,8 +788,6 @@ abstract class RepositoryManager implements RepositoryInterface
      * Increment the given mode|id by the given value
      *
      * @param  int|TModel $model
-     * @param  string $column
-     * @param  int $incrementBy
      * @return TModel|null
      */
     public function increment($model, string $column, int $incrementBy = 1)
@@ -835,8 +809,6 @@ abstract class RepositoryManager implements RepositoryInterface
      * Decrement the given mode|id by the given value
      *
      * @param  int|TModel $model
-     * @param  string $column
-     * @param  int $decrementBy
      * @return TModel|null
      */
     public function decrement($model, string $column, int $decrementBy = 1)
@@ -870,8 +842,6 @@ abstract class RepositoryManager implements RepositoryInterface
             $this->query->select(...$this->select->list());
         }
 
-        $chunk = $this->query->chunk($count,  $callback);
-
-        return $chunk;
+        return $this->query->chunk($count,  $callback);
     }
 }

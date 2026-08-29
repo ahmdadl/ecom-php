@@ -13,8 +13,6 @@ class AggregateUtils
 
     /**
      * Constructor
-     * 
-     * @param Aggregate $aggregate
      */
     public function __construct(Aggregate $aggregate)
     {
@@ -23,8 +21,6 @@ class AggregateUtils
 
     /**
      * Map the data into proper mongodb aggregate framework format
-     * 
-     * @return array
      */
     public function map(): array
     {
@@ -46,8 +42,6 @@ class AggregateUtils
 
     /**
      * returnAs to map method
-     * 
-     * @return array
      */
     public function toArray(): array
     {
@@ -56,10 +50,6 @@ class AggregateUtils
 
     /**
      * Get sum expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function sum(string $column = '', string $returnAs = ''): Expression
     {
@@ -68,9 +58,6 @@ class AggregateUtils
 
     /**
      * Get count expression
-     * 
-     * @param  string $returnAs
-     * @return Expression
      */
     public function count(string $returnAs = ''): Expression
     {
@@ -79,10 +66,6 @@ class AggregateUtils
 
     /**
      * Get avg expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function avg(string $column = '', string $returnAs = ''): Expression
     {
@@ -91,10 +74,6 @@ class AggregateUtils
 
     /**
      * Get week expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function week(string $column = '', string $returnAs = ''): Expression
     {
@@ -103,10 +82,6 @@ class AggregateUtils
 
     /**
      * Get month expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function month(string $column = '', string $returnAs = ''): Expression
     {
@@ -115,10 +90,6 @@ class AggregateUtils
 
     /**
      * Get year expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function year(string $column = '', string $returnAs = ''): Expression
     {
@@ -127,10 +98,6 @@ class AggregateUtils
 
     /**
      * Get multiple expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function multiple(string $column = '', string $returnAs = ''): Expression
     {
@@ -139,10 +106,6 @@ class AggregateUtils
 
     /**
      * Get divide expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function divide(string $column = '', string $returnAs = ''): Expression
     {
@@ -151,10 +114,6 @@ class AggregateUtils
 
     /**
      * Get max expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function max(string $column = '', string $returnAs = ''): Expression
     {
@@ -163,10 +122,6 @@ class AggregateUtils
 
     /**
      * Get min expression
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function min(string $column = '', string $returnAs = ''): Expression
     {
@@ -175,10 +130,6 @@ class AggregateUtils
 
     /**
      * Get first of value
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function first(string $column = '', string $returnAs = ''): Expression
     {
@@ -187,10 +138,6 @@ class AggregateUtils
 
     /**
      * Get last of value
-     * 
-     * @param  string $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function last(string $column = '', string $returnAs = ''): Expression
     {
@@ -199,11 +146,8 @@ class AggregateUtils
 
     /**
      * Create new Expression
-     * 
-     * @param  string $operator
+     *
      * @param  mixed $column
-     * @param  string $returnAs
-     * @return Expression
      */
     public function expression(string $operator, $column, string $returnAs = ''): Expression
     {

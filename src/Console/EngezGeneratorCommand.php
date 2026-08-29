@@ -100,16 +100,11 @@ abstract class EngezGeneratorCommand extends Command implements EngezInterface
 
     /**
      * The filesystem instance.
-     *
-     * @var \Illuminate\Filesystem\Filesystem
      */
     protected Filesystem $files;
 
     /**
      * Constructor
-     *
-     * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @return void
      */
     public function __construct(Filesystem $files)
     {
@@ -150,8 +145,6 @@ abstract class EngezGeneratorCommand extends Command implements EngezInterface
     /**
      * Add The given content in the given path in the app module directory
      *
-     * @param  string $filePath
-     * @param string $content
      * @return void
      */
     protected function putFile(string $filePath, string $content)
@@ -185,7 +178,7 @@ abstract class EngezGeneratorCommand extends Command implements EngezInterface
                 '{{ ClassName }}' => $utilsClass,
             ];
 
-            $this->putFile($utilsClassFilePath, $this->replaceStub('Utils/utils', $utilsReplacements), 'Utils');
+            $this->putFile($utilsClassFilePath, $this->replaceStub('Utils/utils', $utilsReplacements));
         }
     }
 

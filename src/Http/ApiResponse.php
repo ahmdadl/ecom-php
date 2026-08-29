@@ -10,29 +10,21 @@ trait ApiResponse
 
     /**
      * Return error as array
-     *
-     * @var string
      */
     protected string $errorAsArray = 'array';
 
     /**
      * The returned key in the error array type
-     *
-     * @var string
      */
     protected string $errorKey = 'key';
 
     /**
      * The returned value in the error array type
-     *
-     * @var string
      */
     protected string $errorValue = 'value';
 
     /**
      * Return error as object
-     *
-     * @var string
      */
     protected string $errorStrategy = 'object';
 
@@ -42,7 +34,7 @@ trait ApiResponse
      * @param array<string, mixed> $data
      * @return Response
      */
-    protected function success(array $data = null)
+    protected function success(?array $data = null)
     {
         $data = $data ?: config('mongez.response.defaults.success', [
             'success' => true,
@@ -61,7 +53,7 @@ trait ApiResponse
      * @param array<string, mixed> $data
      * @return Response
      */
-    protected function successCreate(array $data = null)
+    protected function successCreate(?array $data = null)
     {
         $data = $data ?: config('mongez.response.defaults.successCreate', [
             'success' => true,
@@ -103,10 +95,8 @@ trait ApiResponse
         $errorStrategy = config('mongez.response.error.strategy', $this->errorAsArray);
         $arrayKey = config('mongez.response.error.key', $this->errorKey);
         $arrayValue = config('mongez.response.error.value', $this->errorValue);
-
         if ($data instanceof MessageBag) {
             $errors = [];
-
             foreach ($data->messages() as $input => $messagesList) {
                 if ($errorStrategy === $this->errorStrategy) {
                     $errors[$input] = $messagesList[0];
@@ -117,9 +107,10 @@ trait ApiResponse
                     ];
                 }
             }
-
             return ['errors' => $errors];
-        } elseif (is_string($data)) {
+        }
+
+        if (is_string($data)) {
             if ($errorStrategy === $this->errorStrategy) {
                 $data = [
                     'error' => $data,
@@ -132,7 +123,6 @@ trait ApiResponse
                     ]
                 ];
             }
-
             return ['errors' => $data];
         }
 
@@ -147,9 +137,7 @@ trait ApiResponse
      */
     protected function notFound($data = null)
     {
-        if ($data === null) {
-            $data = config('mongez.response.defaults.notFound', trans('response.notFound'));
-        }
+        $data ??= config('mongez.response.defaults.notFound', trans('response.notFound'));
 
         $data = $this->mapResponseError($data);
 
@@ -181,7 +169,6 @@ trait ApiResponse
      * Send Response
      *
      * @param  array<string, mixed> $data
-     * @param  int $statusCode
      * @param  array<string, mixed> $headers
      * @param  mixed $jsonOptions
      * @return Response

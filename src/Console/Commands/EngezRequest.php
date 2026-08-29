@@ -25,15 +25,11 @@ class EngezRequest extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * The request name.
-     *
-     * @var string
      */
     protected string $requestName;
 
     /**
      * The trait name.
-     *
-     * @var string
      */
     protected string $traitName;
 

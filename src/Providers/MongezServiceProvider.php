@@ -75,8 +75,6 @@ class MongezServiceProvider extends ServiceProvider
 
     /**
      * Guard against pushing the request middleware more than once (i.e Octane workers)
-     *
-     * @var bool
      */
     protected static bool $middlewarePushed = false;
 
@@ -223,7 +221,6 @@ class MongezServiceProvider extends ServiceProvider
     /**
      * Get config value from the mongez config file
      *
-     * @param  string $key
      * @param  mixed  $default
      * @return mixed
      */
@@ -234,8 +231,6 @@ class MongezServiceProvider extends ServiceProvider
 
     /**
      * Get config path
-     *
-     * @return string
      */
     protected function configPath(): string
     {

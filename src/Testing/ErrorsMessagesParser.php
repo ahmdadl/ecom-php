@@ -19,8 +19,6 @@ class ErrorsMessagesParser
 
     /**
      * Constructor
-     * 
-     * @param  array $errors
      */
     public function __construct(array $errors)
     {
@@ -29,21 +27,15 @@ class ErrorsMessagesParser
 
     /**
      * Parse the errors and return a clean message
-     * 
-     * @return array
      */
     public function parse(): array
     {
         $messages = [];
 
         foreach ($this->errors as $error) {
-            $keys = array_map(function ($key) {
-                return ':' . $key;
-            }, array_keys($error['messageAttributes']));
+            $keys = array_map(fn($key) => ':' . $key, array_keys($error['messageAttributes']));
 
-            $values = array_map(function ($value) {
-                return $this->color((string) $value, 'green', ['bold']);
-            }, array_values($error['messageAttributes']));
+            $values = array_map(fn($value) => $this->color((string) $value, 'green', ['bold']), array_values($error['messageAttributes']));
 
             $messages[] = $this->color($error['rule'], 'magenta') . ': ' .  str_replace(
                 $keys,

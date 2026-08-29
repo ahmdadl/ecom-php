@@ -15,8 +15,6 @@ class IsDateTimeRule extends UnitRule implements UnitRuleInterface
 
     /**
      * Determine if the rule is valid
-     *
-     * @return bool
      */
     public function isValid(): bool
     {
@@ -25,8 +23,6 @@ class IsDateTimeRule extends UnitRule implements UnitRuleInterface
 
     /**
      * Get error message
-     *
-     * @return string
      */
     public function getErrorMessage(): string
     {

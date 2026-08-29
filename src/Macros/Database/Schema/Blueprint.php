@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Macros\Database\Schema;
 
 use HZ\Illuminate\Mongez\Helpers\Database\MongoDB\Database;

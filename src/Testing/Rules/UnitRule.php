@@ -31,23 +31,18 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Rule Error Message
-     * 
-     * @var string 
      */
     protected string $errorMessage = '';
 
     /**
      * Rule options
-     * 
-     * @var array
      */
     protected array $options = [];
 
     /**
      * Set rule unit
-     * 
+     *
      * @var  UnitType $unit
-     * @return self
      */
     public function setUnit(UnitType $unit): UnitRule
     {
@@ -57,8 +52,7 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Determine whether the rule will be executed.
-     * 
-     * @param  bool $executable
+     *
      * @return UnitRule
      */
     public function executable(bool $executable): UnitRuleInterface
@@ -77,9 +71,6 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Rule options that can be passe
-     * 
-     * @param array $options
-     * @return UnitRuleInterface
      */
     public function setOptions(array $options): UnitRuleInterface
     {
@@ -90,9 +81,8 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Determine if the rule is valid
-     * 
+     *
      * @param  mixed $value
-     * @return bool
      */
     public function isValid(): bool
     {
@@ -101,8 +91,6 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Get error message
-     * 
-     * @return string
      */
     public function getErrorMessage(): string
     {
@@ -119,8 +107,6 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Get rule message attributes
-     * 
-     * @return array
      */
     public function getMessageAttributes(): array
     {

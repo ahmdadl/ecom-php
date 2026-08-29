@@ -15,8 +15,6 @@ class Select
 
     /**
      * Constructor
-     *
-     * @param array $selectList
      */
     public function __construct(array $selectList)
     {
@@ -27,7 +25,6 @@ class Select
      * Add one or more column to list
      *
      * @param  string $key
-     * @return $this
      */
     public function add(...$columns): self
     {
@@ -40,7 +37,6 @@ class Select
      * Remove the given select column
      *
      * @param  mixed $column
-     * @return $this
      */
     public function remove($column): self
     {
@@ -54,7 +50,6 @@ class Select
      *
      * @param  string $oldColumn
      * @param  mixed ...$newColumns
-     * @return $this
      */
     public function replace($oldColumn, ...$newColumns): self
     {
@@ -69,9 +64,6 @@ class Select
 
     /**
      * Determine if the given column exists or not
-     *
-     * @param  string $column
-     * @return bool
      */
     public function has(string $column): bool
     {
@@ -90,8 +82,6 @@ class Select
 
     /**
      * Determine if the select list is empty
-     * 
-     * @return bool
      */
     public function isEmpty(): bool
     {
@@ -100,8 +90,6 @@ class Select
 
     /**
      * Determine if the select list is not empty
-     * 
-     * @return bool
      */
     public function isNotEmpty(): bool
     {

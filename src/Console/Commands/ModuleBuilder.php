@@ -12,6 +12,7 @@ use HZ\Illuminate\Mongez\Console\EngezGeneratorCommand;
 // class ModuleBuilder extends EngezGeneratorCommand
 class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 {
+    public $module;
     /**
      * User module is exist
      *
@@ -61,10 +62,8 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Determine whether to generate service class with the module
-     *
-     * @var bool
      */
-    protected ?bool $withService;
+    protected ?bool $withService = null;
 
     /**
      * Execute the console command.
@@ -131,6 +130,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
         if ($this->moduleExists()) {
             return $this->terminate('This module is already created');
         }
+        return null;
     }
 
     /**
@@ -410,7 +410,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
             ]) : '',
         ];
 
-        $this->putFile("Providers/{$moduleName}ServiceProvider.php", $this->replaceStub('Providers/provider', $replacements), 'Provider');
+        $this->putFile("Providers/{$moduleName}ServiceProvider.php", $this->replaceStub('Providers/provider', $replacements));
 
         $this->updateServiceProviderConfig();
     }
@@ -587,8 +587,6 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Determine if current generated module is a subset of parent module
-     *
-     * @return bool
      */
     protected function hasParentModule(): bool
     {
@@ -598,8 +596,6 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
     /**
      * Get top module name
      * If parent exists, then return the parent, otherwise return the original module
-     *
-     * @return string
      */
     protected function topParentModule(): string
     {
@@ -610,8 +606,6 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Add repository helper function
-     *
-     * @return void
      */
     protected function addRepositoryHelper(): void
     {

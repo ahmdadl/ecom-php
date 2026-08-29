@@ -8,9 +8,6 @@ trait TextUtils
 {
     /**
      * Create studly case string for given string
-     * 
-     * @param string $text
-     * @return string
      */
     protected function studly(string $text): string
     {
@@ -19,9 +16,6 @@ trait TextUtils
 
     /**
      * Create kebab case string for given string
-     * 
-     * @param string $text
-     * @return string
      */
     protected function kebab(string $text): string
     {
@@ -30,9 +24,6 @@ trait TextUtils
 
     /**
      * Create snake case string for given string
-     * 
-     * @param string $text
-     * @return string
      */
     protected function snake(string $text): string
     {
@@ -41,9 +32,6 @@ trait TextUtils
 
     /**
      * Create camel case string for given string
-     * 
-     * @param string $text
-     * @return string
      */
     protected function camel(string $text): string
     {
@@ -52,9 +40,6 @@ trait TextUtils
 
     /**
      * Create singular string for given string
-     * 
-     * @param string $text
-     * @return string
      */
     protected function singular(string $text): string
     {
@@ -63,9 +48,6 @@ trait TextUtils
 
     /**
      * Create plural string for given string
-     * 
-     * @param string $text
-     * @return string
      */
     protected function plural(string $text): string
     {
@@ -74,10 +56,6 @@ trait TextUtils
 
     /**
      * Create plural string for given string
-     * 
-     * @param string $haystack
-     * @param string $needle
-     * @return bool
      */
     protected function startsWith(string $haystack, string $needle): bool
     {
@@ -87,10 +65,8 @@ trait TextUtils
 
     /**
      * Create plural string for given string
-     * 
-     * @param string $haystack
+     *
      * @param string|string[] $needle
-     * @return bool
      */
     protected function contains(string $haystack, $needle): bool
     {

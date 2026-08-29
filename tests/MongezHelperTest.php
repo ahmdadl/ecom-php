@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Tests;
 
 use HZ\Illuminate\Mongez\Helpers\Mongez;

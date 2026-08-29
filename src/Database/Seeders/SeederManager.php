@@ -172,7 +172,7 @@ abstract class SeederManager extends Seeder
      */
     public function getConst($constName)
     {
-        return constant(get_class($this->repo) . '::' . $constName);
+        return $this->repo::{$constName};
     }
 
     /**
@@ -364,9 +364,6 @@ abstract class SeederManager extends Seeder
 
     /**
      * Create an instance of Faker/Factory with given locale
-     *
-     * @param string $fakerLocale
-     * @return Generator
      */
     private function faker(string $fakerLocale): Generator
     {

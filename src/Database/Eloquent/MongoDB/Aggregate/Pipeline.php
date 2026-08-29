@@ -77,7 +77,6 @@ class Pipeline
      *
      * @param array<int|string, mixed>|int|string|null $key
      * @param mixed $value
-     * @return $this
      */
     public function data($key, $value = null): Pipeline
     {
@@ -115,17 +114,17 @@ class Pipeline
 
         foreach ($columns as $column) {
             if (is_array($column)) {
-                list($column, $alias) = $column;
+                [$column, $alias] = $column;
             } else {
                 $keys = explode('.', $column);
                 $alias = end($keys); // i.e user.id => will return id only
             }
 
-            if ($this->name == 'group') {
+            if ($this->name === 'group') {
                 $this->data($alias, [
                     '$last' => "$$column"
                 ]);
-            } elseif ($this->name == 'project') {
+            } elseif ($this->name === 'project') {
                 $this->data($alias, [
                     $column => "$$column"
                 ]);
@@ -137,9 +136,8 @@ class Pipeline
 
     /**
      * Unselect the given columns
-     * 
+     *
      * @param string ...$columns
-     * @return $this
      */
     public function unselect(...$columns): Pipeline
     {
@@ -162,11 +160,11 @@ class Pipeline
 
         $column = $operator = $value = null;
 
-        if ($totalArguments == 2) {
-            list($column, $value) = $arguments;
+        if ($totalArguments === 2) {
+            [$column, $value] = $arguments;
             $operator = '=';
-        } elseif ($totalArguments == 3) {
-            list($column, $operator, $value) = $arguments;
+        } elseif ($totalArguments === 3) {
+            [$column, $operator, $value] = $arguments;
         }
 
         if ($value instanceof DateTimeInterface) {
@@ -192,11 +190,11 @@ class Pipeline
 
         $column = $operator = $value = null;
 
-        if ($totalArguments == 2) {
-            list($column, $value) = $arguments;
+        if ($totalArguments === 2) {
+            [$column, $value] = $arguments;
             $operator = '=';
-        } elseif ($totalArguments == 3) {
-            list($column, $operator, $value) = $arguments;
+        } elseif ($totalArguments === 3) {
+            [$column, $operator, $value] = $arguments;
         }
 
         $data = [
@@ -212,10 +210,9 @@ class Pipeline
 
     /**
      * where in clause
-     * 
+     *
      * @param string $column
      * @param array<int|string, mixed> $array
-     * @return Pipeline
      */
     public function whereIn($column, $array): Pipeline
     {
@@ -236,20 +233,18 @@ class Pipeline
     /**
      * @param string $column
      * @param array<int> $array
-     * @return Pipeline
      */
     public function whereInInt($column, $array): Pipeline
     {
-        return $this->whereIn($column, array_map('intval', $array));
+        return $this->whereIn($column, array_map(intval(...), $array));
     }
 
     /**
      * Where between clause
-     * 
+     *
      * @param  string $column
      * @param  mixed $minValue
      * @param  mixed $maxValue
-     * @return Pipeline
      */
     public function whereBetween($column, $minValue, $maxValue): Pipeline
     {
@@ -271,15 +266,14 @@ class Pipeline
 
     /**
      * Select columns
-     * 
+     *
      * @param mixed ...$columns
-     * @return $this
      */
     public function count(...$columns): Pipeline
     {
         foreach ($columns as $column) {
             if (is_array($column)) {
-                list($column, $alias) = $column;
+                [$column, $alias] = $column;
             } else {
                 $alias = $column;
             }
@@ -294,8 +288,7 @@ class Pipeline
 
     /**
      * Parse date into proper UTCDateTime format
-     * 
-     * @param  DateTimeInterface $date
+     *
      * @return UTCDateTime
      */
     protected function praseDate(DateTimeInterface $date)
@@ -305,8 +298,6 @@ class Pipeline
 
     /**
      * Return the final name of the pipeline
-     * 
-     * @return string
      */
     public function getName(): string
     {
@@ -325,7 +316,6 @@ class Pipeline
 
     /**
      * @param int $number
-     * @return Pipeline
      */
     public function limit($number): Pipeline
     {
@@ -335,7 +325,6 @@ class Pipeline
 
     /**
      * @param int $number
-     * @return Pipeline
      */
     public function skip($number): Pipeline
     {
@@ -347,7 +336,6 @@ class Pipeline
      * Group by the given columns (delegates to the aggregation framework)
      *
      * @param mixed ...$columns
-     * @return Pipeline
      */
     public function groupBy(...$columns): Pipeline
     {
@@ -361,7 +349,6 @@ class Pipeline
      * @param string $localField
      * @param string $foreignField
      * @param string|null $as
-     * @return Pipeline
      */
     public function join($from, $localField, $foreignField, $as = null): Pipeline
     {
@@ -380,7 +367,6 @@ class Pipeline
      * @param string $column
      * @param mixed $includeArrayIndex
      * @param mixed $preserveNullAndEmptyArrays
-     * @return Pipeline
      */
     public function unwind($column, $includeArrayIndex, $preserveNullAndEmptyArrays): Pipeline
     {
@@ -402,7 +388,6 @@ class Pipeline
     /**
      * @param string $name
      * @param array<int, mixed> $arguments
-     * @return Aggregate
      */
     public function __call($name, $arguments): Aggregate
     {

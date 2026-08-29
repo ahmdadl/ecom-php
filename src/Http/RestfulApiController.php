@@ -53,7 +53,6 @@ abstract class RestfulApiController extends ApiController
     /**
      * Get List of records
      *
-     * @param  \Illuminate\Http\Request $request
      * @return Response
      */
     public function index(Request $request)
@@ -89,7 +88,6 @@ abstract class RestfulApiController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return Response
      */
     public function store(Request $request)
@@ -115,22 +113,21 @@ abstract class RestfulApiController extends ApiController
         $model = $this->repository->create($request);
 
         $returnOnStore = $this->controllerInfo['returnOn']['store'] ?? config('mongez.admin.returnOn.store', 'single-record');
-
         if ($returnOnStore === 'single-record') {
             return $this->successCreate([
                 'record' => $this->repository->wrap($model)
             ]);
-        } elseif ($returnOnStore === 'all-records') {
-            return $this->index($request);
-        } else {
-            return $this->successCreate();
         }
+
+        if ($returnOnStore === 'all-records') {
+            return $this->index($request);
+        }
+        return $this->successCreate();
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int $id
      * @return Response
      */
@@ -177,22 +174,21 @@ abstract class RestfulApiController extends ApiController
         $this->repository->update($model, $request);
 
         $returnOnUpdate = $this->controllerInfo['returnOn']['update'] ?? config('mongez.admin.returnOn.update', 'single-record');
-
         if ($returnOnUpdate === 'single-record') {
             return $this->success([
                 'record' => $this->repository->wrap($model)
             ]);
-        } elseif ($returnOnUpdate === 'all-records') {
-            return $this->index($request);
-        } else {
-            return $this->success();
         }
+
+        if ($returnOnUpdate === 'all-records') {
+            return $this->index($request);
+        }
+        return $this->success();
     }
 
     /**
      * Edit the specified fields of the specified resource
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int $id
      * @return Response
      */
@@ -235,16 +231,16 @@ abstract class RestfulApiController extends ApiController
         $this->repository->patch($model, $request);
 
         $returnOnPatch = $this->controllerInfo['returnOn']['patch'] ?? config('mongez.admin.returnOn.patch', 'single-record');
-
         if ($returnOnPatch === 'single-record') {
             return $this->success([
                 'record' => $this->repository->wrap($model)
             ]);
-        } elseif ($returnOnPatch === 'all-records') {
-            return $this->index($request);
-        } else {
-            return $this->success();
         }
+
+        if ($returnOnPatch === 'all-records') {
+            return $this->index($request);
+        }
+        return $this->success();
     }
 
     /**
@@ -318,7 +314,6 @@ abstract class RestfulApiController extends ApiController
     /**
      * Get value from controller info
      *
-     * @param  string $key
      * @return mixed
      */
     protected function controllerInfo(string $key)
@@ -329,7 +324,6 @@ abstract class RestfulApiController extends ApiController
     /**
      * Get  options
      *
-     * @param \Illuminate\Http\Request $request
      * @return array<string, mixed>
      */
     protected function listOptions(Request $request)
@@ -351,7 +345,6 @@ abstract class RestfulApiController extends ApiController
      * Make custom validation for update
      *
      * @param  int $id
-     * @param  \Illuminate\Http\Request $request
      * @return array<string, mixed>
      */
     protected function updateValidation($id, Request $request)
@@ -363,7 +356,6 @@ abstract class RestfulApiController extends ApiController
      * Make custom validation for patch
      *
      * @param  int $id
-     * @param  \Illuminate\Http\Request $request
      * @return array<string, mixed>
      */
     protected function patchValidation($id, Request $request)
@@ -399,7 +391,6 @@ abstract class RestfulApiController extends ApiController
      * Useful when needs to make a validation before storing the record
      * If it returns a value, it will be returned instead
      *
-     * @param  Request  $request
      * @return array<string, mixed>|null
      */
     protected function beforeStoring(Request $request)
@@ -412,7 +403,6 @@ abstract class RestfulApiController extends ApiController
      * Useful when needs to make a validation before operating on a record
      * If it returns a value, it will be returned instead
      *
-     * @param  Request  $request
      * @return array<string, mixed>|null
      */
     protected function beforeAll(Request $request)
@@ -426,7 +416,6 @@ abstract class RestfulApiController extends ApiController
      * If it returns a value, it will be returned instead
      *
      * @param  Model      $model
-     * @param  Request  $request
      * @return array<string, mixed>|null
      */
     protected function beforeUpdating($model, Request $request)
@@ -440,7 +429,6 @@ abstract class RestfulApiController extends ApiController
      * If it returns a value, it will be returned instead
      *
      * @param  Model      $model
-     * @param  Request  $request
      * @return array<string, mixed>|null
      */
     protected function beforePatching($model, Request $request)
@@ -454,7 +442,6 @@ abstract class RestfulApiController extends ApiController
      * If it returns a value, it will be returned instead
      *
      * @param  Model      $model
-     * @param  Request  $request
      * @return array<string, mixed>|null
      */
     protected function beforeDeleting($model, Request $request)

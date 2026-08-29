@@ -6,8 +6,6 @@ trait DatabaseConcerns
 {
     /**
      * Current database name
-     *
-     * @var string
      */
     protected string $databaseName;
 
@@ -23,8 +21,6 @@ trait DatabaseConcerns
 
     /**
      * Determine if current database is MongoDB
-     * 
-     * @return bool
      */
     protected function isMongoDB(): bool
     {
@@ -33,8 +29,6 @@ trait DatabaseConcerns
 
     /**
      * Determine if current database is MySQL
-     * 
-     * @return bool
      */
     protected function isMySQL(): bool
     {
@@ -43,8 +37,6 @@ trait DatabaseConcerns
 
     /**
      * Get database name in all lower case
-     * 
-     * @return string
      */
     protected function databaseName(): string
     {

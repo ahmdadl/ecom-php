@@ -34,7 +34,7 @@ abstract class ViewController extends Controller
      * 
      * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
      */
-    protected $repository = null;
+    protected $repository;
 
     /**
      * Events Object
@@ -58,9 +58,7 @@ abstract class ViewController extends Controller
 
     /**
      * Render the given view path
-     * 
-     * @param string $viewPath
-     * @param  array $data
+     *
      * @return string
      */
     protected function render(string $viewPath, array $data = [])
@@ -148,7 +146,6 @@ abstract class ViewController extends Controller
     /**
      * Unauthorized data
      *
-     * @param  string $message
      * @return string
      */
     protected function unauthorized(string $message)
@@ -165,8 +162,6 @@ abstract class ViewController extends Controller
     /**
      * Send Response
      *
-     * @param  int $statusCode
-     * @param  array $message
      * @return string
      */
     protected function send(int $statusCode, array $message)

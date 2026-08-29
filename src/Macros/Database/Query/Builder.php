@@ -42,9 +42,7 @@ class Builder
      */
     public function whereLike()
     {
-        return function (string $column, $value) {
-            return $this->where($column, 'LIKE', "%$value%");
-        };
+        return fn(string $column, $value) => $this->where($column, 'LIKE', "%$value%");
     }
 
     /**
@@ -56,9 +54,7 @@ class Builder
      */
     public function orWhereLike()
     {
-        return function (string $column, $value) {
-            return $this->orWhere($column, 'LIKE', "%$value%");
-        };
+        return fn(string $column, $value) => $this->orWhere($column, 'LIKE', "%$value%");
     }
 
     /**
@@ -76,9 +72,7 @@ class Builder
      */
     public function whereLocationNear()
     {
-        return function (string $column, array $coordinates, float $distance, string $distanceType = 'km') {
-            return $this->where($column, 'geoWithin', static::locationNear($coordinates, $distance, $distanceType));
-        };
+        return fn(string $column, array $coordinates, float $distance, string $distanceType = 'km') => $this->where($column, 'geoWithin', $this->locationNear($coordinates, $distance, $distanceType));
     }
 
 
@@ -97,21 +91,16 @@ class Builder
      */
     public function orWhereLocationNear()
     {
-        return function (string $column, array $coordinates, float $distance, string $distanceType = 'km') {
-            return $this->orWhere($column, 'geoWithin', static::locationNear($coordinates, $distance, $distanceType));
-        };
+        return fn(string $column, array $coordinates, float $distance, string $distanceType = 'km') => $this->orWhere($column, 'geoWithin', $this->locationNear($coordinates, $distance, $distanceType));
     }
 
     /**
      * Get location near by the given options
      * It has to be private function so it can not be read when reading all class methods to inject method macros
-     * 
-     * @param  array $coordinates
+     *
      * @param  float $distance
-     * @param  string $distanceType
-     * @return array
      */
-    private static function locationNear(array $coordinates, $distance, string $distanceType): array
+    private function locationNear(array $coordinates, $distance, string $distanceType): array
     {
         $distance = (float) $distance;
         $distanceInRadian = $distance;

@@ -29,9 +29,8 @@ class ArrayOfUnit extends ArrayUnit
 
     /**
      * Append a callback to each unit type
-     * 
+     *
      * @param  \Clouse $callback
-     * @return self
      */
     public function each(Closure $callback): ArrayOfUnit
     {

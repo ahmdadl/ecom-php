@@ -169,12 +169,6 @@ parameters:
 			path: src/Console/Commands/EngezController.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/Commands/EngezController.php
-
-		-
 			message: '#^PHPDoc tag @param has invalid value \(string path\)\: Unexpected token "path", expected variable at offset 56 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
@@ -259,12 +253,6 @@ parameters:
 			path: src/Console/Commands/EngezController.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/Commands/EngezFilter.php
-
-		-
 			message: '#^Parameter \#1 \$filterClass of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:filterClass\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -325,12 +313,6 @@ parameters:
 			path: src/Console/Commands/EngezMigration.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/Commands/EngezMigration.php
-
-		-
 			message: '#^Parameter \#1 \$moduleName of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:setModuleName\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -381,12 +363,6 @@ parameters:
 		-
 			message: '#^Expression on left side of \?\? is not nullable\.$#'
 			identifier: nullCoalesce.expr
-			count: 1
-			path: src/Console/Commands/EngezModel.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: src/Console/Commands/EngezModel.php
 
@@ -505,12 +481,6 @@ parameters:
 			path: src/Console/Commands/EngezRepository.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/Commands/EngezRepository.php
-
-		-
 			message: '#^PHPDoc tag @var for property HZ\\Illuminate\\Mongez\\Console\\Commands\\EngezRepository\:\:\$searchFilters with type string is incompatible with native type array\.$#'
 			identifier: property.phpDocType
 			count: 1
@@ -583,12 +553,6 @@ parameters:
 			path: src/Console/Commands/EngezResource.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/Commands/EngezResource.php
-
-		-
 			message: '#^Parameter \#1 \$moduleName of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:setModuleName\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -609,12 +573,6 @@ parameters:
 		-
 			message: '#^Binary operation "\." between array\|bool\|float\|int\|string\|null and ''Seeder'' results in an error\.$#'
 			identifier: binaryOp.invalid
-			count: 1
-			path: src/Console/Commands/EngezSeeder.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: src/Console/Commands/EngezSeeder.php
 
@@ -646,12 +604,6 @@ parameters:
 			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\Commands\\EngezTest\:\:validateArguments\(\) with return type void returns null but should not return anything\.$#'
 			identifier: return.void
 			count: 1
-			path: src/Console/Commands/EngezTest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 2
 			path: src/Console/Commands/EngezTest.php
 
 		-
@@ -727,12 +679,6 @@ parameters:
 			path: src/Console/Commands/EngezTrait.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/Commands/EngezTranslation.php
-
-		-
 			message: '#^Parameter \#1 \$moduleName of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:setModuleName\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -745,26 +691,20 @@ parameters:
 			path: src/Console/Commands/EngezTranslation.php
 
 		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Console\\Commands\\ModuleBuilder\:\:\$module\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Console/Commands/ModuleBuilder.php
-
-		-
 			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Console\\Commands\\ModuleBuilder\:\:optionHasValue\(\)\.$#'
 			identifier: method.notFound
 			count: 10
 			path: src/Console/Commands/ModuleBuilder.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\Commands\\ModuleBuilder\:\:validateArguments\(\) with return type void returns null but should not return anything\.$#'
+			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\Commands\\ModuleBuilder\:\:validateArguments\(\) with return type void returns never but should not return anything\.$#'
 			identifier: return.void
 			count: 1
 			path: src/Console/Commands/ModuleBuilder.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
+			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\Commands\\ModuleBuilder\:\:validateArguments\(\) with return type void returns null but should not return anything\.$#'
+			identifier: return.void
 			count: 1
 			path: src/Console/Commands/ModuleBuilder.php
 
@@ -817,8 +757,8 @@ parameters:
 			path: src/Console/Commands/ModuleBuilder.php
 
 		-
-			message: '#^Result of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:terminate\(\) \(void\) is used\.$#'
-			identifier: method.void
+			message: '#^Property HZ\\Illuminate\\Mongez\\Console\\Commands\\ModuleBuilder\:\:\$module has no type specified\.$#'
+			identifier: missingType.property
 			count: 1
 			path: src/Console/Commands/ModuleBuilder.php
 
@@ -853,8 +793,8 @@ parameters:
 			path: src/Console/Commands/MongezTestCommand.php
 
 		-
-			message: '#^Binary operation "\." between array\|bool\|float\|int\|string\|null and non\-falsy\-string results in an error\.$#'
-			identifier: binaryOp.invalid
+			message: '#^Binary operation "\.\=" between array\|bool\|float\|int\|string\|null and non\-falsy\-string results in an error\.$#'
+			identifier: assignOp.invalid
 			count: 1
 			path: src/Console/Commands/PostmanCollection.php
 
@@ -955,12 +895,6 @@ parameters:
 			path: src/Console/EngezGeneratorCommand.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:putFile\(\) invoked with 3 parameters, 2 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Console/EngezGeneratorCommand.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:replaceStub\(\) has parameter \$replacements with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -979,9 +913,15 @@ parameters:
 			path: src/Console/EngezGeneratorCommand.php
 
 		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:validateArguments\(\) with return type void returns never but should not return anything\.$#'
+			identifier: return.void
+			count: 1
+			path: src/Console/EngezGeneratorCommand.php
+
+		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:validateArguments\(\) with return type void returns null but should not return anything\.$#'
 			identifier: return.void
-			count: 2
+			count: 1
 			path: src/Console/EngezGeneratorCommand.php
 
 		-
@@ -1009,12 +949,6 @@ parameters:
 			path: src/Console/EngezGeneratorCommand.php
 
 		-
-			message: '#^Result of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:terminate\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: src/Console/EngezGeneratorCommand.php
-
-		-
 			message: '#^Result of method Illuminate\\Console\\Command\:\:info\(\) \(void\) is used\.$#'
 			identifier: method.void
 			count: 1
@@ -1024,12 +958,6 @@ parameters:
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Console\\Markdown\:\:\$files\.$#'
 			identifier: property.notFound
 			count: 10
-			path: src/Console/Markdown.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Console\\Markdown\:\:\$info\.$#'
-			identifier: property.notFound
-			count: 1
 			path: src/Console/Markdown.php
 
 		-
@@ -1225,12 +1153,6 @@ parameters:
 			path: src/Console/Postman.php
 
 		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Console\\Stub\:\:\$content\.$#'
-			identifier: property.notFound
-			count: 12
-			path: src/Console/Stub.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Console\\Stub\:\:data\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -1255,8 +1177,8 @@ parameters:
 			path: src/Console/Stub.php
 
 		-
-			message: '#^PHPDoc tag @param for parameter \$newContent with type bool is incompatible with native type string\.$#'
-			identifier: parameter.phpDocType
+			message: '#^Property HZ\\Illuminate\\Mongez\\Console\\Stub\:\:\$content has no type specified\.$#'
+			identifier: missingType.property
 			count: 1
 			path: src/Console/Stub.php
 
@@ -1423,7 +1345,7 @@ parameters:
 			path: src/Database/Eloquent/MongoDB/Aggregate/Aggregate.php
 
 		-
-			message: '#^PHPDoc tag @param has invalid value \(\.\.\.string \$columns\)\: Unexpected token "string", expected variable at offset 62 on line 4$#'
+			message: '#^PHPDoc tag @param has invalid value \(\.\.\.string \$columns\)\: Unexpected token "string", expected variable at offset 61 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: src/Database/Eloquent/MongoDB/Aggregate/Aggregate.php
@@ -1485,12 +1407,6 @@ parameters:
 		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Aggregate\\Aggregate\:\:\$query has no type specified\.$#'
 			identifier: missingType.property
-			count: 1
-			path: src/Database/Eloquent/MongoDB/Aggregate/Aggregate.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
 			count: 1
 			path: src/Database/Eloquent/MongoDB/Aggregate/Aggregate.php
 
@@ -2383,12 +2299,6 @@ parameters:
 			path: src/Http/AdminUIController.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\AdminUIController\:\:show\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 2
-			path: src/Http/AdminUIController.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\AdminUIController\:\:show\(\) should return Illuminate\\Http\\Response but returns string\.$#'
 			identifier: return.type
 			count: 1
@@ -2449,12 +2359,6 @@ parameters:
 			path: src/Http/AdminUIController.php
 
 		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$data \(array\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 2
-			path: src/Http/ApiController.php
-
-		-
 			message: '#^HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__get\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Http\\ApiController does not extend any class\.$#'
 			identifier: class.noParent
 			count: 1
@@ -2482,12 +2386,6 @@ parameters:
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:\$intInputs\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$data \(array\) is implicitly nullable via default value null\.$#'
-			identifier: parameter.implicitlyNullable
-			count: 2
 			path: src/Http/ApiFormRequest.php
 
 		-
@@ -2817,12 +2715,6 @@ parameters:
 		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$value$#'
 			identifier: parameter.notFound
-			count: 2
-			path: src/Macros/Database/Query/Builder.php
-
-		-
-			message: '#^Unsafe call to private method HZ\\Illuminate\\Mongez\\Macros\\Database\\Query\\Builder\:\:locationNear\(\) through static\:\:\.$#'
-			identifier: staticClassAccess.privateMethod
 			count: 2
 			path: src/Macros/Database/Query/Builder.php
 
@@ -3175,12 +3067,6 @@ parameters:
 			path: src/Providers/MongezServiceProvider.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MYSQLRepositoryManager\:\:handleArrayableValue\(\) has parameter \$value with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/MYSQLRepositoryManager.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$request$#'
 			identifier: parameter.notFound
 			count: 1
@@ -3223,12 +3109,6 @@ parameters:
 			path: src/Repository/MongoDBRepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\:\:handleArrayableValue\(\) has parameter \$value with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\:\:listSharedInfo\(\) has parameter \$options with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3261,6 +3141,18 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\:\:reassociate\(\) has parameter \$model with no type specified\.$#'
 			identifier: missingType.parameter
+			count: 1
+			path: src/Repository/MongoDBRepositoryManager.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\:\:setData\(\) has parameter \$request with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Repository/MongoDBRepositoryManager.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\:\:whereBool\(\) return type with generic class HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager does not specify its types\: TModel$#'
+			identifier: missingType.generics
 			count: 1
 			path: src/Repository/MongoDBRepositoryManager.php
 
@@ -3313,8 +3205,38 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:newModel\(\) should return TModel of Illuminate\\Database\\Eloquent\\Model but returns object\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:translate\(\) has parameter \$method with no type specified\.$#'
 			identifier: missingType.parameter
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:useResource\(\) return type with generic class HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:where\(\) return type with generic class HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:whereIn\(\) return type with generic class HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:whereInInt\(\) return type with generic class HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not specify its types\: TModel$#'
+			identifier: missingType.generics
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -3453,6 +3375,18 @@ parameters:
 		-
 			message: '#^Instantiated class HZ\\Illuminate\\Mongez\\Exceptions\\Services\\Payments\\InvalidPaymentMethodException not found\.$#'
 			identifier: class.notFound
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:initiate\(\) has parameter \$amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Services/Payments/HyperPay/HyperPayPayment.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Services\\Payments\\HyperPay\\HyperPayPayment\:\:initiate\(\) has parameter \$paymentMethod with no type specified\.$#'
+			identifier: missingType.parameter
 			count: 1
 			path: src/Services/Payments/HyperPay/HyperPayPayment.php
 
@@ -3823,9 +3757,9 @@ parameters:
 			path: src/Testing/ResponseSchemaInterface.php
 
 		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Testing\\Rules\\EqualRule\:\:\$assertingValue\.$#'
-			identifier: property.notFound
-			count: 3
+			message: '#^Property HZ\\Illuminate\\Mongez\\Testing\\Rules\\EqualRule\:\:\$assertingValue has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
 			path: src/Testing/Rules/EqualRule.php
 
 		-
@@ -4563,12 +4497,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$price\.$#'
 			identifier: property.notFound
-			count: 1
-			path: tests/RepositoryTest.php
-
-		-
-			message: '#^Method Illuminate\\Database\\Eloquent\\Model\:\:toArray\(\) invoked with 1 parameter, 0 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: tests/RepositoryTest.php
 

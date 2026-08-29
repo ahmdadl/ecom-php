@@ -26,9 +26,7 @@ class Request
      */
     public function referer()
     {
-        return function () {
-            return $this->server('HTTP_REFERER');
-        };
+        return fn() => $this->server('HTTP_REFERER');
     }
 
     /**
@@ -58,7 +56,8 @@ class Request
             if (!$authorization) {
                 if ($token = $this->get('Token')) {
                     return ['Bearer', $token];
-                } elseif ($key = $this->get('Key')) {
+                }
+                if ($key = $this->get('Key')) {
                     return ['key', $key];
                 }
 
@@ -101,7 +100,7 @@ class Request
 
             if (!$authorization) return null;
 
-            list($type, $value) = $authorization;
+            [$type, $value] = $authorization;
 
             if ($authorizationType === Request::AUTO) {
                 return $value;

@@ -10,6 +10,7 @@ use HZ\Illuminate\Mongez\Testing\UnitRuleInterface;
 
 class EqualRule extends UnitRule implements UnitRuleInterface
 {
+    public $assertingValue;
     /**
      * {@inheritDoc}
      */

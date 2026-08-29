@@ -8,8 +8,6 @@ class Database
 {
     /**
      * Get all collections list
-     * 
-     * @return array
      */
     public static function collectionsList(): array
     {

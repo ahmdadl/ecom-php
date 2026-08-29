@@ -23,8 +23,6 @@ class IsEmailRule extends UnitRule implements UnitRuleInterface
 
     /**
      * Get error message
-     * 
-     * @return string
      */
     public function getErrorMessage(): string
     {

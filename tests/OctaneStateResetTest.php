@@ -120,7 +120,7 @@ class OctaneStateResetTest extends TestCase
 
     protected function octaneProviderStaticProperty(string $property)
     {
-        return (new \ReflectionClass(MongezOctaneServiceProvider::class))->getStaticProperties()[$property];
+        return new \ReflectionClass(MongezOctaneServiceProvider::class)->getStaticProperties()[$property];
     }
 
     protected function resetOctaneProviderStaticState(): void
@@ -133,12 +133,12 @@ class OctaneStateResetTest extends TestCase
 
     protected function staticProperty(string $class, string $property)
     {
-        return (new \ReflectionClass($class))->getStaticProperties()[$property];
+        return new \ReflectionClass($class)->getStaticProperties()[$property];
     }
 
     protected function instanceProperty(object $object, string $property)
     {
-        return (new \ReflectionClass($object))->getProperty($property)->getValue($object);
+        return new \ReflectionClass($object)->getProperty($property)->getValue($object);
     }
 }
 

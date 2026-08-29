@@ -6,9 +6,6 @@ trait SharedNames
 {
     /**
      * Get proper repository name
-     * 
-     * @param  string $repositoryName
-     * @return string
      */
     protected function repositoryName(string $repositoryName): string
     {
@@ -19,9 +16,6 @@ trait SharedNames
 
     /**
      * Get proper filter class name
-     * 
-     * @param  string $filterClass
-     * @return string
      */
     protected function filterClass(string $filterClass): string
     {
@@ -32,9 +26,6 @@ trait SharedNames
 
     /**
      * Get proper resource class name
-     * 
-     * @param  string $resourceClass
-     * @return string
      */
     protected function resourceClass(string $resourceClass): string
     {
@@ -45,9 +36,6 @@ trait SharedNames
 
     /**
      * Get Proper Model Class name
-     * 
-     * @param  string $modelClass
-     * @return string
      */
     protected function modelClass(string $modelClass): string
     {

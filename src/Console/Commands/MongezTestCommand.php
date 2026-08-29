@@ -28,16 +28,13 @@ class MongezTestCommand extends Command
     protected $description = 'Run Unit Testing With fresh database migrations and seeds';
 
     /**
-     * The database name 
-     * 
-     * @var string
+     * The database name
+     *
      */
     protected string $filterName;
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

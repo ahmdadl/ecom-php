@@ -31,8 +31,6 @@ class HyperPayResponse implements PaymentGatewayResponse
 
     /**
      * Constructor
-     * 
-     * @param array $responseData
      */
     public function __construct(array $responseData)
     {

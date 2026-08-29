@@ -11,7 +11,6 @@ trait EngezStub
      * Get stub content
      *
      * @param string path
-     * @return string
      */
     protected function getStub(string $path): string
     {
@@ -24,9 +23,6 @@ trait EngezStub
 
     /**
      * Create a new stub instance for more complex updates
-     *
-     * @param string $path
-     * @return Stub
      */
     protected function stubInstance(string $path): Stub
     {
@@ -41,8 +37,6 @@ trait EngezStub
      * Convert the given data as array syntax
      *
      * @param array|string $data
-     * @param  bool $newLine
-     * @return string
      */
     protected function stubStringAsArray($data,bool $newLine = false): string
     {
@@ -76,10 +70,6 @@ trait EngezStub
     /**
      * Get the content of the given stub path
      * then replace all stubs inside it with the given values
-     *
-     * @param  string $stubPath
-     * @param  array $replacements
-     * @return string
      */
     protected function replaceStub(string $stubPath, array $replacements): string
     {
@@ -95,10 +85,6 @@ trait EngezStub
     /**
      * Return proper value for default data that will be replaced
      * If the given data is empty, then return tab indent with double slash
-     *
-     * @param  array $data
-     * @param  string $defaultValue
-     * @return string
      */
     protected function stubData(array $data, string $defaultValue = ''): string
     {
@@ -107,9 +93,6 @@ trait EngezStub
 
     /**
      * Add tab indent then append the given text
-     *
-     * @param string $text
-     * @return string
      */
     protected function tabWith(string $text): string
     {

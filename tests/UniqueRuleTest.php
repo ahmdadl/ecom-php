@@ -22,9 +22,6 @@ final class UniqueRuleTest extends TestCase
 
     /**
      * Validate the given rule against the shared email value
-     *
-     * @param string $rule
-     * @return bool
      */
     private function validate(string $rule): bool
     {

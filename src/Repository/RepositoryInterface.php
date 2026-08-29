@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Repository;
 
 use Illuminate\Support\Collection;
@@ -30,7 +32,6 @@ interface RepositoryInterface
      * Delete a specific record
      *
      * @param  int|\Illuminate\Database\Eloquent\Model $id
-     * @return bool
      */
     public function delete($id): bool;
 
@@ -45,7 +46,6 @@ interface RepositoryInterface
     /**
      * Get a specific record with full details
      *
-     * @param  int $id
      * @return TModel|null
      */
     public function get(int $id);
@@ -54,8 +54,6 @@ interface RepositoryInterface
      * Determine whether the given value exists
      *
      * @param  mixed   $value
-     * @param  string  $column
-     * @return bool
      */
     public function has($value, string $column): bool;
 

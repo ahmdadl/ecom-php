@@ -23,7 +23,7 @@ class Arr
             foreach ($array as $key => $arrayValue) {
                 if ($value == $arrayValue) {
                     unset($array[$key]);
-                    if ($removeFirstOnly === true) break;
+                    if ($removeFirstOnly) break;
                 }
             }
 
@@ -39,8 +39,6 @@ class Arr
      */
     public static function outer()
     {
-        return function (...$arrays) {
-            return array_diff(array_merge(...$arrays), array_intersect(...$arrays));
-        };
+        return fn(...$arrays) => array_diff(array_merge(...$arrays), array_intersect(...$arrays));
     }
 }

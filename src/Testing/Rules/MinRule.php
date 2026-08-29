@@ -20,14 +20,12 @@ class MinRule extends UnitRule implements UnitRuleInterface
     public function beforeValidating()
     {
         if (!isset($this->options[0])) {
-            throw new MissingUnitRuleOptionsException(sprintf('min rule needs a min value to compare the given value with.'));
+            throw new MissingUnitRuleOptionsException('min rule needs a min value to compare the given value with.');
         }
     }
 
     /**
      * Determine if the rule is valid
-     * 
-     * @return bool
      */
     public function isValid(): bool
     {
@@ -36,8 +34,6 @@ class MinRule extends UnitRule implements UnitRuleInterface
 
     /**
      * Get error message
-     * 
-     * @return string
      */
     public function getErrorMessage(): string
     {

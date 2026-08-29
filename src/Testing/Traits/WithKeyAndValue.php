@@ -15,15 +15,11 @@ trait WithKeyAndValue
 
     /**
      * Unit Key
-     * 
-     * @var string
      */
     protected string $key = '';
 
     /**
      * Unit parent key
-     * 
-     * @var string
      */
     protected string $parentKey = '';
 
@@ -34,9 +30,6 @@ trait WithKeyAndValue
 
     /**
      * Set unit key namespace
-     * 
-     * @param  string $keyNamespace
-     * @return self
      */
     public function setKeyNamespace(string $keyNamespace): self
     {
@@ -47,9 +40,6 @@ trait WithKeyAndValue
 
     /**
      * Set unit parent key
-     * 
-     * @param  string $parentKey
-     * @return self
      */
     public function setParentKey(string $parentKey): self
     {
@@ -60,9 +50,8 @@ trait WithKeyAndValue
 
     /**
      * Set unit value
-     * 
+     *
      * @param mixed $value
-     * @return self
      */
     public function setValue($value): self
     {
@@ -73,9 +62,6 @@ trait WithKeyAndValue
 
     /**
      * Set unit key
-     * 
-     * @param string $key
-     * @return self
      */
     public function setKey(string $key): self
     {
@@ -86,8 +72,6 @@ trait WithKeyAndValue
 
     /**
      * Get full key path which is the parent key concated with current key
-     * 
-     * @return string
      */
     public function fullKeyPath(): string
     {
@@ -96,8 +80,7 @@ trait WithKeyAndValue
 
     /**
      * Get error prefixed with the full key name
-     * 
-     * @param  string $error
+     *
      * @return string
      */
     public function keyError(string $error)

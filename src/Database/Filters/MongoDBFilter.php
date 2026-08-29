@@ -75,7 +75,7 @@ class MongoDBFilter extends Filter
     public function filterInBoolean($columns, $value)
     {
         foreach ($columns as $column) {
-            $this->query->whereIn($column, array_map('boolval', (array) $value));
+            $this->query->whereIn($column, array_map(boolval(...), (array) $value));
         }
     }
 

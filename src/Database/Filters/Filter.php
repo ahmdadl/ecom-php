@@ -148,7 +148,7 @@ class Filter
     public function filterInInt($columns, $value)
     {
         foreach ($columns as $column) {
-            $this->query->whereIn($column, array_map('intval', (array) $value));
+            $this->query->whereIn($column, array_map(intval(...), (array) $value));
         }
     }
 
@@ -162,7 +162,7 @@ class Filter
     public function filterNotInInt($columns, $value)
     {
         foreach ($columns as $column) {
-            $this->query->whereNotIn($column, array_map('intval', (array) $value));
+            $this->query->whereNotIn($column, array_map(intval(...), (array) $value));
         }
     }
 
@@ -176,7 +176,7 @@ class Filter
     public function filterNotIn($columns, $value)
     {
         foreach ($columns as $column) {
-            $this->query->whereNotIn($column, array_map('intval', (array) $value));
+            $this->query->whereNotIn($column, array_map(intval(...), (array) $value));
         }
     }
 
@@ -214,9 +214,8 @@ class Filter
 
     /**
      * Filter with exact datetime
-     * 
+     *
      * @param array $columns
-     * @param array $dates
      * @return void
      */
     public function filterDateBetween($columns, array $dates)

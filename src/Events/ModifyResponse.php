@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Events;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +14,7 @@ class ModifyResponse
     public function modifyResponse($response, $statusCode)
     {
         if (in_array($statusCode, [Response::HTTP_OK, Response::HTTP_CREATED])) {
-            $response = [
+            return [
                 'data' => $response,
             ];
         }

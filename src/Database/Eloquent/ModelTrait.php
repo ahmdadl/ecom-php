@@ -13,7 +13,7 @@ trait ModelTrait
      * 
      * @var string|null
      */
-    public $prefix = null;
+    public $prefix;
 
     /**
      * If set to true, it will disable updated by during timeline
@@ -24,9 +24,6 @@ trait ModelTrait
 
     /**
      * Determine if the current model uses the given trait
-     *
-     * @param  string $trait
-     * @return bool
      */
     public function uses(string $trait): bool
     {
@@ -52,7 +49,6 @@ trait ModelTrait
      *
      * @param  string $column
      * @param  int $amount
-     * @param  array $extra
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -69,7 +65,6 @@ trait ModelTrait
      *
      * @param  string $column
      * @param  int $amount
-     * @param  array $extra
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])
@@ -79,8 +74,6 @@ trait ModelTrait
 
     /**
      * An alias method to `getAttributes` method
-     * 
-     * @return array
      */
     public function info(): array
     {
@@ -101,8 +94,8 @@ trait ModelTrait
             $prefix = config('mongez.database.prefix');
         }
 
-        if ($prefix && strpos($table, $prefix) !== 0) {
-            $table = $prefix . $table;
+        if ($prefix && !str_starts_with($table, $prefix)) {
+            return $prefix . $table;
         }
 
         return $table;
@@ -110,8 +103,6 @@ trait ModelTrait
 
     /**
      * Get model nid, if no nid yet then return next id
-     * 
-     * @return int
      */
     public function getNid(): int
     {
@@ -128,13 +119,12 @@ trait ModelTrait
 
     /**
      * Pluck the given keys from the model info
-     * 
+     *
      * @param  array $columns
-     * @return array
      */
     public function pluck(...$columns): array
     {
-        if (func_num_args() == 1 && is_array($columns[0])) {
+        if (func_num_args() === 1 && is_array($columns[0])) {
             $columns = $columns[0];
         }
 
@@ -149,7 +139,7 @@ trait ModelTrait
      */
     public function except(...$columns)
     {
-        if (func_num_args() == 1 && is_array($columns[0])) {
+        if (func_num_args() === 1 && is_array($columns[0])) {
             $columns = $columns[0];
         }
 

@@ -73,7 +73,7 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
     {
         parent::initiateListing($options);
 
-        if (static::USING_SOFT_DELETE === true) {
+        if (static::USING_SOFT_DELETE) {
             $retrieveMode = $this->option(static::RETRIEVAL_MODE, static::DEFAULT_RETRIEVAL_MODE);
 
             if ($retrieveMode == static::RETRIEVE_ACTIVE_RECORDS) {
@@ -88,8 +88,6 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
     }
     /**
      * Get table name of the primary model of the repo
-     *
-     * @return string
      */
     public function getTableName(): string
     {
@@ -98,8 +96,6 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
 
     /**
      * Get the table name that will be used in the query
-     *
-     * @return string
      */
     protected function tableName(): string
     {
@@ -108,8 +104,6 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
 
     /**
      * Get the table name that will be used in the rest of the query like select, where...etc
-     *
-     * @return string
      */
     protected function columnTableName(): string
     {
@@ -118,9 +112,6 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
 
     /**
      * Pare the given arrayed value
-     *
-     * @param array $value
-     * @return mixed
      */
     protected function handleArrayableValue(array $value): mixed
     {
@@ -147,9 +138,6 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
 
     /**
      * Get column name appended by table|table alias
-     *
-     * @param  string $column
-     * @return string
      */
     protected function column(string $column): string
     {

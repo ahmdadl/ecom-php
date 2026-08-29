@@ -32,7 +32,7 @@ abstract class UIController
      * 
      * @var RepositoryInterface
      */
-    protected $repository = null;
+    protected $repository;
 
     /**
      * Events Object
@@ -56,9 +56,7 @@ abstract class UIController
 
     /**
      * Render the given view path
-     * 
-     * @param string $viewPath
-     * @param  array $data
+     *
      * @return string
      */
     protected function render(string $viewPath, array $data = [])
@@ -146,7 +144,6 @@ abstract class UIController
     /**
      * Unauthorized data
      *
-     * @param  string $message
      * @return string
      */
     protected function unauthorized(string $message)
@@ -163,8 +160,6 @@ abstract class UIController
     /**
      * Send Response
      *
-     * @param  int $statusCode
-     * @param  array $message
      * @return string
      */
     protected function send(int $statusCode, array $message)

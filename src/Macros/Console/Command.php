@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Macros\Console;
 
 use Illuminate\Console\Command as IlluminateCommand;
@@ -16,9 +19,7 @@ class Command
      */
     public function argumentHasValue()
     {
-        return function (string $argument): bool {
-            return $this->hasArgument($argument) && $this->argument($argument);   
-        };
+        return fn(string $argument): bool => $this->hasArgument($argument) && $this->argument($argument);
     }
     
     /**
@@ -29,8 +30,6 @@ class Command
      */
     public function optionHasValue()
     { 
-        return function (string $option): bool {
-            return $this->hasOption($option) && $this->option($option);   
-        };
+        return fn(string $option): bool => $this->hasOption($option) && $this->option($option);
     }
 }

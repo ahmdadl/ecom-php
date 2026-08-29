@@ -22,7 +22,7 @@ final class JsonResourceTest extends TestCase
     {
         $product = Product::query()->create(['name' => 'Cup', 'price' => 7]);
 
-        $data = (new ProductResource($product))->toArray(null);
+        $data = new ProductResource($product)->toArray(null);
 
         $this->assertSame($product->nid, $data['nid']);
         $this->assertSame('Cup', $data['name']);
@@ -39,10 +39,8 @@ final class JsonResourceTest extends TestCase
         $resource->toArray(null);
 
         $idMethod = new ReflectionMethod($resource, 'id');
-        $idMethod->setAccessible(true);
 
         $nidMethod = new ReflectionMethod($resource, 'nid');
-        $nidMethod->setAccessible(true);
 
         $this->assertSame($product->nid, $idMethod->invoke($resource));
         $this->assertSame($product->nid, $nidMethod->invoke($resource));

@@ -88,7 +88,7 @@ class Events implements EventsInterface
                         $this->load($callback);
                     }
 
-                    list($classObject, $method) = $this->get($callback);
+                    [$classObject, $method] = $this->get($callback);
 
                     $return = $classObject->$method(...$callbackArguments);
                 } else {
@@ -108,25 +108,21 @@ class Events implements EventsInterface
 
     /**
      * Check if the given class is loaded
-     * 
-     * @param  string $class
-     * @return bool
      */
     protected function isLoaded(string $class): bool
     {
-        list($class, $method) = explode('@', $class);
+        [$class, $method] = explode('@', $class);
         return isset($this->classesList[$class]);
     }
 
     /**
      * Load the object of the given class
-     * 
-     * @param  string $class
-     * @return void 
+     *
+     * @return void
      */
     protected function load(string $class)
     {
-        list($class, $method) = explode('@', $class);
+        [$class, $method] = explode('@', $class);
 
         $this->classesList[$class] = App::make($class);
     }
@@ -135,13 +131,12 @@ class Events implements EventsInterface
      * Get the class object and the method for the event
      * If the class doesn't have the method name i.e classPath@methodName
      * the `handle` method will be called instead
-     * 
-     * @param  string $class
+     *
      * @return array [$classObject, $methodName]
      */
     protected function get(string $class): array
     {
-        list($class, $method) = explode('@', $class);
+        [$class, $method] = explode('@', $class);
 
         return [$this->classesList[$class], $method ?: 'handle'];
     }
@@ -152,9 +147,7 @@ class Events implements EventsInterface
     public function subscribe(string $events, $eventListener)
     {
         foreach (explode(' ', $events) as $event) {
-            if (!isset($this->eventsList[$event])) {
-                $this->eventsList[$event] = [];
-            }
+            $this->eventsList[$event] ??= [];
 
             if (is_array($eventListener)) {
                 $eventListener = implode('@', $eventListener);

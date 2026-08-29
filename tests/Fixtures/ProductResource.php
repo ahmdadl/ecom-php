@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Tests\Fixtures;
 
 use HZ\Illuminate\Mongez\Resources\JsonResourceManager;

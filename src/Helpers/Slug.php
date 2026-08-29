@@ -10,11 +10,6 @@ class Slug
 {
     /**
      * make slug for any model
-     *
-     * @param string $text
-     * @param string $localeCode
-     * @param string $separator
-     * @return string
      */
     public static function make(string $text, string $localeCode = 'en', string $separator = '-'): string
     {
@@ -25,7 +20,6 @@ class Slug
      * slug by arabic latter
      *
      * @param $string
-     * @return string
      */
     public static function arabicSlug($string): string
     {

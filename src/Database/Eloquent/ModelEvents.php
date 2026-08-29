@@ -7,19 +7,10 @@ use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model;
 
 trait ModelEvents
 {
-    /**
-     * @var string
-     */
     public static string $modelClass;
 
-    /**
-     * @var array
-     */
     public static array $modelOptions = [];
 
-    /**
-     * @var string
-     */
     public static string $sharedInfoMethod = 'sharedInfo';
 
     /**
@@ -28,8 +19,6 @@ trait ModelEvents
      * The model class, options and shared info method are mutated while
      * handling create/update/delete events. If not cleared they would leak
      * into subsequent requests on persistent workers (e.g. Laravel Octane).
-     *
-     * @return void
      */
     public static function resetState(): void
     {
@@ -82,7 +71,6 @@ trait ModelEvents
     /**
      * Handle create model record as single document in related models.
      *
-     * @param Model $model
      * @return void
      */
     public static function handleCreateSingleModel(Model $model)
@@ -142,7 +130,6 @@ trait ModelEvents
     /**
      * Handle update model record as single document in related models.
      *
-     * @param Model $model
      * @return void
      */
     public static function handleUpdateSingleModel(Model $model)
@@ -178,7 +165,6 @@ trait ModelEvents
     /**
      * Handle update model record as array of documents in related models.
      *
-     * @param Model $model
      * @return void
      */
     public static function handleUpdateArrayModel(Model $model)
@@ -321,9 +307,7 @@ trait ModelEvents
 
                     // searching in the model attributes for key asymptotic to resolved (Model::class) name to get the searching key
                     $foreignColumn = array_key_exists($relationalModel, $model->toArray()) ? $relationalModel :
-                        array_key_first(array_filter($model->toArray(), function ($key) use ($relationalModel) {
-                            return strpos($key, $relationalModel) !== false;
-                        }, ARRAY_FILTER_USE_KEY));
+                        array_key_first(array_filter($model->toArray(), fn($key) => str_contains($key, $relationalModel), ARRAY_FILTER_USE_KEY));
 
                     $modelOptions['foreignColumn'] = $foreignColumn;
                     $modelOptions['sharedInfoMethod'] = static::$sharedInfoMethod;
@@ -401,16 +385,12 @@ trait ModelEvents
     /**
      * Get related models records on create events.
      *
-     * @param Model $model
-     * @param array $options
      * @return mixed
      */
     public static function getCreateRelatedModels(Model $model, array $options)
     {
         $searchingId = isset($model->{$options['searchingColumn']}) ? (int) $model->{$options['searchingColumn']}['nid'] ?:
-            array_map(function ($item) {
-                return  (int) $item['nid'];
-            }, $model->{$options['searchingColumn']} ?: []) : null;
+            array_map(fn($item) => (int) $item['nid'], $model->{$options['searchingColumn']} ?: []) : null;
 
         return static::$modelClass::query()->whereIn('nid', (array) $searchingId)->get();
     }
@@ -418,8 +398,6 @@ trait ModelEvents
     /**
      * Get related models records on update and delete events.
      *
-     * @param Model $model
-     * @param array $options
      * @return mixed
      */
     public static function getRelatedModels(Model $model, array $options)

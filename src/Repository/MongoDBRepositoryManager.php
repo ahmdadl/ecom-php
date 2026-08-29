@@ -43,9 +43,8 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     const LOCATION_DATA = [];
 
     /**
-     * Get the table name that will be used in the query 
-     * 
-     * @return string
+     * Get the table name that will be used in the query
+     *
      */
     protected function tableName(): string
     {
@@ -54,9 +53,6 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
     /**
      * Pare the given arrayed value
-     *
-     * @param array $value
-     * @return mixed
      */
     protected function handleArrayableValue(array $value): mixed
     {
@@ -77,22 +73,17 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * Get shared info data for the given options
      *
-     * @param array $options
-     * @param string $sharedInfoMethod
      * @return array
      */
     public function listSharedInfo(array $options, string $sharedInfoMethod = 'sharedInfo')
     {
-        return $this->listModels($options)->map(function ($model) use ($sharedInfoMethod) {
-            return $model->$sharedInfoMethod();
-        })->toArray();
+        return $this->listModels($options)->map(fn($model) => $model->$sharedInfoMethod())->toArray();
     }
 
     /**
      * Get shared info for the given id
-     * 
+     *
      * @param  int $id
-     * @param  string $sharedInfoMethod
      * @return mixed
      */
     public function sharedInfo($id, string $sharedInfoMethod = 'sharedInfo')
@@ -162,7 +153,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
             if ($this->isIgnorable($column)) continue;
 
             if (is_array($documentModelClass)) {
-                list($class, $sharedInfoMethod) = $documentModelClass;
+                [$class, $sharedInfoMethod] = $documentModelClass;
                 $documentModelClass = $class;
             } else {
                 $sharedInfoMethod = 'sharedInfo';
@@ -194,10 +185,6 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
     /**
      * A shorthand method for filtering data if they are available
-     * 
-     * @param  string $column
-     * @param  string|null $option
-     * @return $this
      */
     protected function whereBool(string $column, ?string $option = null): self
     {
@@ -230,10 +217,10 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
                 continue;
             }
 
-            $ids = array_map('intVal', $value);
+            $ids = array_map(intVal(...), $value);
 
             if (is_array($documentModelClass)) {
-                list($class, $method) = $documentModelClass;
+                [$class, $method] = $documentModelClass;
                 $documentModelClass = $class;
             } else {
                 $method = 'sharedInfo';
@@ -241,9 +228,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
             $records = $documentModelClass::whereIn('nid', $ids)->get();
 
-            $records = $records->map(function ($record) use ($method) {
-                return $record->$method();
-            })->toArray();
+            $records = $records->map(fn($record) => $record->$method())->toArray();
 
             // make sure it is stored in same order as sent from request
             if (count($ids) > 1) {
@@ -291,9 +276,6 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
     /**
      * Get column name appended by table|table alias
-     *
-     * @param  string $column
-     * @return string
      */
     protected function column(string $column): string
     {

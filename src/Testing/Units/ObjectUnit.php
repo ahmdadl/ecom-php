@@ -18,14 +18,11 @@ class ObjectUnit extends UnitType
 
     /**
      * Unit innner units list
-     * 
-     * @var array
      */
     protected array $unitsList = [];
 
     /**
      * Constructor
-     * @param array $unitsList
      */
     public function __construct(array $unitsList = [])
     {
@@ -45,9 +42,8 @@ class ObjectUnit extends UnitType
 
     /**
      * Set units list
-     * 
+     *
      * @param  array $unitsList
-     * @return UnitType
      */
     public function setUnits($unitsList): UnitType
     {
@@ -125,11 +121,9 @@ class ObjectUnit extends UnitType
 
     /**
      * Get an instance of the given unit type
-     * 
+     *
      * The given unit type can be a class of unit or a an alias listed in mongez.testing.units
-     * 
-     * @param  string $unitName
-     * @return UnitType
+     *
      * @throws InvalidUnitTypeException
      */
     protected function getUnit(string $unitName): UnitType

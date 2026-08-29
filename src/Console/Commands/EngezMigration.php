@@ -27,8 +27,6 @@ class EngezMigration extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Migration Name
-     * 
-     * @var string
      */
     protected string $migrationName;
 
@@ -36,15 +34,11 @@ class EngezMigration extends EngezGeneratorCommand implements EngezInterface
      * Migration type
      * It can be create or table
      * If current database is mongodb, it is always table
-     * 
-     * @var string
      */
     protected string $migrationType;
 
     /**
      * Table name
-     * 
-     * @var string
      */
     protected string $tableName;
 
@@ -151,6 +145,6 @@ class EngezMigration extends EngezGeneratorCommand implements EngezInterface
 
         $databaseMigration = $this->isMongoDB() ? 'mongodb-migration' : 'mysql-migration';
 
-        $this->putFIle("Database/migrations/{$databaseFileName}.php", $this->replaceStub('Migrations/' . $databaseMigration, $replacements), 'Migration');
+        $this->putFIle("Database/migrations/{$databaseFileName}.php", $this->replaceStub('Migrations/' . $databaseMigration, $replacements));
     }
 }

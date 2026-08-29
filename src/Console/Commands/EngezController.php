@@ -71,23 +71,17 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Controller name
-     *
-     * @var string
      */
     protected string $controllerName;
 
     /**
      * Controller type
      * Available Values: site|admin|all
-     *
-     * @var string
      */
     protected string $controllerType;
 
     /**
      * The path of the generated controller
-     *
-     * @var string
      */
     protected string $controllerPath;
 
@@ -176,7 +170,6 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
     /**
      * Create a controller for the given type
      *
-     * @param  string $controllerType
      * @return void
      */
     private function createController(string $controllerType)
@@ -222,14 +215,12 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
             $controllerStub .= 'ui-controller';
         }
 
-        $this->putFile($this->controllerPath, $this->replaceStub($controllerStub, $replaces), 'Controller');
+        $this->putFile($this->controllerPath, $this->replaceStub($controllerStub, $replaces));
     }
 
     /**
      * Determine if current generated controller is admin controller
      * This is true when type is admin or all
-     *
-     * @return bool
      */
     protected function isAdminController(): bool
     {
@@ -239,8 +230,6 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
     /**
      * Determine if current generated controller is site controller
      * This is true when type is site or all
-     *
-     * @return bool
      */
     protected function isSiteController(): bool
     {
@@ -250,8 +239,6 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
     /**
      * Put the given content in the given path
      *
-     * @param string $path
-     * @param string $content
      * @return void
      */
     protected function put(string $path, string $content)

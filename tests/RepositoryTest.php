@@ -22,8 +22,6 @@ final class RepositoryTest extends TestCase
 
     /**
      * Create a fresh products repository
-     *
-     * @return ProductsRepository
      */
     private function repository(): ProductsRepository
     {
@@ -75,7 +73,7 @@ final class RepositoryTest extends TestCase
         $resource = $repository->get($product->nid);
 
         $this->assertNotNull($resource);
-        $this->assertSame($product->nid, $resource->toArray(null)['nid']);
+        $this->assertSame($product->nid, $resource->toArray()['nid']);
 
         $this->assertNull($repository->get($product->nid + 500000));
     }

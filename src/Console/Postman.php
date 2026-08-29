@@ -54,9 +54,6 @@ class Postman
 
     /**
      * Create postman content.
-     *
-     * @param array $data
-     * @return void
      */
     public function __construct(array $data)
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Database\Eloquent\MYSQL;
 
 use Illuminate\Database\Eloquent\Model as BaseModel;

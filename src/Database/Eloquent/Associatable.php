@@ -10,8 +10,6 @@ trait Associatable
      * Associate the given value to the given key
      *
      * @param mixed $modelInfo
-     * @param string $column
-     * @return Model
      */
     public function associate($modelInfo, string $column): Model
     {
@@ -32,9 +30,6 @@ trait Associatable
      * Re-associate the given document
      *
      * @param   mixed $modelInfo
-     * @param   string $column
-     * @param   string $searchingColumn
-     * @return Model
      */
     public function reassociate($modelInfo, string $column, string $searchingColumn = 'nid'): Model
     {
@@ -47,7 +42,7 @@ trait Associatable
         $found = false;
 
         foreach ($documents as $key => $document) {
-            if (is_scalar($document) && $document === $modelInfo) {
+            if ($document === $modelInfo) {
                 $documents[$key] = $modelInfo;
                 $found = true;
 
@@ -76,9 +71,6 @@ trait Associatable
      * Disassociate the given value to the given key
      *
      * @param mixed $modelInfo
-     * @param string $column
-     * @param string $searchBy
-     * @return Model
      */
     public function disassociate($modelInfo, string $column, string $searchBy = 'nid'): Model
     {
@@ -88,7 +80,6 @@ trait Associatable
 
         foreach ($array as $value) {
             if (
-                is_scalar($modelInfo) && $modelInfo === $value ||
                 is_array($value) && isset($value[$searchBy]) && $value[$searchBy] == $modelInfo[$searchBy]
             ) {
                 continue;

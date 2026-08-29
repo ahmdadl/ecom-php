@@ -6,8 +6,6 @@ class Expression
 {
     /**
      * Operator
-     * 
-     * @var string
      */
     protected string $operator = '';
 
@@ -20,17 +18,13 @@ class Expression
 
     /**
      * return as
-     * 
-     * @var string
      */
     protected string $returnAs = '';
 
     /**
      * Constructor
-     * 
-     * @param string $operator
+     *
      * @param int|float|string|string[]|Expression $column
-     * @param string $returnAs
      */
     public function __construct(string $operator, $column, string $returnAs = '')
     {
@@ -41,9 +35,6 @@ class Expression
 
     /**
      * Set operator
-     * 
-     * @param string $operator
-     * @return Expression
      */
     public function operator(string $operator): Expression
     {
@@ -53,9 +44,8 @@ class Expression
 
     /**
      * Set column
-     * 
+     *
      * @param string|string[] $column
-     * @return Expression
      */
     public function column($column): Expression
     {
@@ -65,9 +55,6 @@ class Expression
 
     /**
      * Set returnAs
-     * 
-     * @param string $returnAs
-     * @return Expression
      */
     public function returnAs(string $returnAs): Expression
     {
@@ -77,8 +64,6 @@ class Expression
 
     /**
      * Prase expression
-     * 
-     * @return array
      */
     public function parse(): array
     {
@@ -89,9 +74,7 @@ class Expression
         if (is_string($column)) {
             $column = '$' . $column;
         } elseif (is_array($column)) {
-            $column = array_map(function ($column) {
-                return '$' . $column;
-            }, $column);
+            $column = array_map(fn($column) => '$' . $column, $column);
         } elseif ($column instanceof Expression) {
             $column = $column->parse();
         }

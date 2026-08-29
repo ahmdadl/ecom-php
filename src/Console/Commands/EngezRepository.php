@@ -29,15 +29,11 @@ class EngezRepository extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Repository Name
-     *
-     * @var string
      */
     protected string $repositoryName;
 
     /**
      * Repository Class Name
-     *
-     * @var string
      */
     protected string $repositoryClassName;
 
@@ -170,19 +166,17 @@ class EngezRepository extends EngezGeneratorCommand implements EngezInterface
 
         $databaseRepository = $this->isMongoDB() ? 'mongodb-repository' : 'mysql-repository';
 
-        $this->putFile("Repositories/{$this->repositoryClassName}.php", $this->replaceStub('Repositories/' . $databaseRepository, $replacements), 'Repository');
+        $this->putFile("Repositories/{$this->repositoryClassName}.php", $this->replaceStub('Repositories/' . $databaseRepository, $replacements));
     }
 
     /**
      * Set search filters
-     * 
-     * @param  string $filterName
-     * @param  array $searchFilters
+     *
      * @return void
      */
     protected function setSearchFilters(string $filterName, array $searchFilters)
     {
-        if (empty($searchFilters)) return;
+        if ($searchFilters === []) return;
 
         $existingSearchFilters = $this->searchFilters[$filterName] ?? [];
 

@@ -51,8 +51,6 @@ trait Deletable
 
     /**
      * Check if model has deleting depended tables.
-     *
-     * @return bool
      */
     public function deleteHasDependence(): bool
     {
@@ -76,8 +74,6 @@ trait Deletable
 
     /**
      * Check if soft delete used or not
-     *
-     * @return bool
      */
     public function isUsingSoftDelete(): bool
     {
@@ -86,8 +82,6 @@ trait Deletable
 
     /**
      * Check if cache is used or not
-     * 
-     * @return bool
      */
     public function isCacheable(): bool
     {

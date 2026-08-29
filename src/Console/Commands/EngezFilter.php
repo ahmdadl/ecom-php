@@ -23,9 +23,8 @@ class EngezFilter extends EngezGeneratorCommand implements EngezInterface
     protected $description = 'Create new filter to the given module';
 
     /**
-     * The database name 
-     * 
-     * @var string
+     * The database name
+     *
      */
     protected string $filterName;
 
@@ -73,6 +72,6 @@ class EngezFilter extends EngezGeneratorCommand implements EngezInterface
             '{{ DatabaseName }}' => $this->getDatabaseName(),
         ];
 
-        $this->putFile("Filters/{$this->filterName}.php", $this->replaceStub('Filters/filter', $replacements), 'Filter');
+        $this->putFile("Filters/{$this->filterName}.php", $this->replaceStub('Filters/filter', $replacements));
     }
 }

@@ -68,8 +68,6 @@ class ApiRequest
 
     /**
      * Json Docs file path
-     * 
-     * @var string
      */
     protected string $filePath = '';
 
@@ -82,16 +80,11 @@ class ApiRequest
 
     /**
      * final markdown content
-     * 
-     * @var string
      */
     protected string $markdownContent = '';
 
     /**
      * Set docs file path
-     * 
-     * @param  string $filePath
-     * @return ApiRequest
      */
     public function setFilePath(string $filePath): ApiRequest
     {
@@ -102,9 +95,6 @@ class ApiRequest
 
     /**
      * Append the given content to the markdown content
-     * 
-     * @param  mixed $content
-     * @return ApiRequest
      */
     protected function append(mixed $content): ApiRequest
     {
@@ -117,9 +107,8 @@ class ApiRequest
 
     /**
      * Append the given content but add a new line before it
-     * 
+     *
      * @param  string $content
-     * @return ApiRequest
      */
     protected function appendLine($content): ApiRequest
     {
@@ -130,8 +119,7 @@ class ApiRequest
 
     /**
      * Get value from content
-     * 
-     * @param  string $key
+     *
      * @param  mixed $default
      * @return mixed
      */
@@ -143,8 +131,7 @@ class ApiRequest
     /**
      * Get value from the content
      * If the key does not exist, then throw error
-     * 
-     * @param  string $key
+     *
      * @return string
      */
     protected function strictGet(string $key)
@@ -160,8 +147,6 @@ class ApiRequest
 
     /**
      * Parse the file and return valid markdown syntax
-     * 
-     * @return string
      */
     public function parse(): string
     {
@@ -338,9 +323,8 @@ class ApiRequest
 
     /**
      * Create a table head
-     * 
+     *
      * @param array<string, mixed> $columns
-     * @return self
      */
     protected function tableHead(array $columns): ApiRequest
     {
@@ -370,9 +354,8 @@ class ApiRequest
 
     /**
      * Create a table row
-     * 
+     *
      * @param array<string, mixed> $columns
-     * @return self
      */
     protected function tableRow(array $columns): ApiRequest
     {
@@ -514,10 +497,7 @@ class ApiRequest
 
     /**
      * Set response body table
-     * 
-     * @param  array $responseBody
-     * @param  int $responseStatusCode
-     * @param  string $parent
+     *
      * @return void
      */
     protected function setResponseBodyTable(array $responseBody, int $responseStatusCode, string $parent = '')
@@ -596,8 +576,7 @@ class ApiRequest
 
     /**
      * Set response body as json strcture
-     * 
-     * @param  array $response
+     *
      * @return void
      */
     protected function setResponseBodyJsonStructure(array $response)
@@ -609,9 +588,6 @@ class ApiRequest
 
     /**
      * Create json shape from the given response body
-     * 
-     * @param  array $response
-     * @return array
      */
     protected function createJsonShape(array $response): array
     {
@@ -663,8 +639,6 @@ class ApiRequest
 
     /**
      * Save to the given file path
-     * 
-     * @param  string $filePath
      */
     public function saveTo(string $filePath)
     {

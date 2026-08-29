@@ -14,23 +14,17 @@ trait ModuleData
 
     /**
      * Module Name
-     * 
-     * @var string
      */
     protected string $moduleName;
 
     /**
      * Repository Name
-     * 
-     * @var string
      */
     protected string $repositoryName;
 
     /**
      * Module Build mode
      * Available Values api|ui
-     * 
-     * @var string
      */
     protected string $buildMode;
 
@@ -46,8 +40,6 @@ trait ModuleData
 
     /**
      * Determine if the current build mode is api mode
-     * 
-     * @return bool
      */
     protected function isApiMode(): bool
     {
@@ -56,8 +48,6 @@ trait ModuleData
 
     /**
      * Determine if the current build mode is ui mode
-     * 
-     * @return bool
      */
     protected function isUINode(): bool
     {
@@ -66,8 +56,7 @@ trait ModuleData
 
     /**
      * Set Module Name
-     * 
-     * @param string $moduleName
+     *
      * @return void
      */
     protected function setModuleName(string $moduleName)
@@ -78,8 +67,6 @@ trait ModuleData
     /**
      * Get module name
      * The module name MUST BE in plural with studly case format
-     * 
-     * @return string
      */
     protected function getModule(): string
     {
@@ -90,8 +77,6 @@ trait ModuleData
 
     /**
      * Get singular module studly case text
-     * 
-     * @return string
      */
     protected function singularModule(): string
     {
@@ -102,10 +87,6 @@ trait ModuleData
      * Return a full data types options with the given options
      * If second parameter is not empty, then its value will be taken as well from
      * the passed options list
-     * 
-     * @param  array $options
-     * @param  array  $moreOptions
-     * @return array
      */
     protected function withDataTypes(array $options, array $moreOptions = []): array
     {
@@ -119,15 +100,12 @@ trait ModuleData
 
     /**
      * Determine if the given module name exists in modules list
-     * 
-     * @param string $moduleName
-     * @return bool
      */
     protected function moduleExists(string $moduleName = ''): bool
     {
         return in_array(
             strtolower($moduleName ?: $this->getModule()),
-            array_map('strtolower', Mongez::getStored('modules'))
+            array_map(strtolower(...), Mongez::getStored('modules'))
         );
     }
 }

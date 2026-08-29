@@ -10,8 +10,6 @@ trait RoutesAdapter
 
     /**
      * Routes directory inside module folder
-     * 
-     * @var string
      */
     protected string $routesDirectory;
 
@@ -219,6 +217,5 @@ trait RoutesAdapter
             );
             $this->files->put($this->modulePath("routes/admin.php"), $content);
         }
-        return;
     }
 }

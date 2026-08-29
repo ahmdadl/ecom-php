@@ -16,8 +16,6 @@ class MongezRequestMiddleware
      * and beta database switching without mutating the application state
      * in a way that persists between requests (Octane safe).
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -48,7 +46,6 @@ class MongezRequestMiddleware
      * Returns the original database name if the connection was switched,
      * otherwise null.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return string|null
      */
     protected function switchBetaDatabase(Request $request)
@@ -86,7 +83,6 @@ class MongezRequestMiddleware
     /**
      * Restore the original database connection after the request is finished
      *
-     * @param  string $originalDatabase
      * @return void
      */
     protected function restoreDatabase(string $originalDatabase)
@@ -107,7 +103,6 @@ class MongezRequestMiddleware
      * Only alphanumeric/underscore names are allowed to avoid
      * injecting arbitrary environment variable names.
      *
-     * @param  string $betaDBName
      * @return string|null
      */
     protected function resolveBetaDatabaseName(string $betaDBName)
@@ -128,7 +123,6 @@ class MongezRequestMiddleware
     /**
      * Prepare locale code based on the current request
      *
-     * @param  \Illuminate\Http\Request $request
      * @return void
      */
     protected function prepareLocaleCode(Request $request)

@@ -35,8 +35,6 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * If marked as true, a bearer token will be passed with Bearer in the Authorization Header
-     * 
-     * @var bool
      */
     protected ?bool $isAuthenticated = false;
 
@@ -57,8 +55,7 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Call another test unit
-     * 
-     * @param  string $unitTestClass
+     *
      * @return  ApTestCase
      */
     public function callTest(string $unitTestClass)
@@ -85,9 +82,6 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Mark the request as authorized request
-     * 
-     * @param bool $isAuthenticated 
-     * @return $this
      */
     public function isAuthorized(bool $isAuthenticated = true): self
     {
@@ -98,9 +92,6 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Handle Authorization Header
-     * 
-     * @param array $headers
-     * @return array
      */
     protected function handleAuthorizationHeader(array $headers): array
     {
@@ -118,8 +109,6 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with a GET request, expecting a JSON response.
      *
      * @param  string  $uri
-     * @param  array  $headers
-     * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function get($uri, array $headers = []): TestResponse
     {
@@ -132,8 +121,6 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with a POST request, expecting a JSON response.
      *
      * @param  string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function post($uri, array $data = [], array $headers = [])
@@ -147,8 +134,6 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with a PUT request, expecting a JSON response.
      *
      * @param  string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function put($uri, array $data = [], array $headers = [])
@@ -162,8 +147,6 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with a PATCH request, expecting a JSON response.
      *
      * @param  string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function patch($uri, array $data = [], array $headers = [])
@@ -177,8 +160,6 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with a DELETE request, expecting a JSON response.
      *
      * @param  string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function delete($uri, array $data = [], array $headers = [])
@@ -192,8 +173,6 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with an OPTIONS request, expecting a JSON response.
      *
      * @param  string  $uri
-     * @param  array  $data
-     * @param  array  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function options($uri, array $data = [], array $headers = [])
@@ -241,9 +220,6 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Prepare the given uri
-     * 
-     * @param  string $uri
-     * @return string
      */
     protected function prepareUri(string $uri): string
     {
@@ -266,8 +242,7 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Generate data for the given keys and return corresponding data
-     * 
-     * @param array $filling
+     *
      * @return array
      */
     protected function fill(array $filling)
@@ -298,8 +273,6 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Append more headers to each request
-     * 
-     * @return array
      */
     public function appendHeaders(): array
     {

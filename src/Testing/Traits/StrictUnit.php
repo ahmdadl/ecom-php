@@ -14,13 +14,10 @@ trait StrictUnit
      * 
      * @var bool
      */
-    protected $isStrict = null;
+    protected $isStrict;
 
     /**
      * Determine if the response schema must be strict
-     * 
-     * @param  bool $isStrict
-     * @return self
      */
     public function strict(bool $isStrict): self
     {

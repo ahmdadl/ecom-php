@@ -19,15 +19,11 @@ trait Fillers
 {
     /**
      * Storage directory path
-     * 
-     * @var string
      */
     protected string $storageDirectory;
 
     /**
      * Force ignore any column that was not sent in request
-     * 
-     * @var bool
      */
     public bool $forceIgnore = false;
 
@@ -35,7 +31,6 @@ trait Fillers
      * Get request object with data
      *
      * @param  \Illuminate\Http\Request|array<string, mixed> $data
-     * @return \Illuminate\Http\Request
      */
     protected function getRequestWithData($data): Request
     {
@@ -89,7 +84,6 @@ trait Fillers
      * Check if all request inputs are in patchable array
      *
      * @param  \Illuminate\Http\Request $request
-     * @return bool
      */
     protected function checkPatchable($request): bool
     {
@@ -234,9 +228,7 @@ trait Fillers
 
             $file = $this->request->{$input};
 
-            if (is_null($arrayable)) {
-                $arrayable = is_array($file);
-            }
+            $arrayable ??= is_array($file);
 
             if (!$file) {
                 if ($clearable) {
@@ -283,7 +275,6 @@ trait Fillers
      * Upload the given file and return the new path
      *
      * @param  UploadedFile $file
-     * @return string
      */
     public function uploadFile($file): string
     {
@@ -298,9 +289,6 @@ trait Fillers
 
     /**
      * Get file name
-     *
-     * @param UploadedFile $fileObject
-     * @return string
      */
     protected function getFileName(UploadedFile $fileObject): string
     {
@@ -310,16 +298,11 @@ trait Fillers
 
         $extension = File::extension($originalName) ?: (string) $fileObject->guessExtension();
 
-        $fileName = false === $keepFileName ? Str::random(40) . '.' . $extension : $this->adjustFileName($originalName);
-
-        return $fileName;
+        return false === $keepFileName ? Str::random(40) . '.' . $extension : $this->adjustFileName($originalName);
     }
 
     /**
      * Adjust the given file name
-     *
-     * @param  string $fileName
-     * @return string
      */
     private function adjustFileName(string $fileName): string
     {
@@ -340,13 +323,11 @@ trait Fillers
      */
     private function mergeOldAndNewFiles(array $files, $column, $model)
     {
-        $filesFromRequest = array_map(function ($file) {
-            return ltrim($file, '/');
-        }, (array) $this->input($column . 'String', []));
+        $filesFromRequest = array_map(fn($file) => ltrim($file, '/'), (array) $this->input($column . 'String', []));
 
         $images = Arr::get($model, $column);
 
-        if ($images && is_string($images) || (empty($filesFromRequest) && empty($files))) return $images;
+        if ($images && is_string($images) || ($filesFromRequest === [] && $files === [])) return $images;
 
         foreach ($filesFromRequest as $key => $oldFile) {
             if (!isset($files[$key])) continue;
@@ -392,8 +373,6 @@ trait Fillers
 
     /**
      * Get the uploads storage directory name
-     *
-     * @return string
      */
     protected function getUploadsStorageDirectoryName(): string
     {
@@ -505,7 +484,6 @@ trait Fillers
      * Set the given key/value to the model
      *
      * @param  TModel $model
-     * @param  string $key
      * @param  mixed $value
      * @return void
      */
@@ -518,7 +496,6 @@ trait Fillers
      * Set boolean value
      *
      * @param  TModel $model
-     * @param  string $key
      * @param  mixed $value
      * @return void
      */
@@ -531,7 +508,6 @@ trait Fillers
      * Set int value
      *
      * @param  TModel $model
-     * @param  string $key
      * @param  mixed $value
      * @return void
      */
@@ -544,7 +520,6 @@ trait Fillers
      * Set float value
      *
      * @param  TModel $model
-     * @param  string $key
      * @param  mixed $value
      * @return void
      */
@@ -555,9 +530,6 @@ trait Fillers
 
     /**
      * Check if the given input is ignorable
-     *
-     * @param  string $input
-     * @return bool
      */
     protected function isIgnorable(string $input): bool
     {
@@ -567,8 +539,7 @@ trait Fillers
 
     /**
      * Get input value
-     * 
-     * @param  string $key
+     *
      * @param  mixed $default
      * @return mixed
      */
@@ -579,10 +550,8 @@ trait Fillers
 
     /**
      * Get int input value
-     * 
-     * @param  string $key
+     *
      * @param  mixed $default
-     * @return int
      */
     protected function intInput(string $key, $default = null): int
     {
@@ -591,10 +560,8 @@ trait Fillers
 
     /**
      * Get float input value
-     * 
-     * @param  string $key
+     *
      * @param  mixed $default
-     * @return float
      */
     protected function floatInput(string $key, $default = null): float
     {
@@ -603,10 +570,8 @@ trait Fillers
 
     /**
      * Get a boolean value
-     * 
-     * @param  string $key
+     *
      * @param  mixed $default
-     * @return bool
      */
     public function boolInput(string $key, $default = null): bool
     {

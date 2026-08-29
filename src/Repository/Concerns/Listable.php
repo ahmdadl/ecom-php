@@ -71,9 +71,6 @@ trait Listable
 
     /**
      * Use the given resource class
-     * 
-     * @param  string $resourceClass
-     * @return $this
      */
     public function useResource(string $resourceClass): self
     {
@@ -84,8 +81,7 @@ trait Listable
 
     /**
      * Set current used resource
-     * 
-     * @param  string $resourceClass
+     *
      * @return void
      */
     public static function setCurrentResource(string $resourceClass)
@@ -108,8 +104,6 @@ trait Listable
 
     /**
      * Get current used resource class Listable
-     * 
-     * @return string
      */
     public function getResourceClass(): string
     {
@@ -124,7 +118,6 @@ trait Listable
      * Get a normal record by id
      * Please use the `get` method to get full details about the record
      *
-     * @param  int $id
      * @return TModel|null
      */
     public function find(int $id)
@@ -266,7 +259,6 @@ trait Listable
      * Set pagination info from pagination data
      *
      * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator<int, mixed> $data
-     * @return void
      */
     protected function setPaginateInfo(\Illuminate\Contracts\Pagination\LengthAwarePaginator $data): void
     {
@@ -304,7 +296,6 @@ trait Listable
      * Wrap the given model to its resource
      *
      * @param \Illuminate\Database\Eloquent\Model|array<string, mixed> $model
-     * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function wrap($model): JsonResource
     {
@@ -370,7 +361,7 @@ trait Listable
      */
     protected function orderBy(array $orderBy): void
     {
-        if (empty($orderBy)) return;
+        if ($orderBy === []) return;
 
         if ($this->query === null) return;
 
@@ -389,7 +380,6 @@ trait Listable
      * Set options list
      *
      * @param array<string, mixed> $options
-     * @return void
      */
     protected function setOptions(array $options): void
     {
@@ -403,7 +393,6 @@ trait Listable
     /**
      * Get option value
      *
-     * @param  string $key
      * @param  mixed $default
      * @return mixed
      */
@@ -422,8 +411,6 @@ trait Listable
 
     /**
      * Get published column
-     * 
-     * @return string
      */
     protected function getPublishedColumn(): string
     {
@@ -446,10 +433,6 @@ trait Listable
 
     /**
      * A shorthand method for filtering data if they are available
-     * 
-     * @param  string $column
-     * @param  string|null $option
-     * @return $this
      */
     protected function where(string $column, ?string $option = null): self
     {
@@ -468,10 +451,6 @@ trait Listable
 
     /**
      * A shorthand method for filtering data if they are available
-     * 
-     * @param  string $column
-     * @param  string|null $option
-     * @return $this
      */
     protected function whereIn(string $column, ?string $option = null): self
     {
@@ -490,10 +469,6 @@ trait Listable
 
     /**
      * A shorthand method for filtering data if they are available
-     * 
-     * @param  string $column
-     * @param  string|null $option
-     * @return $this
      */
     protected function whereInInt(string $column, ?string $option = null): self
     {
@@ -504,7 +479,7 @@ trait Listable
         if ($this->query === null) return $this;
 
         if ($optionValue = $this->option($option)) {
-            $this->query->whereIn($column, array_map('intval', (array) $optionValue));
+            $this->query->whereIn($column, array_map(intval(...), (array) $optionValue));
         }
 
         return $this;
@@ -555,7 +530,7 @@ trait Listable
      */
     public function get(int $id)
     {
-        return $this->getBy('nid', (int) $id);
+        return $this->getBy('nid', $id);
     }
 
     /**
@@ -584,7 +559,7 @@ trait Listable
     public function getBy($column, $value)
     {
         if ($this->isCachable()) {
-            $cacheKey = static::NAME . '_' . $column . '_' . (string) $value;
+            $cacheKey = static::NAME . '_' . $column . '_' . $value;
             $record = $this->getCache($cacheKey);
 
             if (!$record) {

@@ -48,8 +48,6 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
 
     /**
      * Modules directory path
-     * 
-     * @var string
      */
     protected string $moduleBaseDirectory;
 
@@ -82,7 +80,7 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
      */
     public function mapRoutes()
     {
-        if (!($this->app instanceof CachesRoutes && $this->app->routesAreCached())) {
+        if (!$this->app instanceof CachesRoutes || !$this->app->routesAreCached()) {
             $this->mapRoutesList();
         }
     }
@@ -121,7 +119,7 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
      */
     public function mergeConfigurations()
     {
-        if (!($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
+        if (!$this->app instanceof CachesConfiguration || !$this->app->configurationIsCached()) {
             $configDirectory = $this->moduleBaseDirectory . '/config';
 
             // get all config files
@@ -134,7 +132,7 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
             $configFilesList = scandir($configDirectory);
 
             foreach ($configFilesList as $configFile) {
-                if ($configFile == '.' || $configFile == '..') {
+                if ($configFile === '.' || $configFile === '..') {
                     continue;
                 }
 

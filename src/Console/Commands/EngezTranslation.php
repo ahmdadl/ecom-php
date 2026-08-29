@@ -23,9 +23,8 @@ class EngezTranslation extends EngezGeneratorCommand implements EngezInterface
     protected $description = 'Create new translation file to the given module';
 
     /**
-     * The translation file name 
-     * 
-     * @var string
+     * The translation file name
+     *
      */
     protected string $fileName;
 
@@ -80,7 +79,7 @@ class EngezTranslation extends EngezGeneratorCommand implements EngezInterface
         $localeCodes = (array) config('mongez.localeCodes') ?: [config('app.locale')];
 
         foreach ($localeCodes as $localeCode) {
-            $this->putFile("lang/{$localeCode}/{$this->fileName}.php", $this->replaceStub('lang/file', $replacements), 'Translation');
+            $this->putFile("lang/{$localeCode}/{$this->fileName}.php", $this->replaceStub('lang/file', $replacements));
         }
 
         // check the utils class

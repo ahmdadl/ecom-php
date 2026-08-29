@@ -37,9 +37,7 @@ trait RecycleBin
     {
         $records = DB::table(static::trashTable())->pluck('record');
 
-        return $records->map(function ($record) {
-            return new static((array) $record);
-        });
+        return $records->map(fn($record) => new static((array) $record));
     }
 
     /**

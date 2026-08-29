@@ -26,15 +26,11 @@ class UnitType
 
     /**
      * Errors List
-     * 
-     * @var array
      */
     protected array $errorsList = [];
 
     /**
      * A flag to determine if the unit key is missing from the response
-     * 
-     * @var bool
      */
     protected bool $isMissingKey = false;
 
@@ -45,22 +41,16 @@ class UnitType
 
     /**
      * Determine if unit can be empty
-     * 
-     * @var bool
      */
     protected bool $canBeEmpty = false;
 
     /**
      * Determine if unit can be null
-     * 
-     * @var bool
      */
     protected bool $isNulable = false;
 
     /**
      * Rules options
-     * 
-     * @var array
      */
     protected array $rulesOptions = [];
 
@@ -83,8 +73,6 @@ class UnitType
 
     /**
      * Unit can have empty value
-     * 
-     * @return UnitType
      */
     public function canBeEmpty(): UnitType
     {
@@ -95,8 +83,6 @@ class UnitType
 
     /**
      * Unit with null value will be marked as invalid
-     * 
-     * @return UnitType
      */
     public function canNotBeEmpty(): UnitType
     {
@@ -107,8 +93,6 @@ class UnitType
 
     /**
      * Unit with null value will be marked as valid
-     * 
-     * @return UnitType
      */
     public function nullable(): UnitType
     {
@@ -119,8 +103,6 @@ class UnitType
 
     /**
      * Unit with null value will be marked as invalid
-     * 
-     * @return UnitType
      */
     public function notNullable(): UnitType
     {
@@ -131,8 +113,6 @@ class UnitType
 
     /**
      * Get unit type name
-     * 
-     * @return string
      */
     protected function name(): string
     {
@@ -150,9 +130,8 @@ class UnitType
 
     /**
      * Add ruels to the current unit
-     * 
+     *
      * @param  UnitRule[] $rules
-     * @return $this
      */
     public function addRules(array $rules): UnitType
     {
@@ -163,8 +142,6 @@ class UnitType
 
     /**
      * Mark the current unit as a missing key
-     * 
-     * @return UnitType
      */
     public function missingKey(): UnitType
     {
@@ -174,8 +151,6 @@ class UnitType
 
     /**
      * Validate the unit
-     * 
-     * @return self
      */
     public function validate(): self
     {
@@ -214,9 +189,6 @@ class UnitType
 
     /**
      * Get rule options
-     * 
-     * @param UnitRuleInterface $rule
-     * @return array
      */
     public function getRuleOptions(UnitRuleInterface $rule): array
     {
@@ -225,11 +197,6 @@ class UnitType
 
     /**
      * Add error to errors list
-     * 
-     * @param  string $ruleError
-     * @param  string $errorMessage
-     * @param  array $messageAttributes
-     * @return UnitType
      */
     public function addError(string $ruleError, string $errorMessage, array $messageAttributes = []): UnitType
     {
@@ -246,9 +213,8 @@ class UnitType
     }
 
     /**
-     * Get base message attributes 
-     * 
-     * @return array
+     * Get base message attributes
+     *
      */
     public function getBaseUnitMessageAttributes(): array
     {
@@ -274,12 +240,10 @@ class UnitType
 
     /**
      * Check if the unit valid
-     * 
-     * @return bool
      */
     public function isValid(): bool
     {
-        return empty($this->errorsList);
+        return $this->errorsList === [];
     }
 
     /**
@@ -305,9 +269,6 @@ class UnitType
 
     /**
      * Check if the given rule is listed in the rules list
-     * 
-     * @param  string $rule
-     * @return bool
      */
     public static function isListedRule(string $rule): bool
     {
@@ -315,10 +276,8 @@ class UnitType
     }
 
     /**
-     * Resolve the given rule class 
-     * 
-     * @param  string $rule
-     * @return UnitRuleInterface
+     * Resolve the given rule class
+     *
      */
     public static function resolveRule(string $rule): UnitRuleInterface
     {
@@ -328,9 +287,6 @@ class UnitType
 
     /**
      * Check if the given unit is listed in the units list
-     * 
-     * @param  string $unit
-     * @return bool
      */
     public static function isListedUnit(string $unit): bool
     {
@@ -338,10 +294,8 @@ class UnitType
     }
 
     /**
-     * Resolve the given unit class 
-     * 
-     * @param  string $unit
-     * @return UnitType
+     * Resolve the given unit class
+     *
      */
     public static function resolveUnit(string $unit): UnitType
     {
@@ -351,23 +305,14 @@ class UnitType
 
     /**
      * Check if current unit has the given rule name
-     * 
-     * @param  string $ruleName
-     * @return bool
      */
     public function hasRule(string $ruleName): bool
     {
-        foreach ($this->rules as $rule) {
-            if ($rule->name() === $ruleName) return true;
-        }
-
-        return false;
+        return array_any($this->rules, fn($rule) => $rule->name() === $ruleName);
     }
 
     /**
      * Get Errors List
-     * 
-     * @return array
      */
     public function errorsList(): array
     {

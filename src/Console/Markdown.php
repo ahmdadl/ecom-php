@@ -8,6 +8,10 @@ use HZ\Illuminate\Mongez\Console\Traits\EngezTrait;
 
 class Markdown
 {
+    /**
+     * @var array<string, mixed>
+     */
+    public $info;
     use EngezTrait;
 
     /**
@@ -32,9 +36,7 @@ class Markdown
     protected $content;
 
     /**
-     * For setting required data to generate MarkDown file
-     * 
-     * @param array $data  
+     * For setting required data to generate MarkDown file 
      */
     public function __construct(array $data)
     {

@@ -71,8 +71,7 @@ class Mongez
 
     /**
      * Set request locale code
-     * 
-     * @param  string $requestLocaleCode
+     *
      * @return void
      */
     public static function setRequestLocaleCode(string $requestLocaleCode)
@@ -97,9 +96,6 @@ class Mongez
      * so persistent workers (e.g. Laravel Octane) do not leak the previous
      * request's locale to the next one. The application locale itself is left
      * untouched in that case.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return void
      */
     public static function setLocaleFromRequest(Request $request): void
     {
@@ -119,8 +115,6 @@ class Mongez
 
     /**
      * Check if request has a locale code key
-     * 
-     * @return bool
      */
     public static function requestHasLocaleCode(): bool
     {
@@ -129,8 +123,6 @@ class Mongez
 
     /**
      * Get request locale code
-     * 
-     * @return string
      */
     public static function getRequestLocaleCode(): string
     {
@@ -147,8 +139,6 @@ class Mongez
 
     /**
      * Check if package is installed
-     * 
-     * @return bool
      */
     public static function isInstalled(): bool
     {
@@ -254,8 +244,7 @@ class Mongez
 
     /**
      * Append value to an arrayable key
-     * 
-     * @param  string $key
+     *
      * @param  mixed $value
      * @return void
      */
@@ -314,8 +303,6 @@ class Mongez
 
     /**
      * Get current app type
-     * 
-     * @return string
      */
     public static function appType(): string
     {

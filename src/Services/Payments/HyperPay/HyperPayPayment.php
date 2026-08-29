@@ -154,8 +154,6 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Get access token based on current environment
-     * 
-     * @return string
      */
     private function getAccessToken(): string
     {
@@ -165,8 +163,7 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Get entity id of the given payment method
-     * 
-     * @param string $paymentMethod
+     *
      * @return string
      * @throws InvalidPaymentMethodException
      */
@@ -178,7 +175,7 @@ class HyperPayPayment implements PaymentMethodInterface
             throw new InvalidPaymentMethodException(sprintf('Invalid payment method %s.', $paymentMethod));
         }
 
-        if ($paymentMethod == 'MASTER') {
+        if ($paymentMethod === 'MASTER') {
             $paymentMethod = 'VISA';
         }
 
@@ -187,8 +184,6 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Check if current status of payment is sandbox mode
-     * 
-     * @return bool
      */
     private function isSandboxMode(): bool
     {
@@ -197,8 +192,6 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Check if current status of payment is sandbox mode
-     * 
-     * @return bool
      */
     private function isLiveMode(): bool
     {
@@ -207,11 +200,10 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Get payment response status
-     * 
+     *
      * @param int     $orderId
      * @param string  $hyperPayId
      * @param string  $paymentMethod
-     * @return PaymentGatewayResponse
      */
     public function confirm($orderId, $hyperPayId, $paymentMethod): PaymentGatewayResponse
     {
@@ -256,8 +248,7 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Log the given data
-     * 
-     * @param array $data
+     *
      * @return void
      */
     private function log(array $data)
@@ -286,10 +277,7 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Send the given request
-     * 
-     * @param string $route
-     * @param array $options
-     * @param string $requestMethod
+     *
      * @return array|object
      */
     private function send(string $route, array $options, string $requestMethod = 'POST')
@@ -315,8 +303,7 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Get settings value
-     * 
-     * @param string $key
+     *
      * @param mixed $default
      * @return mixed
      */

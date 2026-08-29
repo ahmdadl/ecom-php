@@ -12,7 +12,6 @@ trait Translatable
      * Translate message from modules dynamically
      *
      * @param  array<int, mixed> $args
-     * @return mixed
      */
     public function __call($method, $args): mixed
     {

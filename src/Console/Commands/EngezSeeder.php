@@ -23,9 +23,8 @@ class EngezSeeder extends EngezGeneratorCommand implements EngezInterface
     protected $description = 'Create new seed file to the given module';
 
     /**
-     * The seeder class name 
-     * 
-     * @var string
+     * The seeder class name
+     *
      */
     protected string $seederClass;
 
@@ -84,7 +83,7 @@ class EngezSeeder extends EngezGeneratorCommand implements EngezInterface
             '{{ repository }}' => $this->option('repository'),
         ];
 
-        $this->putFile("Database/Seeders/{$this->seederClass}.php", $this->replaceStub('Seeders/seeder', $replacements), 'Seeder');
+        $this->putFile("Database/Seeders/{$this->seederClass}.php", $this->replaceStub('Seeders/seeder', $replacements));
 
         $this->updateBaseSeedersClass();
     }

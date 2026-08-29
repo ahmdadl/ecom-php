@@ -43,9 +43,8 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
     protected $description = 'Make new model to specific module';
 
     /**
-     * The model name 
-     * 
-     * @var string
+     * The model name
+     *
      */
     protected string $modelName;
 
@@ -138,7 +137,7 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
             '{{ data }}' => $this->stubData($data, "\t//"),
         ];
 
-        $this->putFile("Models/$modelName.php", $this->replaceStub('Models/model', $replaces), 'Model');
+        $this->putFile("Models/$modelName.php", $this->replaceStub('Models/model', $replaces));
     }
 
     /**

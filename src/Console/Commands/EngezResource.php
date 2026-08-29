@@ -25,8 +25,6 @@ class EngezResource extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Resource name
-     *
-     * @var string
      */
     protected string $resourceName;
 
@@ -111,6 +109,6 @@ class EngezResource extends EngezGeneratorCommand implements EngezInterface
             $replacements["{{ $type }}"] = $data;
         }
 
-        $this->putFile("Resources/$resourceName.php", $this->replaceStub('Resources/resource', $replacements), 'Resource');
+        $this->putFile("Resources/$resourceName.php", $this->replaceStub('Resources/resource', $replacements));
     }
 }

@@ -11,19 +11,13 @@ use Exception;
 
 class Unique
 {
-    /**
-     * @var array
-     */
     protected array $parameters = ['table', 'column', 'ignoreValue'];
 
     /**
      * Determine if the validation rule passes.
      *
-     * @param string $attribute
      * @param mixed $value
      * @param $parameters
-     * @param Validator $validator
-     * @return bool
      * @throws Exception
      */
     public function passes(string $attribute, $value, $parameters, Validator $validator): bool
@@ -33,7 +27,7 @@ class Unique
         $countCheck = DB::table($this->parameters['table'])->where($this->parameters['column'], $value)->where($this->parameters['ignoreColumn'] ?? 'nid', '!=', (int) $this->parameters['ignoreValue'])->count();
 
         if ($countCheck) {
-            $validator->errors()->add($attribute, trans('validation.unique', ['attribute' => trans("validation.attributes.${attribute}")]));
+            $validator->errors()->add($attribute, trans('validation.unique', ['attribute' => trans("validation.attributes.{$attribute}")]));
 
             return false;
         }
@@ -44,7 +38,6 @@ class Unique
     /**
      * Validate required parameters and combine the parameters.
      *
-     * @param array $parameters
      * @return void
      * @throws Exception
      */

@@ -21,7 +21,6 @@ trait EngezTrait
 
         $createFile = true;
         if ($this->files->exists($filePath)) {
-            $createFile = false;
             $createFile = $this->confirm($fileType . ' exists, override it?');
         }
 
@@ -43,9 +42,6 @@ trait EngezTrait
 
     /**
      * Get the final path of the module for the given relative path
-     * 
-     * @param   string $relativePath
-     * @return  string 
      */
     protected function modulePath(string $relativePath): string
     {
@@ -60,8 +56,7 @@ trait EngezTrait
 
     /**
      * Check if the given directory path is not created, if so then create one
-     * 
-     * @param  string $directoryPath
+     *
      * @return  void
      */
     public function makeDirectory(string $directoryPath)
@@ -86,11 +81,8 @@ trait EngezTrait
 
     /**
      * Display the given error message then terminate the request
-     * 
-     * @param  string $message
-     * @return void
      */
-    protected function terminate(string $message)
+    protected function terminate(string $message): never
     {
         $this->error($message);
         die();
@@ -98,9 +90,6 @@ trait EngezTrait
 
     /**
      * Get a repository shortcut name based on the given module name
-     * 
-     * @param  string $module
-     * @return string 
      */
     public function repositoryShortcutName(string $module): string
     {
@@ -139,9 +128,6 @@ trait EngezTrait
 
     /**
      * Get options values for the given array
-     * 
-     * @param  array $keys
-     * @return array
      */
     protected function optionsValues(array $keys): array
     {
@@ -174,15 +160,13 @@ trait EngezTrait
         try {
             $permissionsRepo = repo('permissions');
             $permissionsRepo->insertModulePermissions($this->moduleName);
-        } catch (\Throwable $th) {
+        } catch (\Throwable) {
             // this wil silent the not found repository if there is no permissions repository 
         }
     }
 
     /**
      * Update configurations
-     *
-     * @return void
      */
     protected function updateConfig(): void
     {
@@ -209,8 +193,6 @@ trait EngezTrait
 
     /**
      * Update configurations
-     *
-     * @return void
      */
     protected function updateServiceProviderConfig(): void
     {

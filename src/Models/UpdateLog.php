@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Models;
 
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model;

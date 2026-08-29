@@ -25,8 +25,6 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * The resource name.
-     *
-     * @var string
      */
     protected string $traitName;
 
@@ -127,8 +125,6 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Determine if current generated trait is request validation trait.
-     *
-     * @return bool
      */
     protected function isRequestTrait(): bool
     {
@@ -137,8 +133,6 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
 
     /**
      * Determine if current generated trait is general trait.
-     *
-     * @return bool
      */
     protected function isGeneralTrait(): bool
     {

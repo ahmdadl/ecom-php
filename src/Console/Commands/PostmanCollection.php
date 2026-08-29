@@ -135,7 +135,7 @@ class PostmanCollection extends Command
             File::makeDirectory($postmanDirectory, 0755, true, true);
         }
 
-        $fileName = $fileName . "-v{$this->newVersion()}";
+        $fileName .= "-v{$this->newVersion()}";
 
         file_put_contents($postmanDirectory . "/$fileName.postman.json", json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 

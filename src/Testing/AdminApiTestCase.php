@@ -8,8 +8,6 @@ abstract class AdminApiTestCase extends ApiTestCase
 {
     /**
      * If marked as true, a bearer token will be passed with Bearer in the Authorization Header
-     *
-     * @var bool|null
      */
     protected ?bool $isAuthenticated = true;
 
@@ -22,8 +20,6 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Module route
-     * 
-     * @var string
      */
     protected string $route = '';
 
@@ -36,9 +32,6 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Get full data but replace the given array keys
-     * 
-     * @param array $newData
-     * @return array
      */
     protected function fullDataReplace(array $newData): array
     {
@@ -47,9 +40,6 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Get full data except the given keys
-     * 
-     * @param array $exceptKeys
-     * @return array
      */
     protected function fullDataExcept(array $exceptKeys): array
     {
@@ -58,9 +48,6 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Merge the given array with the full data
-     * 
-     * @param array $otherData
-     * @return array
      */
     protected function fullDataWith(array $otherData): array
     {
@@ -69,8 +56,6 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Get request route
-     * 
-     * @return string
      */
     protected function getRoute(): string
     {
@@ -80,8 +65,6 @@ abstract class AdminApiTestCase extends ApiTestCase
     /**
      * Define the full data that should be fully valid.
      * This includes required and optional data
-     * 
-     * @return array
      */
     protected function fullData(): array
     {

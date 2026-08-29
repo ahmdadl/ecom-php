@@ -40,8 +40,6 @@ abstract class TestCase extends Testbench
 
     /**
      * Mark mongez as installed to skip prepareForFirstTime() console boot steps
-     *
-     * @return void
      */
     protected function markMongezAsInstalled(): void
     {
@@ -58,9 +56,6 @@ abstract class TestCase extends Testbench
 
     /**
      * Drop the given collections from the test database
-     *
-     * @param string ...$collections
-     * @return void
      */
     protected function dropCollections(string ...$collections): void
     {

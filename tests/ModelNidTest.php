@@ -70,8 +70,8 @@ final class ModelNidTest extends TestCase
 
     public function test_get_nid_returns_next_counter_value_for_unsaved_models(): void
     {
-        $firstPeekedNid = (new Product())->getNid();
-        $secondPeekedNid = (new Product())->getNid();
+        $firstPeekedNid = new Product()->getNid();
+        $secondPeekedNid = new Product()->getNid();
 
         $this->assertIsInt($firstPeekedNid);
         $this->assertSame($firstPeekedNid, $secondPeekedNid);
