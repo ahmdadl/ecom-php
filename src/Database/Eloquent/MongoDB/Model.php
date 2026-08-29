@@ -342,7 +342,7 @@ abstract class Model extends BaseModel
         // but mongodb/laravel-mongodb v5 aliases root-level `id` fields to `_id`
         // on query builder writes, which would corrupt those documents or fail on
         // immutable _id, so the counter is written directly through the driver.
-        $idsCollection = (new static)->getConnection()->getMongoDB()->selectCollection('ids');
+        $idsCollection = (new static)->getConnection()->getDatabase()->selectCollection('ids');
 
         if (!$lastId) {
             $idsCollection->insertOne([

@@ -2,7 +2,6 @@
 
 namespace HZ\Illuminate\Mongez\Providers;
 
-use HZ\Illuminate\Mongez\Database\Query\Grammars\CustomMongoGrammar;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Carbon\CarbonImmutable;
@@ -75,6 +74,13 @@ class MongezServiceProvider extends ServiceProvider
     protected $config = [];
 
     /**
+     * Guard against pushing the request middleware more than once (i.e Octane workers)
+     *
+     * @var bool
+     */
+    protected static bool $middlewarePushed = false;
+
+    /**
      * Bootstrap any application services.
      *
      * @return void
@@ -89,7 +95,11 @@ class MongezServiceProvider extends ServiceProvider
         $this->makeCarbonImmutable();
 
         if (!$this->app->runningInConsole()) {
-            $this->app->make(HttpKernel::class)->pushMiddleware(MongezRequestMiddleware::class);
+            if (!static::$middlewarePushed) {
+                $this->app->make(HttpKernel::class)->pushMiddleware(MongezRequestMiddleware::class);
+
+                static::$middlewarePushed = true;
+            }
 
             return;
         }

@@ -71,7 +71,7 @@ class MongezTestCommand extends Command
 
         DB::reconnect();
 
-        $db = DB::connection('mongodb')->getMongoDB();
+        $db = DB::connection('mongodb')->getDatabase();
 
         $this->info(sprintf('Dropping Testing Database <comment>%s</comment>', $databaseTest));
 
