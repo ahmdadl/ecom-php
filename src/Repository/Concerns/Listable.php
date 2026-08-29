@@ -26,14 +26,14 @@ trait Listable
     /**
      * Options list
      *
-     * @param array
+     * @var array<string, mixed>
      */
     protected $options = [];
 
     /**
      * Pagination info
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $paginationInfo = [];
 
@@ -63,7 +63,7 @@ trait Listable
 
         $model = static::MODEL;
 
-        return $model::where($column, $value)->exists();
+        return (new $model)->where($column, $value)->exists();
     }
 
     /**
@@ -132,7 +132,7 @@ trait Listable
     /**
      * Get list of models for the given options
      *
-     * @param  array $options
+     * @param  array<string, mixed> $options
      * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listModels(array $options)
@@ -145,7 +145,7 @@ trait Listable
     /**
      * Get total records based on given options
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return int
      */
     public function total(array $options)
@@ -161,7 +161,7 @@ trait Listable
     /**
      * Initiate listing info
      *
-     * @param  array $options
+     * @param  array<string, mixed> $options
      * @return void
      */
     protected function initiateListing(array $options)
@@ -223,8 +223,8 @@ trait Listable
     /**
      * Get published items
      *
-     * @param array $options
-     * @return Collection
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listPublished(array $options = [])
     {
@@ -237,8 +237,8 @@ trait Listable
      * Alias to listPublished
      *
      * @deprecated
-     * @param array $options
-     * @return Collection
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function published(array $options = [])
     {
@@ -262,7 +262,7 @@ trait Listable
     /**
      * Set pagination info from pagination data
      *
-     * @param object $data
+     * @param \Illuminate\Contracts\Pagination\LengthAwarePaginator $data
      * @return void
      */
     protected function setPaginateInfo($data)
@@ -280,7 +280,7 @@ trait Listable
      * Get pagination info
      *
      * @deprecated use getPaginationInfo instead
-     * @return array $paginationInfo
+     * @return array<string, mixed> $paginationInfo
      */
     public function getPaginateInfo(): array
     {
@@ -290,7 +290,7 @@ trait Listable
     /**
      * Get pagination info
      *
-     * @return array $paginationInfo
+     * @return array<string, mixed> $paginationInfo
      */
     public function getPaginationInfo(): array
     {
@@ -300,7 +300,7 @@ trait Listable
     /**
      * Wrap the given model to its resource
      *
-     * @param \Illuminate\Database\Eloquent\Model|array $model
+     * @param \Illuminate\Database\Eloquent\Model|array<string, mixed> $model
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function wrap($model): JsonResource
@@ -310,14 +310,18 @@ trait Listable
         }
 
         $resource = $this->getResourceClass();
-        return new $resource($model);
+
+        /** @var JsonResource $result */
+        $result = new $resource($model);
+
+        return $result;
     }
 
     /**
      * Wrap the given collection into collection of resources
      *
-     * @param \Illuminate\Support\Collection|array $collection
-     * @return \Illuminate\Http\Resources\Json\ResourceCollection|array
+     * @param \Illuminate\Support\Collection<int, \Illuminate\Database\Eloquent\Model>|array<string, mixed> $collection
+     * @return \Illuminate\Http\Resources\Json\ResourceCollection|array<string, mixed>
      */
     public function wrapMany($collection)
     {
@@ -358,9 +362,14 @@ trait Listable
      * @param   array $orderBy
      * @return  void
      */
+    /**
+     * @param array<string, mixed> $orderBy
+     */
     protected function orderBy(array $orderBy)
     {
         if (empty($orderBy)) return;
+
+        if ($this->query === null) return;
 
         // If there is no zero index in the array
         // it means the order will be for multiple columns
@@ -376,7 +385,7 @@ trait Listable
     /**
      * Set options list
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return void
      */
     protected function setOptions(array $options): void
@@ -422,7 +431,7 @@ trait Listable
     /**
      * Get only one record based on the given options
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return TModel|null
      */
     public function first(array $options)
@@ -445,6 +454,8 @@ trait Listable
             $option = $column;
         }
 
+        if ($this->query === null) return $this;
+
         if ($optionValue = $this->option($option)) {
             $this->query->where($column, $optionValue);
         }
@@ -465,6 +476,8 @@ trait Listable
             $option = $column;
         }
 
+        if ($this->query === null) return $this;
+
         if ($optionValue = $this->option($option)) {
             $this->query->whereIn($column, (array) $optionValue);
         }
@@ -484,6 +497,8 @@ trait Listable
         if (!$option) {
             $option = $column;
         }
+
+        if ($this->query === null) return $this;
 
         if ($optionValue = $this->option($option)) {
             $this->query->whereInInt($column, array_map('intval', (array) $optionValue));
@@ -519,9 +534,9 @@ trait Listable
     /**
      * Decode the array, which should be a string if you're working with mysql
      * or just an array if you work with NO-SQL database
-     * 
+     *
      * @param  mixed $data
-     * @return array
+     * @return array<string, mixed>
      */
     protected function decodeArray($data): array
     {
@@ -543,12 +558,13 @@ trait Listable
     /**
      * Get model for the given id
      *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model $id
+     * @param  int|array<string, mixed>|\Illuminate\Database\Eloquent\Model $id
      * @return TModel|null
      */
     public function getModel($id)
     {
         if ($id instanceof Model) {
+            /** @var TModel $id */
             return $id;
         }
 
@@ -557,9 +573,9 @@ trait Listable
 
     /**
      * Get by the given column name
-     * 
+     *
      * @param  string $column
-     * @param  mixed value
+     * @param  mixed $value
      * @return mixed
      */
     public function getBy($column, $value)
@@ -590,14 +606,14 @@ trait Listable
      * Get the current model by the given column name and value
      *
      * @param  string $column
-     * @param  mixed value
+     * @param  mixed $value
      * @return TModel|null
      */
     public function getByModel($column, $value)
     {
         $model = static::MODEL;
 
-        $query = $model::where($column, $value);
+        $query = (new $model)->where($column, $value);
 
         $this->trigger('fetching', $query);
 
@@ -607,8 +623,8 @@ trait Listable
     /**
      * list all records
      *
-     * @param array $options
-     * @return \Illuminate\Support\Collection
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listAll(array $options = [])
     {
@@ -622,8 +638,8 @@ trait Listable
     /**
      * list all published records
      *
-     * @param array $options
-     * @return \Illuminate\Support\Collection
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listAllPublished(array $options = [])
     {
@@ -635,8 +651,8 @@ trait Listable
     /**
      * list all models
      *
-     * @param array $options
-     * @return \Illuminate\Support\Collection
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listAllModels(array $options)
     {
@@ -648,8 +664,8 @@ trait Listable
     /**
      * list all published models
      *
-     * @param array $options
-     * @return \Illuminate\Support\Collection
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listAllPublishedModels(array $options)
     {
@@ -662,7 +678,7 @@ trait Listable
      * count all records
      * ? alias to total
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return int
      */
     public function count(array $options = [])
@@ -673,7 +689,7 @@ trait Listable
     /**
      * count all published records
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      * @return int
      */
     public function countPublished(array $options = [])

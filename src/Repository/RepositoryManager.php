@@ -432,6 +432,8 @@ abstract class RepositoryManager implements RepositoryInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @return Collection<int, TModel>
      */
     public function list(array $options): Collection
     {
@@ -661,6 +663,14 @@ abstract class RepositoryManager implements RepositoryInterface
      * @return void
      */
     abstract protected function setData($model, Request $request);
+
+    /**
+     * Get the actual column name for the given column in the underlying store.
+     *
+     * @param  string $column
+     * @return string
+     */
+    abstract protected function column(string $column): string;
 
     /**
      * Update record for the given model

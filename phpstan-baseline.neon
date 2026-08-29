@@ -2467,18 +2467,6 @@ parameters:
 			path: src/Events/LogResponse.php
 
 		-
-			message: '#^Access to constant HTTP_CREATED on an unknown class HZ\\Illuminate\\Mongez\\Events\\Response\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Events/ModifyResponse.php
-
-		-
-			message: '#^Access to constant HTTP_OK on an unknown class HZ\\Illuminate\\Mongez\\Events\\Response\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Events/ModifyResponse.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Events\\ModifyResponse\:\:modifyResponse\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2917,7 +2905,7 @@ parameters:
 			path: src/Http/Middleware/MongezRequestMiddleware.php
 
 		-
-			message: '#^Parameter \#1 \$id of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:getModel\(\) expects array\|Illuminate\\Database\\Eloquent\\Model\|int, string given\.$#'
+			message: '#^Parameter \#1 \$id of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:getModel\(\) expects array\<string, mixed\>\|Illuminate\\Database\\Eloquent\\Model\|int, string given\.$#'
 			identifier: argument.type
 			count: 2
 			path: src/Http/RestfulApiController.php
@@ -3607,12 +3595,6 @@ parameters:
 			path: src/Repository/MYSQLRepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\MYSQLRepositoryManager\:\:initiateListing\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/MYSQLRepositoryManager.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$request$#'
 			identifier: parameter.notFound
 			count: 1
@@ -3757,13 +3739,19 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<TModel of Illuminate\\Database\\Eloquent\\Model\>\:\:column\(\)\.$#'
+			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<TModel of Illuminate\\Database\\Eloquent\\Model\>\:\:handleArrayableValue\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<TModel of Illuminate\\Database\\Eloquent\\Model\>\:\:handleArrayableValue\(\)\.$#'
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\LengthAwarePaginator\:\:count\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:whereInInt\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Repository/RepositoryManager.php
@@ -3781,33 +3769,9 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Call to an undefined method object\:\:count\(\)\.$#'
+			message: '#^Call to an undefined method TModel of Illuminate\\Database\\Eloquent\\Model\:\:where\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method object\:\:currentPage\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method object\:\:lastPage\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method object\:\:perPage\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method object\:\:total\(\)\.$#'
-			identifier: method.notFound
-			count: 1
+			count: 2
 			path: src/Repository/RepositoryManager.php
 
 		-
@@ -3820,12 +3784,6 @@ parameters:
 			message: '#^Call to an undefined static method TModel of Illuminate\\Database\\Eloquent\\Model\:\:getTableName\(\)\.$#'
 			identifier: staticMethod.notFound
 			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined static method TModel of Illuminate\\Database\\Eloquent\\Model\:\:where\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 2
 			path: src/Repository/RepositoryManager.php
 
 		-
@@ -3871,12 +3829,6 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Cannot call method orderBy\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Cannot call method paginate\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -3886,24 +3838,6 @@ parameters:
 			message: '#^Cannot call method select\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
 			identifier: method.nonObject
 			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method where\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method whereIn\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Cannot call method whereInInt\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
-			identifier: method.nonObject
-			count: 1
 			path: src/Repository/RepositoryManager.php
 
 		-
@@ -3955,18 +3889,6 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:count\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:countPublished\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:create\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -3985,12 +3907,6 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:decodeArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:fileOptions\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -4003,49 +3919,7 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:first\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getBy\(\) has parameter \$value with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getByModel\(\) has parameter \$value with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getDeleteDependencies\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getModel\(\) has parameter \$id with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getModel\(\) should return \(TModel of Illuminate\\Database\\Eloquent\\Model\)\|null but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getPaginateInfo\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getPaginationInfo\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Repository/RepositoryManager.php
@@ -4069,80 +3943,8 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:initiateListing\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:list\(\) has parameter \$options with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAll\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAll\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAllModels\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAllModels\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAllPublished\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAllPublished\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAllPublishedModels\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listAllPublishedModels\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listModels\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listPublished\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:listPublished\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -4171,26 +3973,14 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:orderBy\(\) has parameter \$orderBy with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:orderBy\(\) has no return type specified\.$#'
+			identifier: missingType.return
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:patch\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:published\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:published\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -4207,14 +3997,8 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:setOptions\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:total\(\) has parameter \$options with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:setPaginateInfo\(\) has parameter \$data with generic interface Illuminate\\Contracts\\Pagination\\LengthAwarePaginator but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -4261,73 +4045,13 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrap\(\) has parameter \$model with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrap\(\) should return Illuminate\\Http\\Resources\\Json\\JsonResource but returns object\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrapMany\(\) has parameter \$collection with generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrapMany\(\) has parameter \$collection with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrapMany\(\) has parameter \$collection with no value type specified in iterable type array\|Illuminate\\Support\\Collection\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrapMany\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:wrapMany\(\) return type has no value type specified in iterable type array\|Illuminate\\Http\\Resources\\Json\\ResourceCollection\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^PHPDoc tag @param has invalid value \(\\Illuminate\\Http\\Request\)\: Unexpected token "\\n     ", expected variable at offset 68 on line 4$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^PHPDoc tag @param has invalid value \(array\)\: Unexpected token "\\n     ", expected variable at offset 50 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^PHPDoc tag @param has invalid value \(array\)\: Unexpected token "\\n     ", expected variable at offset 67 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(mixed value\)\: Unexpected token "value", expected variable at offset 126 on line 5$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^PHPDoc tag @param has invalid value \(mixed value\)\: Unexpected token "value", expected variable at offset 99 on line 5$#'
 			identifier: phpDoc.parseError
 			count: 1
 			path: src/Repository/RepositoryManager.php
@@ -4383,18 +4107,6 @@ parameters:
 		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$eventName has no type specified\.$#'
 			identifier: missingType.property
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$options has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:\$paginationInfo type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
 			count: 1
 			path: src/Repository/RepositoryManager.php
 

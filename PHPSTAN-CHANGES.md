@@ -97,4 +97,51 @@ anyway). Plus one `return.missing` in `RepositoryTrait::__get()`.
   non-existent `File::getJson()`. If any app overrode this, align with the new implementation.
 - The six `set*Information`/`set*Heading` methods are now truly `void`.
 
+---
+
+## Batch 3 — `Listable.php` (54 → 0) + `RepositoryManager` generic `list()` + abstract `column()` (total saved: ~49, 1146 → 1097)
+
+### Root cause
+`Listable` is the trait that powers all repository read/listing. Its errors were mostly untyped
+collections/arrays (PHPStan level 8 requires `array<string, mixed>` and `Collection<int, TModel>`
+value types) plus two real issues:
+- `$model::where(...)` where `$model` is `class-string<TModel>` — PHPStan can't resolve a static call
+  on a generic class-string. Fixed by `(new $model)->where(...)`.
+- `column()` is called in the trait but only defined on the concrete subclasses
+  (`MongoDBRepositoryManager`, `MYSQLRepositoryManager`). Added an abstract declaration on the base.
+
+### Changes (all in `src/Repository/Concerns/Listable.php` unless noted)
+- `@var array<string, mixed>` on the `$options` and `$paginationInfo` properties (was untyped `@param`). `[SAFE]`
+- `has()` and `getByModel()`: `$model::where(...)` → `(new $model)->where(...)`. `[RISK]` (behaviorally
+  identical — instantiates then queries — but creates one extra object per call).
+- All `@param array` / `@return array` → `array<string, mixed>`. `[SAFE]`
+- `listPublished`, `published`, `listAll`, `listAllPublished`, `listAllModels`, `listAllPublishedModels`,
+  `count`, `countPublished`: return type `Collection` → `Collection<int, TModel>` (PHPDoc only —
+  **native** `Collection<int, TModel>` is a syntax error in PHP; `php -l` confirmed). `[SAFE]`
+- `setPaginateInfo()`: `@param object $data` → `@param \Illuminate\Contracts\Pagination\LengthAwarePaginator $data`. `[SAFE]`
+- `getPaginateInfo()` / `getPaginationInfo()` / `decodeArray()`: `@return array` → `array<string, mixed>`. `[SAFE]`
+- `wrap()`: param `Model|array` → `Model|array<string, mixed>`; added `/** @var JsonResource $result */`
+  before `return new $resource($model)` (returns an object, not a JsonResource). `[SAFE]`
+- `wrapMany()`: param `Collection|array` → `Collection<int, Model>|array<string, mixed>`; return
+  `ResourceCollection|array` → `ResourceCollection|array<string, mixed>`. `[SAFE]`
+- `orderBy()`, `where()`, `whereIn()`, `whereInInt()`: added `if ($this->query === null) return;`
+  / `return $this;` guards (`$query` is `Builder|null`). `[RISK]` (these methods were previously
+  silently no-op on a null query; now they return early — behaviorally identical for the normal path,
+  but a null-query call no longer attempts a method on null).
+- `getModel()`: param `int|array|Model` → `int|array<string, mixed>|Model`; added `/** @var TModel $id */`
+  before returning the `Model` on the `instanceof` branch. `[SAFE]`
+- `getBy()` / `getByModel()`: `@param mixed value` typo → `@param mixed $value`. `[SAFE]`
+
+### Changes in `src/Repository/RepositoryManager.php`
+- `list()`: added `@return Collection<int, TModel>` docblock (kept native `: Collection`). `[SAFE]`
+- Added `abstract protected function column(string $column): string;` (right after `abstract protected
+  function setData(...)`). Both subclasses already implement it. `[SAFE]`
+
+### Review notes for app authors
+- `RepositoryManager::column()` is now part of the abstract contract — any custom repository subclass
+  that does not implement `column(string $column): string` will now fail to instantiate. The shipped
+  `MongoDBRepositoryManager` and `MYSQLRepositoryManager` already implement it.
+- `Listable::where()/whereIn()/whereInInt()/orderBy()` now early-return when `$this->query` is null
+  (previously they would have errored at runtime too, so this is strictly safer).
+
 
