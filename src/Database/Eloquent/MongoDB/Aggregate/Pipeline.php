@@ -25,6 +25,8 @@ class Pipeline
 
     /**
      * Pipeline Data
+     *
+     * @var array<int|string, mixed>
      */
     protected $data = [];
 
@@ -44,20 +46,11 @@ class Pipeline
     ];
 
     /**
-     * {@inheritDoc}
-     */
-    public function __construct(Aggregate $aggregationFramework, string $name)
-    {
-        $this->name = $name;
-        $this->aggregationFramework = $aggregationFramework;
-    }
-
-    /**
      * Sum the given column name 
      * Please note this method MUST BE CALLED directly after the group by method 
      * 
-     * @param string|array $columns
-     * @return float   
+     * @param array<int|string, mixed>|string $columns
+     * @return Pipeline
      */
     public function sum($columns)
     {
@@ -81,13 +74,17 @@ class Pipeline
 
     /**
      * Add data to it
-     * 
-     * @param string|array $key
+     *
+     * @param array<int|string, mixed>|int|string|null $key
      * @param mixed $value
      * @return $this
      */
     public function data($key, $value = null): Pipeline
     {
+        if ($key === null) {
+            return $this;
+        }
+
         if (is_array($key)) {
             $this->data = array_merge($this->data, $key);
         } else {
@@ -108,10 +105,9 @@ class Pipeline
     /**
      * Select columns
      * 
-     * @param ...mixed $columns
-     * @return $this
+     * @param mixed ...$columns
      */
-    public function select(...$columns)
+    public function select(...$columns): Pipeline
     {
         if (!in_array($this->name, ['group', 'project'])) {
             return $this->aggregationFramework->select(...$columns);
@@ -142,10 +138,10 @@ class Pipeline
     /**
      * Unselect the given columns
      * 
-     * @param  ...string $columns
+     * @param string ...$columns
      * @return $this
      */
-    public function unselect(...$columns)
+    public function unselect(...$columns): Pipeline
     {
         foreach ($columns as $column) {
             $this->data($column, 0);
@@ -156,16 +152,15 @@ class Pipeline
 
     /**
      * Where clause
-     * 
-     * @param string $column 
-     * @param string $operator|$value 
-     * @param mixed $value
-     * @return Pipeline 
+     *
+     * @return Pipeline
      */
     public function where()
     {
         $arguments = func_get_args();
         $totalArguments = count($arguments);
+
+        $column = $operator = $value = null;
 
         if ($totalArguments == 2) {
             list($column, $value) = $arguments;
@@ -187,16 +182,15 @@ class Pipeline
 
     /**
      * Where clause
-     * 
-     * @param string $column 
-     * @param string $operator|$value 
-     * @param mixed $value
-     * @return Pipeline 
+     *
+     * @return Pipeline
      */
     public function orWhere()
     {
         $arguments = func_get_args();
         $totalArguments = count($arguments);
+
+        $column = $operator = $value = null;
 
         if ($totalArguments == 2) {
             list($column, $value) = $arguments;
@@ -219,9 +213,9 @@ class Pipeline
     /**
      * where in clause
      * 
-     * @param  string $column
-     * @param  array $array 
-     * @return Pipeline      
+     * @param string $column
+     * @param array<int|string, mixed> $array
+     * @return Pipeline
      */
     public function whereIn($column, $array): Pipeline
     {
@@ -238,6 +232,11 @@ class Pipeline
      * @param  string $column
      * @param  array $array 
      * @return Pipeline      
+     */
+    /**
+     * @param string $column
+     * @param array<int> $array
+     * @return Pipeline
      */
     public function whereInInt($column, $array): Pipeline
     {
@@ -273,7 +272,7 @@ class Pipeline
     /**
      * Select columns
      * 
-     * @param ...mixed $columns
+     * @param mixed ...$columns
      * @return $this
      */
     public function count(...$columns): Pipeline
@@ -301,7 +300,7 @@ class Pipeline
      */
     protected function praseDate(DateTimeInterface $date)
     {
-        return new UTCDateTime($date->format('Uv'));
+        return new UTCDateTime((int) $date->format('Uv'));
     }
 
     /**
@@ -317,7 +316,7 @@ class Pipeline
     /**
      * Return the final data of the pipeline
      * 
-     * @return array|string
+     * @return array<int|string, mixed>
      */
     public function getData()
     {
@@ -325,30 +324,46 @@ class Pipeline
     }
 
     /**
-     * @inheritDoc
+     * @param int $number
+     * @return Pipeline
      */
-    public function limit($number)
+    public function limit($number): Pipeline
     {
         $this->data((int) $number);
         return $this;
     }
 
     /**
-     * @inheritDoc
+     * @param int $number
+     * @return Pipeline
      */
-    public function skip($number)
+    public function skip($number): Pipeline
     {
         $this->data((int)$number);
         return $this;
     }
 
     /**
-     * Unwind the given column
-     * 
-     * @param string $column
-     * @return $this
+     * Group by the given columns (delegates to the aggregation framework)
+     *
+     * @param mixed ...$columns
+     * @return Pipeline
      */
-    public function join($from, $localField, $foreignField, $as = null)
+    public function groupBy(...$columns): Pipeline
+    {
+        return $this->aggregationFramework->groupBy(...$columns);
+    }
+
+    /**
+     * Unwind the given column
+     *
+     * @param string $from
+     * @param string $localField
+     * @param string $foreignField
+     * @param string|null $as
+     * @return Pipeline
+     */
+    public function join($from, $localField, $foreignField, $as = null): Pipeline
     {
         if (!$as) $as = $from;
 
@@ -362,9 +377,12 @@ class Pipeline
     }
 
     /**
-     * @inheritDoc
+     * @param string $column
+     * @param mixed $includeArrayIndex
+     * @param mixed $preserveNullAndEmptyArrays
+     * @return Pipeline
      */
-    public function unwind($column, $includeArrayIndex, $preserveNullAndEmptyArrays)
+    public function unwind($column, $includeArrayIndex, $preserveNullAndEmptyArrays): Pipeline
     {
         if ($this->name !== 'unwind') {
             return $this->aggregationFramework->unwind($column);
@@ -382,10 +400,18 @@ class Pipeline
     }
 
     /**
-     * {@inheritDoc}
+     * @param string $name
+     * @param array<int, mixed> $arguments
+     * @return Aggregate
      */
-    public function __call($name, $arguments)
+    public function __call($name, $arguments): Aggregate
     {
-        return call_user_func_array([$this->aggregationFramework, $name], $arguments);
+        /** @var callable $callback */
+        $callback = [$this->aggregationFramework, $name];
+
+        /** @var Aggregate $result */
+        $result = call_user_func_array($callback, $arguments);
+
+        return $result;
     }
 }

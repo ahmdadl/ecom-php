@@ -144,4 +144,53 @@ value types) plus two real issues:
 - `Listable::where()/whereIn()/whereInInt()/orderBy()` now early-return when `$this->query` is null
   (previously they would have errored at runtime too, so this is strictly safer).
 
+---
+
+## Batch 4 — `src/Database/Eloquent/MongoDB/Aggregate/Pipeline.php` (47 → 0) (total saved: ~46, 1097 → 1051)
+
+### Root cause
+`Pipeline` is the MongoDB aggregation pipeline builder. Errors were a mix of untyped collections/arrays,
+`__call` without types, a real type mismatch on `sum()` (docblock said `float`, body returns `$this` for
+fluent chaining), an invalid `UTCDateTime` argument (passed a string instead of int), an undefined
+`groupBy()` (delegated via `__call` to the `Aggregate` object but never explicitly exposed), and several
+docblock params that didn't match the real signatures (`where()`/`orWhere()` read args via `func_get_args`).
+
+### Changes (all in `src/Database/Eloquent/MongoDB/Aggregate/Pipeline.php`)
+- `$data` property `@var array<string, mixed>` → `array<int|string, mixed>`. `[SAFE]`
+- `sum()`: `@param string|array` → `array<int|string, mixed>|string`; `@return float` → `@return Pipeline`
+  (body returns `$this`; was a docblock/impl mismatch). `[RISK]` (return type is now the fluent builder,
+  not the numeric sum — callers that expected a float from `sum()` must now read the result differently;
+  verify any `->sum(...)` usage that consumes the returned number).
+- `select()` / `unselect()` / `count()`: invalid `@param ...mixed` / `...string` → `@param mixed ...$columns`;
+  added native `: Pipeline` return (the methods delegate to `Aggregate` and return the builder). `[SAFE]`
+- `where()` / `orWhere()`: removed the formal `@param` (they use `func_get_args`) and added
+  `$column = $operator = $value = null;` initialization to fix "variable might not be defined". `[RISK]`
+  (initializing to null changes the implicit undefined-var behavior; logic is otherwise identical).
+- `whereIn()`: `@param array $array` → `array<int|string, mixed> $array`; added docblock to `whereInInt()`. `[SAFE]`
+- `praseDate()`: `new UTCDateTime($date->format('Uv'))` → `new UTCDateTime((int) $date->format('Uv'))`
+  (`UTCDateTime` constructor needs an int/timestamp, not a string). `[RISK]` (was passing a string before —
+  this is a latent runtime bug fix).
+- `getData()`: `@return array<string, mixed>` → `array<int|string, mixed>`. `[SAFE]`
+- `limit()` / `skip()`: added `@param int $number` + `: Pipeline`. `[SAFE]`
+- `join()` / `unwind()`: added `@param` types + `: Pipeline`. `[SAFE]`
+- `data()`: `$key` param widened to `array<int|string, mixed>|int|string|null`; added early
+  `if ($key === null) return $this;` guard (prevents passing a null array key through the `where()` path). `[RISK]`
+- Added explicit `groupBy(...$columns): Pipeline` that delegates to
+  `$this->aggregationFramework->groupBy(...)` (fixes the `$this->groupBy()->sum()` chain). `[SAFE]`
+- `__call($name, $arguments): Aggregate` with `@param array<int, mixed> $arguments` and a
+  `/** @var callable $callback */` cast for the `call_user_func_array` call. `[SAFE]`
+
+### Corruption incident (LEARNED LESSON)
+A batch of edits used overlapping anchors (one edited `unwind`'s docblock while another prepended a
+`groupBy` block matching the `@inheritDoc` of `unwind`), producing **duplicate** `groupBy` and `unwind`
+methods and a garbage constructor body in the early copy. Fixed by deleting the spurious early block.
+**Always run `php -l` after batch edits** — overlapping-anchor multi-edits can silently corrupt files.
+
+### Review notes for app authors
+- `Pipeline::sum()` now returns the `Pipeline` (fluent), not the numeric total. If app code does
+  `$total = $pipeline->sum('amount')` expecting a number, this is a behavioral change — adjust accordingly.
+- `Pipeline::praseDate()` now builds `UTCDateTime` from an int timestamp (correct), previously a string.
+- `Pipeline::data()` with a null key now returns `$this` early instead of proceeding.
+
+---
 
