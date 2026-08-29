@@ -1,6 +1,11 @@
 <?php
 namespace HZ\Illuminate\Mongez\Macros\Console;
 
+use Illuminate\Console\Command as IlluminateCommand;
+
+/**
+ * @mixin IlluminateCommand
+ */
 class Command
 {
     /**

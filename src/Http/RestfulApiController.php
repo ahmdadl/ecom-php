@@ -2,12 +2,14 @@
 
 namespace HZ\Illuminate\Mongez\Http;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class RestfulApiController extends ApiController
 {
@@ -52,7 +54,7 @@ abstract class RestfulApiController extends ApiController
      * Get List of records
      *
      * @param  \Illuminate\Http\Request $request
-     * @return string
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -69,7 +71,7 @@ abstract class RestfulApiController extends ApiController
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -88,7 +90,7 @@ abstract class RestfulApiController extends ApiController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -130,7 +132,7 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -192,7 +194,7 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function patch(Request $request, $id)
     {
@@ -248,8 +250,8 @@ abstract class RestfulApiController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int|string $id
-     * @return \Illuminate\Http\Response
+     * @param  string $id
+     * @return Response
      */
     public function destroy($id, Request $request)
     {
@@ -328,14 +330,17 @@ abstract class RestfulApiController extends ApiController
      * Get  options
      *
      * @param \Illuminate\Http\Request $request
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function listOptions(Request $request): array
+    protected function listOptions(Request $request)
     {
         $requestData = $request->all();
 
-        if ($request->sortBy) {
-            $requestData['orderBy'] = [$request->sortBy, $request->sortDirection];
+        $sortBy = $request->input('sortBy');
+        $sortDirection = $request->input('sortDirection');
+
+        if ($sortBy) {
+            $requestData['orderBy'] = [$sortBy, $sortDirection];
         };
 
         return array_merge((array) $this->controllerInfo('listOptions'), $requestData);
@@ -347,9 +352,9 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  int $id
      * @param  \Illuminate\Http\Request $request
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function updateValidation($id, Request $request): array
+    protected function updateValidation($id, Request $request)
     {
         return (array) $this->controllerInfo('rules.update');
     }
@@ -359,9 +364,9 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  int $id
      * @param  \Illuminate\Http\Request $request
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function patchValidation($id, Request $request): array
+    protected function patchValidation($id, Request $request)
     {
         return (array) $this->controllerInfo('rules.patch');
     }
@@ -370,9 +375,9 @@ abstract class RestfulApiController extends ApiController
      * Make custom validation for store
      *
      * @param mixed $request
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function storeValidation($request): array
+    protected function storeValidation($request)
     {
         return (array) $this->controllerInfo('rules.store');
     }
@@ -382,9 +387,9 @@ abstract class RestfulApiController extends ApiController
      *
      * @param mixed $request
      * @param int $id
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function allValidation($request, $id = null): array
+    protected function allValidation($request, $id = null)
     {
         return (array) $this->controllerInfo('rules.all');
     }
@@ -395,7 +400,7 @@ abstract class RestfulApiController extends ApiController
      * If it returns a value, it will be returned instead
      *
      * @param  Request  $request
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     protected function beforeStoring(Request $request)
     {
@@ -408,7 +413,7 @@ abstract class RestfulApiController extends ApiController
      * If it returns a value, it will be returned instead
      *
      * @param  Request  $request
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     protected function beforeAll(Request $request)
     {
@@ -422,7 +427,7 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  Model      $model
      * @param  Request  $request
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     protected function beforeUpdating($model, Request $request)
     {
@@ -436,7 +441,7 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  Model      $model
      * @param  Request  $request
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     protected function beforePatching($model, Request $request)
     {
@@ -450,7 +455,7 @@ abstract class RestfulApiController extends ApiController
      *
      * @param  Model      $model
      * @param  Request  $request
-     * @return array|null
+     * @return array<string, mixed>|null
      */
     protected function beforeDeleting($model, Request $request)
     {

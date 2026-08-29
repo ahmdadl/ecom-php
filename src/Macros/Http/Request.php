@@ -2,9 +2,13 @@
 
 namespace HZ\Illuminate\Mongez\Macros\Http;
 
+use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
+/**
+ * @mixin IlluminateRequest
+ */
 class Request
 {
     /**

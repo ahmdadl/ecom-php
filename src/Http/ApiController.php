@@ -6,6 +6,7 @@ namespace HZ\Illuminate\Mongez\Http;
 
 use HZ\Illuminate\Mongez\Events\Events;
 use HZ\Illuminate\Mongez\Http\ApiResponse;
+use HZ\Illuminate\Mongez\Repository\RepositoryManager;
 use HZ\Illuminate\Mongez\Traits\WithRepositoryAndService;
 use HZ\Illuminate\Mongez\Translation\Traits\Translatable;
 
@@ -31,8 +32,8 @@ abstract class ApiController
     /**
      * Repository Object
      * Can be filled when REPOSITORY_NAME is provided.
-     * 
-     * @var RepositoryInterface
+     *
+     * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
      */
     protected $repository;
 

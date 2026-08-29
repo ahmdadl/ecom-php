@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace HZ\Illuminate\Mongez\Http\Validation;
 
 use Illuminate\Contracts\Validation\Rule;
-use HZ\Illuminate\Mongez\Repository\RepositoryInterface;
+use HZ\Illuminate\Mongez\Repository\RepositoryManager;
 
 class UniqueEmail implements Rule
 {
     /**
      * Repository object
      * 
-     * @var RepositoryInterface
+     * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
      */
     protected $repository;
 

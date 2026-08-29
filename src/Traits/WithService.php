@@ -11,10 +11,12 @@ trait WithService
     /**
      * {@inheritDoc}
      */
-    public function __get($key)
+    public function __get($key): mixed
     {
         if (Str::endsWith($key, 'Service')) {
             return app()->make(Str::studly($key));
         }
+
+        return null;
     }
 }

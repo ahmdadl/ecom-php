@@ -76,7 +76,7 @@ class ApiRequest
     /**
      * Json content
      * 
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $jsonContent = [];
 
@@ -103,10 +103,10 @@ class ApiRequest
     /**
      * Append the given content to the markdown content
      * 
-     * @param  mixed $ocntent
+     * @param  mixed $content
      * @return ApiRequest
      */
-    protected function append($content): ApiRequest
+    protected function append(mixed $content): ApiRequest
     {
         if (!$content) return $this;
 
@@ -119,7 +119,7 @@ class ApiRequest
      * Append the given content but add a new line before it
      * 
      * @param  string $content
-     * @return string
+     * @return ApiRequest
      */
     protected function appendLine($content): ApiRequest
     {
@@ -165,7 +165,7 @@ class ApiRequest
      */
     public function parse(): string
     {
-        $this->jsonContent = File::getJson($this->filePath);
+        $this->jsonContent = json_decode(File::get($this->filePath), true);
 
         $this->setBeforeDocumentHeading();
         $this->setDocumentHeading();
@@ -201,7 +201,7 @@ class ApiRequest
      */
     protected function setBeforeDocumentHeading()
     {
-        return $this->appendLine($this->get(static::ADDTIONAL_CONTENT_BEFORE_HEADING_KEY));
+        $this->appendLine($this->get(static::ADDTIONAL_CONTENT_BEFORE_HEADING_KEY));
     }
 
     /**
@@ -227,7 +227,7 @@ class ApiRequest
      */
     protected function setAfterDocumentHeading()
     {
-        return $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_REQUEST_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_REQUEST_KEY));
     }
 
     /**
@@ -238,7 +238,7 @@ class ApiRequest
      */
     protected function setBeforeRequestInformation()
     {
-        return $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_REQUEST_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_REQUEST_KEY));
     }
 
     /**
@@ -339,7 +339,7 @@ class ApiRequest
     /**
      * Create a table head
      * 
-     * @param arrray $columns
+     * @param array<string, mixed> $columns
      * @return self
      */
     protected function tableHead(array $columns): ApiRequest
@@ -371,7 +371,7 @@ class ApiRequest
     /**
      * Create a table row
      * 
-     * @param arrray $columns
+     * @param array<string, mixed> $columns
      * @return self
      */
     protected function tableRow(array $columns): ApiRequest
@@ -449,7 +449,7 @@ class ApiRequest
      */
     protected function setAfterRequestInformation()
     {
-        return $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_REQUEST_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_REQUEST_KEY));
     }
 
     /**
@@ -460,7 +460,7 @@ class ApiRequest
      */
     protected function setBeforeResponseInformation()
     {
-        return $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_RESPONSE_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_RESPONSE_KEY));
     }
 
     /**
@@ -658,7 +658,7 @@ class ApiRequest
      */
     protected function setAfterResponseInformation()
     {
-        return $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_RESPONSE_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_RESPONSE_KEY));
     }
 
     /**

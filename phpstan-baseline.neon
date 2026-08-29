@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to an undefined static method Illuminate\\Support\\Facades\\File\:\:getJson\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:append\(\) has parameter \$content with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:appendJsonStructure\(\) has parameter \$json with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -37,42 +25,6 @@ parameters:
 			path: src/ApiDocs/ApiRequest.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setAfterDocumentHeading\(\) with return type void returns HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setAfterRequestInformation\(\) with return type void returns HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setAfterResponseInformation\(\) with return type void returns HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setBeforeDocumentHeading\(\) with return type void returns HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setBeforeRequestInformation\(\) with return type void returns HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setBeforeResponseInformation\(\) with return type void returns HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:setResponseBodyJsonStructure\(\) has parameter \$response with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -85,51 +37,15 @@ parameters:
 			path: src/ApiDocs/ApiRequest.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:tableHead\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
+			message: '#^Parameter \#1 \$columns of method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:tableHead\(\) expects array\<string, mixed\>, array\<int, string\> given\.$#'
+			identifier: argument.type
+			count: 4
 			path: src/ApiDocs/ApiRequest.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:tableRow\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$columns with type HZ\\Illuminate\\Mongez\\ApiDocs\\arrray is incompatible with native type array\.$#'
-			identifier: parameter.phpDocType
-			count: 2
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$ocntent$#'
-			identifier: parameter.notFound
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^PHPDoc tag @return with type string is incompatible with native type HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Parameter \$columns of method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:tableHead\(\) has invalid type HZ\\Illuminate\\Mongez\\ApiDocs\\arrray\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Parameter \$columns of method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:tableRow\(\) has invalid type HZ\\Illuminate\\Mongez\\ApiDocs\\arrray\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/ApiDocs/ApiRequest.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:\$jsonContent type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
+			message: '#^Parameter \#1 \$columns of method HZ\\Illuminate\\Mongez\\ApiDocs\\ApiRequest\:\:tableRow\(\) expects array\<string, mixed\>, array\<int, string\> given\.$#'
+			identifier: argument.type
+			count: 4
 			path: src/ApiDocs/ApiRequest.php
 
 		-
@@ -175,7 +91,7 @@ parameters:
 			path: src/Console/Commands/EngezController.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\:\:insertModulePermissions\(\)\.$#'
+			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:insertModulePermissions\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Console/Commands/EngezController.php
@@ -271,12 +187,6 @@ parameters:
 			path: src/Console/Commands/EngezController.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Console/Commands/EngezController.php
-
-		-
 			message: '#^Parameter \#1 \$repositoryName of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:repositoryName\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -327,12 +237,6 @@ parameters:
 		-
 			message: '#^Result of method HZ\\Illuminate\\Mongez\\Console\\Commands\\EngezController\:\:missingRequiredOption\(\) \(void\) is used\.$#'
 			identifier: method.void
-			count: 1
-			path: src/Console/Commands/EngezController.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Console/Commands/EngezController.php
 
@@ -553,7 +457,7 @@ parameters:
 			path: src/Console/Commands/EngezRemove.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\:\:insertModulePermissions\(\)\.$#'
+			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:insertModulePermissions\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Console/Commands/EngezRemove.php
@@ -571,12 +475,6 @@ parameters:
 			path: src/Console/Commands/EngezRemove.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Console/Commands/EngezRemove.php
-
-		-
 			message: '#^Parameter \#1 \$value of static method Illuminate\\Support\\Str\:\:studly\(\) expects string, array\|bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -585,12 +483,6 @@ parameters:
 		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Console\\Commands\\EngezRemove\:\:\$info type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Console/Commands/EngezRemove.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Console/Commands/EngezRemove.php
 
@@ -1039,7 +931,7 @@ parameters:
 			path: src/Console/EngezGeneratorCommand.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\:\:insertModulePermissions\(\)\.$#'
+			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:insertModulePermissions\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Console/EngezGeneratorCommand.php
@@ -1117,12 +1009,6 @@ parameters:
 			path: src/Console/EngezGeneratorCommand.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Console/EngezGeneratorCommand.php
-
-		-
 			message: '#^Result of method HZ\\Illuminate\\Mongez\\Console\\EngezGeneratorCommand\:\:terminate\(\) \(void\) is used\.$#'
 			identifier: method.void
 			count: 1
@@ -1131,12 +1017,6 @@ parameters:
 		-
 			message: '#^Result of method Illuminate\\Console\\Command\:\:info\(\) \(void\) is used\.$#'
 			identifier: method.void
-			count: 1
-			path: src/Console/EngezGeneratorCommand.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Console/EngezGeneratorCommand.php
 
@@ -1195,7 +1075,7 @@ parameters:
 			path: src/Console/Markdown.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\:\:insertModulePermissions\(\)\.$#'
+			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:insertModulePermissions\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Console/Markdown.php
@@ -1237,20 +1117,8 @@ parameters:
 			path: src/Console/Markdown.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Console/Markdown.php
-
-		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Console\\Markdown\:\:\$data type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Console/Markdown.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Console/Markdown.php
 
@@ -1303,7 +1171,7 @@ parameters:
 			path: src/Console/Postman.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\:\:insertModulePermissions\(\)\.$#'
+			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:insertModulePermissions\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: src/Console/Postman.php
@@ -1339,12 +1207,6 @@ parameters:
 			path: src/Console/Postman.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Console/Postman.php
-
-		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Console\\Postman\:\:\$content \(string\) does not accept string\|false\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -1359,12 +1221,6 @@ parameters:
 		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Console\\Postman\:\:\$formDataArray type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Console/Postman.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Console/Postman.php
 
@@ -1883,12 +1739,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Database/Eloquent/MongoDB/Database.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 2
-			path: src/Database/Eloquent/MongoDB/Model.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Connection\:\:getDatabase\(\)\.$#'
@@ -2419,6 +2269,12 @@ parameters:
 			path: src/Database/Seeders/SeederManager.php
 
 		-
+			message: '#^Call to an undefined static method Illuminate\\Database\\Seeder\:\:__get\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: src/Database/Seeders/SeederManager.php
+
+		-
 			message: '#^Constant HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:DOCUMENT_SEEDER type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2473,21 +2329,15 @@ parameters:
 			path: src/Database/Seeders/SeederManager.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
+			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: src/Database/Seeders/SeederManager.php
 
 		-
 			message: '#^Property HZ\\Illuminate\\Mongez\\Database\\Seeders\\SeederManager\:\:\$faker \(Faker\\Factory\) does not accept Faker\\Generator\.$#'
 			identifier: assign.propertyType
 			count: 1
-			path: src/Database/Seeders/SeederManager.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
-			count: 2
 			path: src/Database/Seeders/SeederManager.php
 
 		-
@@ -2617,6 +2467,18 @@ parameters:
 			path: src/Events/LogResponse.php
 
 		-
+			message: '#^Access to constant HTTP_CREATED on an unknown class HZ\\Illuminate\\Mongez\\Events\\Response\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Events/ModifyResponse.php
+
+		-
+			message: '#^Access to constant HTTP_OK on an unknown class HZ\\Illuminate\\Mongez\\Events\\Response\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Events/ModifyResponse.php
+
+		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Events\\ModifyResponse\:\:modifyResponse\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2635,12 +2497,6 @@ parameters:
 			path: src/Events/ModifyResponse.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\:\:wrap\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Events/WithUser.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Events\\WithUser\:\:sendUser\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2649,12 +2505,6 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Events\\WithUser\:\:sendUser\(\) has parameter \$response with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: src/Events/WithUser.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 1
 			path: src/Events/WithUser.php
 
@@ -2941,50 +2791,32 @@ parameters:
 			path: src/Http/AdminUIController.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
-			count: 1
-			path: src/Http/AdminUIController.php
-
-		-
 			message: '#^Variable \$validationRules might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
 			path: src/Http/AdminUIController.php
 
 		-
-			message: '#^Access to parent\:\:class but HZ\\Illuminate\\Mongez\\Http\\ApiController does not extend any class\.$#'
-			identifier: class.noParent
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$data \(array\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
 			count: 2
 			path: src/Http/ApiController.php
 
 		-
-			message: '#^Call to an undefined static method Illuminate\\Support\\Str\:\:removeFirst\(\)\.$#'
-			identifier: staticMethod.notFound
+			message: '#^HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__get\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Http\\ApiController does not extend any class\.$#'
+			identifier: class.noParent
 			count: 1
 			path: src/Http/ApiController.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__call\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__call\(\) has parameter \$args with no type specified\.$#'
-			identifier: missingType.parameter
+			message: '#^HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:getRepository\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Http\\ApiController does not extend any class\.$#'
+			identifier: class.noParent
 			count: 1
 			path: src/Http/ApiController.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__call\(\) has parameter \$method with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:__get\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: src/Http/ApiController.php
 
@@ -3001,68 +2833,8 @@ parameters:
 			path: src/Http/ApiController.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:badRequest\(\) should return string but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:getService\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:getService\(\) has parameter \$key with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:mapResponseError\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:send\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:send\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:success\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:success\(\) should return string but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:successCreate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:successCreate\(\) should return string but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:unauthorized\(\) should return string but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
 			count: 1
 			path: src/Http/ApiController.php
 
@@ -3075,31 +2847,13 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:\$repository \(HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\) does not accept HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:\$repository has unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface as its type\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/ApiController.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
 			count: 2
+			path: src/Http/ApiController.php
+
+		-
+			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
+			identifier: arguments.count
+			count: 1
 			path: src/Http/ApiController.php
 
 		-
@@ -3109,15 +2863,9 @@ parameters:
 			path: src/Http/ApiFormRequest.php
 
 		-
-			message: '#^Call to an undefined static method Illuminate\\Support\\Str\:\:removeFirst\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:__call\(\) has parameter \$args with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
+			message: '#^Deprecated in PHP 8\.4\: Parameter \#1 \$data \(array\) is implicitly nullable via default value null\.$#'
+			identifier: parameter.implicitlyNullable
+			count: 2
 			path: src/Http/ApiFormRequest.php
 
 		-
@@ -3127,37 +2875,7 @@ parameters:
 			path: src/Http/ApiFormRequest.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:mapResponseError\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:send\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:send\(\) has parameter \$headers with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:setIntInputs\(\) has parameter \$inputs with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:success\(\) has parameter \$data with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:successCreate\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
 			path: src/Http/ApiFormRequest.php
@@ -3181,32 +2899,14 @@ parameters:
 			path: src/Http/ApiFormRequest.php
 
 		-
-			message: '#^Parameter \#1 \$data of method HZ\\Illuminate\\Mongez\\Http\\ApiFormRequest\:\:badRequest\(\) expects array, Illuminate\\Support\\MessageBag given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
 			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/Http/ApiFormRequest.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Parameter \#2 \$response of class Illuminate\\Validation\\ValidationException constructor expects Symfony\\Component\\HttpFoundation\\Response\|null, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/ApiFormRequest.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
+			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: src/Http/ApiFormRequest.php
 
@@ -3217,241 +2917,13 @@ parameters:
 			path: src/Http/Middleware/MongezRequestMiddleware.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Http\\Request\:\:\$sortBy\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Http\\Request\:\:\$sortDirection\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method create\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
+			message: '#^Parameter \#1 \$id of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\:\:getModel\(\) expects array\|Illuminate\\Database\\Eloquent\\Model\|int, string given\.$#'
+			identifier: argument.type
 			count: 2
 			path: src/Http/RestfulApiController.php
 
 		-
-			message: '#^Call to method get\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method getModel\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 4
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method getPaginationInfo\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method getTableName\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method list\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method patch\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method update\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Call to method wrap\(\) on an unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\.$#'
-			identifier: class.notFound
-			count: 3
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:allValidation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforeAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforeDeleting\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforePatching\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforeStoring\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforeUpdating\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:destroy\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:destroy\(\) should return Illuminate\\Http\\Response but returns string\.$#'
-			identifier: return.type
-			count: 3
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:listOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:patch\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:patch\(\) should return Illuminate\\Http\\Response but returns string\.$#'
-			identifier: return.type
-			count: 5
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:patchValidation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:show\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:show\(\) should return Illuminate\\Http\\Response but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:store\(\) should return Illuminate\\Http\\Response but returns string\.$#'
-			identifier: return.type
-			count: 6
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:storeValidation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:update\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:update\(\) should return Illuminate\\Http\\Response but returns string\.$#'
-			identifier: return.type
-			count: 6
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:updateValidation\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Parameter \#1 \$data of method HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:badRequest\(\) expects array, Illuminate\\Support\\MessageBag given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Parameter \#1 \$haystack of static method Illuminate\\Support\\Str\:\:contains\(\) expects string, int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Parameter \#2 \$string of function explode expects string, int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Parameter \$model of method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforeDeleting\(\) has invalid type HZ\\Illuminate\\Mongez\\Http\\Model\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Parameter \$model of method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforePatching\(\) has invalid type HZ\\Illuminate\\Mongez\\Http\\Model\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Parameter \$model of method HZ\\Illuminate\\Mongez\\Http\\RestfulApiController\:\:beforeUpdating\(\) has invalid type HZ\\Illuminate\\Mongez\\Http\\Model\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\ApiController\:\:\$repository \(HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\) does not accept HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
-			count: 1
-			path: src/Http/RestfulApiController.php
-
-		-
-			message: '#^Access to parent\:\:class but HZ\\Illuminate\\Mongez\\Http\\UIController does not extend any class\.$#'
+			message: '#^HZ\\Illuminate\\Mongez\\Http\\UIController\:\:__get\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Http\\UIController does not extend any class\.$#'
 			identifier: class.noParent
 			count: 1
 			path: src/Http/UIController.php
@@ -3493,13 +2965,13 @@ parameters:
 			path: src/Http/UIController.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
+			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Http/UIController.php
 
 		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\UIController\:\:\$repository \(HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\) does not accept HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\.$#'
+			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\UIController\:\:\$repository \(HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface\) does not accept HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Http/UIController.php
@@ -3508,12 +2980,6 @@ parameters:
 			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\UIController\:\:\$repository has unknown class HZ\\Illuminate\\Mongez\\Http\\RepositoryInterface as its type\.$#'
 			identifier: class.notFound
 			count: 1
-			path: src/Http/UIController.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
-			count: 2
 			path: src/Http/UIController.php
 
 		-
@@ -3595,16 +3061,16 @@ parameters:
 			path: src/Http/Validation/UniqueEmail.php
 
 		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\Validation\\UniqueEmail\:\:\$repository \(HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\) does not accept Illuminate\\Contracts\\Repositories\\Repository\.$#'
+			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\Validation\\UniqueEmail\:\:\$repository \(HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<Illuminate\\Database\\Eloquent\\Model\>\) does not accept Illuminate\\Contracts\\Repositories\\Repository\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Http/Validation/UniqueEmail.php
 
 		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\Validation\\UniqueEmail\:\:\$repository with generic interface HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface does not specify its types\: TModel$#'
-			identifier: missingType.generics
+			message: '#^Call to an undefined static method Illuminate\\Routing\\Controller\:\:__get\(\)\.$#'
+			identifier: staticMethod.notFound
 			count: 1
-			path: src/Http/Validation/UniqueEmail.php
+			path: src/Http/ViewController.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Http\\ViewController\:\:badRequest\(\) has parameter \$data with no value type specified in iterable type array\.$#'
@@ -3643,46 +3109,10 @@ parameters:
 			path: src/Http/ViewController.php
 
 		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
+			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Http/ViewController.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Http\\ViewController\:\:\$repository with generic interface HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface does not specify its types\: TModel$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/Http/ViewController.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
-			count: 2
-			path: src/Http/ViewController.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Console\\Command\:\:argument\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/Console/Command.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Console\\Command\:\:hasArgument\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/Console/Command.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Console\\Command\:\:hasOption\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/Console/Command.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Console\\Command\:\:option\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/Console/Command.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Macros\\Console\\Command\:\:argumentHasValue\(\) should return bool but returns Closure\.$#'
@@ -3712,18 +3142,6 @@ parameters:
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Macros\\Database\\Query\\Builder\:\:\$model\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Macros/Database/Query/Builder.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Database\\Query\\Builder\:\:orWhere\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Macros/Database/Query/Builder.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Database\\Query\\Builder\:\:where\(\)\.$#'
-			identifier: method.notFound
-			count: 2
 			path: src/Macros/Database/Query/Builder.php
 
 		-
@@ -3775,6 +3193,12 @@ parameters:
 			path: src/Macros/Database/Query/Builder.php
 
 		-
+			message: '#^PHPDoc tag @mixin contains generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Macros/Database/Query/Builder.php
+
+		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$column$#'
 			identifier: parameter.notFound
 			count: 4
@@ -3811,40 +3235,10 @@ parameters:
 			path: src/Macros/Database/Query/Builder.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Database\\Schema\\Blueprint\:\:integer\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: src/Macros/Database/Schema/Blueprint.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Database\\Schema\\Blueprint\:\:softDeletes\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/Database/Schema/Blueprint.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Database\\Schema\\Blueprint\:\:timestamps\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/Database/Schema/Blueprint.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Macros\\Database\\Schema\\Blueprint\:\:loggers\(\) with return type void returns Closure but should not return anything\.$#'
 			identifier: return.void
 			count: 1
 			path: src/Macros/Database/Schema/Blueprint.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\FileSystem\\FileSystem\:\:get\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/FileSystem/FileSystem.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\FileSystem\\FileSystem\:\:put\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Macros/FileSystem/FileSystem.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Macros\\FileSystem\\FileSystem\:\:getJson\(\) has invalid return type HZ\\Illuminate\\Mongez\\Macros\\FileSystem\\stdClass\.$#'
@@ -3895,21 +3289,15 @@ parameters:
 			path: src/Macros/FileSystem/FileSystem.php
 
 		-
+			message: '#^Parameter \#2 \$contents of method Illuminate\\Filesystem\\Filesystem\:\:put\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Macros/FileSystem/FileSystem.php
+
+		-
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Macros\\Http\\Request\:\:\$convertedFiles\.$#'
 			identifier: property.notFound
 			count: 1
-			path: src/Macros/Http/Request.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Http\\Request\:\:get\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Macros/Http/Request.php
-
-		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Http\\Request\:\:server\(\)\.$#'
-			identifier: method.notFound
-			count: 5
 			path: src/Macros/Http/Request.php
 
 		-
@@ -3973,16 +3361,16 @@ parameters:
 			path: src/Macros/Http/Request.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Routing\\Router\:\:apiResource\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Parameter \#2 \$string of function explode expects string, array\|string given\.$#'
+			identifier: argument.type
 			count: 1
-			path: src/Macros/Routing/Router.php
+			path: src/Macros/Http/Request.php
 
 		-
-			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Macros\\Routing\\Router\:\:patch\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, array\|string\|null given\.$#'
+			identifier: argument.type
 			count: 1
-			path: src/Macros/Routing/Router.php
+			path: src/Macros/Http/Request.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Macros\\Routing\\Router\:\:restfulApi\(\) should return Illuminate\\Routing\\PendingResourceRegistration but returns Closure\.$#'
@@ -4081,6 +3469,12 @@ parameters:
 			path: src/Macros/Support/Collection.php
 
 		-
+			message: '#^PHPDoc tag @mixin contains generic class Illuminate\\Support\\Collection but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Macros/Support/Collection.php
+
+		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$callback$#'
 			identifier: parameter.notFound
 			count: 1
@@ -4097,12 +3491,6 @@ parameters:
 			identifier: parameter.notFound
 			count: 2
 			path: src/Macros/Support/Collection.php
-
-		-
-			message: '#^Call to an undefined static method HZ\\Illuminate\\Mongez\\Macros\\Support\\Str\:\:replaceFirst\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/Macros/Support/Str.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Macros\\Support\\Str\:\:removeFirst\(\) should return string but returns Closure\.$#'
@@ -4231,18 +3619,6 @@ parameters:
 			path: src/Repository/MYSQLRepositoryManager.php
 
 		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:disassociate\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:reassociate\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
 			message: '#^Cannot call method where\(\) on Illuminate\\Database\\Eloquent\\Builder\|null\.$#'
 			identifier: method.nonObject
 			count: 1
@@ -4327,24 +3703,6 @@ parameters:
 			path: src/Repository/MongoDBRepositoryManager.php
 
 		-
-			message: '#^Parameter \#1 \$model of method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\<TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\>\:\:setDocumentData\(\) expects TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
-			message: '#^Parameter \#1 \$model of method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\<TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\>\:\:setLocationData\(\) expects TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
-			message: '#^Parameter \#1 \$model of method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\<TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\>\:\:setMultiDocumentData\(\) expects TModel of HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model, Illuminate\\Database\\Eloquent\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Repository/MongoDBRepositoryManager.php
-
-		-
 			message: '#^Parameter \$query of method HZ\\Illuminate\\Mongez\\Repository\\MongoDBRepositoryManager\:\:aggregate\(\) has invalid type HZ\\Illuminate\\Mongez\\Repository\\QueryBuilder\.$#'
 			identifier: class.notFound
 			count: 1
@@ -4399,12 +3757,6 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Access to parent\:\:class but HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not extend any class\.$#'
-			identifier: class.noParent
-			count: 2
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Call to an undefined method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<TModel of Illuminate\\Database\\Eloquent\\Model\>\:\:column\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -4455,12 +3807,6 @@ parameters:
 		-
 			message: '#^Call to an undefined method object\:\:total\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Call to an undefined static method Illuminate\\Support\\Str\:\:removeFirst\(\)\.$#'
-			identifier: staticMethod.notFound
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -4561,6 +3907,18 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
+			message: '#^HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:__get\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not extend any class\.$#'
+			identifier: class.noParent
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
+			message: '#^HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getRepository\(\) calls parent\:\:__get\(\) but HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager does not extend any class\.$#'
+			identifier: class.noParent
+			count: 1
+			path: src/Repository/RepositoryManager.php
+
+		-
 			message: '#^Instantiated class HZ\\Illuminate\\Mongez\\Services\\Images\\ImageResize not found\.$#'
 			identifier: class.notFound
 			count: 2
@@ -4575,12 +3933,6 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:__call\(\) has parameter \$args with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:__get\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -4707,12 +4059,6 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getRequestWithData\(\) has parameter \$data with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:getService\(\) has no return type specified\.$#'
-			identifier: missingType.return
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -4873,18 +4219,6 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:translate\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:translate\(\) has parameter \$args with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\:\:translate\(\) has parameter \$method with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
@@ -5025,17 +4359,11 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/Repository/RepositoryManager.php
 
 		-
 			message: '#^Parameter \#1 \$query of class HZ\\Illuminate\\Mongez\\Database\\Filters\\FilterManager constructor expects Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Query\\Builder, Illuminate\\Database\\Eloquent\\Builder\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Repository/RepositoryManager.php
-
-		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Repository/RepositoryManager.php
@@ -5089,8 +4417,8 @@ parameters:
 			path: src/Repository/RepositoryManager.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
+			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: src/Repository/RepositoryManager.php
 
@@ -5129,18 +4457,6 @@ parameters:
 			identifier: missingType.property
 			count: 1
 			path: src/Repository/Select.php
-
-		-
-			message: '#^Call to an undefined static method Illuminate\\Support\\Str\:\:removeFirst\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:__call\(\) has parameter \$args with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
 
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectArray\(\) has parameter \$collection with no value type specified in iterable type array\.$#'
@@ -5319,13 +4635,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$object_or_class of function method_exists expects object\|string, class\-string\|false given\.$#'
 			identifier: argument.type
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Parameter \#1 \$repository of function repo expects class\-string\<HZ\\Illuminate\\Mongez\\Repository\\RepositoryInterface\>, string given\.$#'
-			identifier: argument.type
-			count: 1
+			count: 2
 			path: src/Resources/JsonResourceManager.php
 
 		-
@@ -5377,8 +4687,8 @@ parameters:
 			path: src/Resources/JsonResourceManager.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function repo$#'
-			identifier: argument.templateType
+			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: src/Resources/JsonResourceManager.php
 
@@ -6169,12 +5479,6 @@ parameters:
 			path: tests/Fixtures/Product.php
 
 		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 3
-			path: tests/JsonResourceTest.php
-
-		-
 			message: '#^Parameter \#1 \$request of method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:toArray\(\) expects Illuminate\\Http\\Request, null given\.$#'
 			identifier: argument.type
 			count: 2
@@ -6184,12 +5488,6 @@ parameters:
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
-			path: tests/ModelNidTest.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 8
 			path: tests/ModelNidTest.php
 
 		-
@@ -6379,14 +5677,14 @@ parameters:
 			path: tests/RecycleBinTest.php
 
 		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 4
+			message: '#^Cannot access property \$record on stdClass\|null\.$#'
+			identifier: property.nonObject
+			count: 1
 			path: tests/RecycleBinTest.php
 
 		-
-			message: '#^Cannot access property \$record on stdClass\|null\.$#'
-			identifier: property.nonObject
+			message: '#^Parameter \#1 \$id of static method HZ\\Illuminate\\Mongez\\Database\\Eloquent\\MongoDB\\Model\:\:findDeleted\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/RecycleBinTest.php
 
@@ -6394,12 +5692,6 @@ parameters:
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$name\.$#'
 			identifier: property.notFound
 			count: 1
-			path: tests/RepositoryTest.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 12
 			path: tests/RepositoryTest.php
 
 		-
@@ -6415,13 +5707,25 @@ parameters:
 			path: tests/RepositoryTest.php
 
 		-
+			message: '#^Parameter \#1 \$id of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\>\:\:get\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/RepositoryTest.php
+
+		-
+			message: '#^Parameter \#1 \$id of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\>\:\:getPublishedModel\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: tests/RepositoryTest.php
+
+		-
+			message: '#^Parameter \#1 \$id of method HZ\\Illuminate\\Mongez\\Repository\\RepositoryManager\<HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\>\:\:publish\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: tests/RepositoryTest.php
+
+		-
 			message: '#^Offset ''db'' might not exist on Illuminate\\Foundation\\Application\|null\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
 			path: tests/TestCase.php
-
-		-
-			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$nid\.$#'
-			identifier: property.notFound
-			count: 2
-			path: tests/UniqueRuleTest.php

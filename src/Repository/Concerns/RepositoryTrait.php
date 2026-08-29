@@ -12,7 +12,7 @@ trait RepositoryTrait
      * @param string $key
      * @return \HZ\Illuminate\Mongez\Repository\RepositoryInterface|mixed|null
      */
-    public function __get($key)
+    public function __get($key): mixed
     {
         $repository = null;
 
@@ -26,9 +26,11 @@ trait RepositoryTrait
             return repo($repository);
         }
 
-        // check if the trait in a sub-class and the parent has __get method 
-        if (class_parents($this) && method_exists(parent::class, '__get')) {
+        // check if the trait in a sub-class and the parent has __get method
+        if (class_parents($this) && method_exists(get_parent_class($this), '__get')) {
             return parent::__get($key);
         }
+
+        return null;
     }
 }

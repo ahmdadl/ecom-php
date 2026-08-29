@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Model as BaseModel;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
 
+/**
+ * @property int|null $nid
+ */
 abstract class Model extends BaseModel
 {
     use RecycleBin, ModelEvents, Associatable, GeneralScopes;

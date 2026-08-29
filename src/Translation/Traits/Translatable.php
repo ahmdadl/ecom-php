@@ -10,18 +10,23 @@ trait Translatable
 {
     /**
      * Translate message from modules dynamically
+     *
+     * @param  array<int, mixed> $args
+     * @return mixed
      */
-    public function __call($method, $args)
+    public function __call($method, $args): mixed
     {
         if (!Str::startsWith($method, 'trans')) {
-            if (method_exists(get_parent_class($this), '__call')) {
-                return call_user_func_array([get_parent_class($this), '__call'], $args);
+            $parent = get_parent_class($this);
+
+            if ($parent !== false && method_exists($parent, '__call')) {
+                return call_user_func_array([$parent, '__call'], $args);
             }
 
-            return;
+            return null;
         }
 
-        $moduleName = Str::removeFirst('trans', $method);
+        $moduleName = Str::replaceFirst('trans', $method);
 
         $fileName = array_shift($args);
 

@@ -39,10 +39,10 @@ trait ApiResponse
     /**
      * Send success data
      *
-     * @param array $data
-     * @return string
+     * @param array<string, mixed> $data
+     * @return Response
      */
-    protected function success($data = null)
+    protected function success(array $data = null)
     {
         $data = $data ?: config('mongez.response.defaults.success', [
             'success' => true,
@@ -58,10 +58,10 @@ trait ApiResponse
     /**
      * Send Success success data
      *
-     * @param array $data
-     * @return string
+     * @param array<string, mixed> $data
+     * @return Response
      */
-    protected function successCreate($data = null)
+    protected function successCreate(array $data = null)
     {
         $data = $data ?: config('mongez.response.defaults.successCreate', [
             'success' => true,
@@ -77,8 +77,8 @@ trait ApiResponse
     /**
      * Send bad request data
      *
-     * @param  array $data
-     * @return string
+     * @param  array|\Illuminate\Support\MessageBag $data
+     * @return Response
      */
     protected function badRequest($data)
     {
@@ -95,9 +95,9 @@ trait ApiResponse
      * Map error based on configurations
      *
      * @param  mixed $data
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function mapResponseError($data)
+    protected function mapResponseError($data): array
     {
         $errorMaxArrayLength = config('mongez.response.error.maxArrayLength', 1);
         $errorStrategy = config('mongez.response.error.strategy', $this->errorAsArray);
@@ -142,7 +142,7 @@ trait ApiResponse
     /**
      * Send not found request data
      *
-     * @param  string $data
+     * @param  mixed $data
      * @return Response
      */
     protected function notFound($data = null)
@@ -164,7 +164,7 @@ trait ApiResponse
      * Unauthorized data
      *
      * @param  mixed $data
-     * @return string
+     * @return Response
      */
     protected function unauthorized($data = null)
     {
@@ -180,9 +180,9 @@ trait ApiResponse
     /**
      * Send Response
      *
-     * @param  array $data
+     * @param  array<string, mixed> $data
      * @param  int $statusCode
-     * @param  array $headers
+     * @param  array<string, mixed> $headers
      * @param  mixed $jsonOptions
      * @return Response
      */

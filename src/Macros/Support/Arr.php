@@ -2,6 +2,11 @@
 
 namespace HZ\Illuminate\Mongez\Macros\Support;
 
+use Illuminate\Support\Arr as IlluminateArr;
+
+/**
+ * @mixin IlluminateArr
+ */
 class Arr
 {
     /**

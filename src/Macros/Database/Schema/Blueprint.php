@@ -2,7 +2,11 @@
 namespace HZ\Illuminate\Mongez\Macros\Database\Schema;
 
 use HZ\Illuminate\Mongez\Helpers\Database\MongoDB\Database;
+use Illuminate\Database\Schema\Blueprint as IlluminateBlueprint;
 
+/**
+ * @mixin IlluminateBlueprint
+ */
 class Blueprint
 {
     /**

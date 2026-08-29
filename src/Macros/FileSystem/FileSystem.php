@@ -1,6 +1,11 @@
 <?php
 namespace HZ\Illuminate\Mongez\Macros\FileSystem;
 
+use Illuminate\Filesystem\Filesystem as IlluminateFilesystem;
+
+/**
+ * @mixin IlluminateFilesystem
+ */
 class FileSystem
 {
     /**

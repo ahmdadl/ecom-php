@@ -2,7 +2,11 @@
 namespace HZ\Illuminate\Mongez\Macros\Support;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection as IlluminateCollection;
 
+/**
+ * @mixin IlluminateCollection
+ */
 class Collection
 {
     /**

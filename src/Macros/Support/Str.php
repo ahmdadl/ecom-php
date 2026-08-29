@@ -1,6 +1,11 @@
 <?php
 namespace HZ\Illuminate\Mongez\Macros\Support;
 
+use Illuminate\Support\Str as IlluminateStr;
+
+/**
+ * @mixin IlluminateStr
+ */
 class Str
 {
     /**

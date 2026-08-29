@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
 use MongoDB\BSON\UTCDateTime;
 use HZ\Illuminate\Mongez\Events\Events;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
-use HZ\Illuminate\Mongez\Repository\RepositoryInterface;
+use HZ\Illuminate\Mongez\Repository\RepositoryManager;
 use HZ\Illuminate\Mongez\Repository\NotFoundRepositoryException;
 
 if (!function_exists('is_json')) {
@@ -98,12 +98,11 @@ if (!function_exists('pred')) {
 if (!function_exists('repo')) {
     /**
      * Get repository object for the given repository name
-     * 
-     * @template T of \HZ\Illuminate\Mongez\Repository\RepositoryInterface
-     * @param class-string<T> $repository
-     * @return T
+     *
+     * @param string $repository
+     * @return RepositoryManager<\Illuminate\Database\Eloquent\Model>
      */
-    function repo(string $repository): \HZ\Illuminate\Mongez\Repository\RepositoryInterface
+    function repo(string $repository)
     {
         $repositoryClass = config('mongez.repositories.' . $repository);
 

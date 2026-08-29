@@ -1,6 +1,11 @@
 <?php
 namespace HZ\Illuminate\Mongez\Macros\Routing;
 
+use Illuminate\Routing\Router as IlluminateRouter;
+
+/**
+ * @mixin IlluminateRouter
+ */
 class Router
 {
     /**

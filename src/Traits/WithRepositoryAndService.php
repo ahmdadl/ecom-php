@@ -20,7 +20,7 @@ trait WithRepositoryAndService
     /**
      * {@inheritDoc}
      */
-    public function __get($key)
+    public function __get($key): mixed
     {
         $return = $this->getService($key);
 
@@ -30,8 +30,8 @@ trait WithRepositoryAndService
 
         if ($return) return $return;
 
-        // check if the trait in a sub-class and the parent has __get method 
-        if (class_parents($this) && method_exists(parent::class, '__get')) {
+        // check if the trait in a sub-class and the parent has __get method
+        if (class_parents($this) && method_exists(get_parent_class($this), '__get')) {
             return parent::__get($key);
         }
 

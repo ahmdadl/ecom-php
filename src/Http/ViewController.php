@@ -7,7 +7,7 @@ use Illuminate\Support\MessageBag;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 use HZ\Illuminate\Mongez\Events\Events;
-use HZ\Illuminate\Mongez\Repository\RepositoryInterface;
+use HZ\Illuminate\Mongez\Repository\RepositoryManager;
 use HZ\Illuminate\Mongez\Repository\Concerns\RepositoryTrait;
 
 abstract class ViewController extends Controller
@@ -32,7 +32,7 @@ abstract class ViewController extends Controller
     /**
      * Repository OBject
      * 
-     * @var RepositoryInterface
+     * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
      */
     protected $repository = null;
 

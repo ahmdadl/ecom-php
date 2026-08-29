@@ -4,7 +4,11 @@ namespace HZ\Illuminate\Mongez\Macros\Database\Query;
 
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
+/**
+ * @mixin EloquentBuilder
+ */
 class Builder
 {
     /**
