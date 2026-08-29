@@ -194,3 +194,51 @@ methods and a garbage constructor body in the early copy. Fixed by deleting the 
 
 ---
 
+## Batch #5 — `JsonResourceManager.php` (39 → 0)
+
+Goal: type the resource manager so PHPStan stops flagging untyped arrays, untyped params, a wrong
+`Request` import, a native return-type typo, and an undefined-variable access.
+
+### Changes
+- **7 property `@var` fixes** `[SAFE]`:
+  - `$data` → `array<string, mixed>`
+  - `$disabledKeys` / `$allowedKeys` / `$baseDisabledKeys` / `$baseAllowedKeys` → `array<int|string, mixed>`
+  - `$subClassesCache` → `array<int|string, mixed>|null`
+  - `$assetsUrlFunction` → `callable` (lets `call_user_func` accept it at L809/L814)
+- **Return types** `[SAFE]`:
+  - `subClasses()` `@return array` → `array<int, string>`
+  - `toArray($request)` param typed `\Illuminate\Http\Request $request`, `@return array` → `array<string, mixed>`
+  - `info()` `@return array` → `array<string, mixed>`
+- **`remove()` / `disable()` / `only()`** docblock `@param string ...$keys`/invalid → `@param mixed ...$keys`, native `: void`. `[RISK]` (docblock only; behavior unchanged)
+- **`assetsFunction()`** `@return string` → `@return callable`, removed native `: string`. `[RISK]` (callers now expect a callable)
+- **`assetsUrl()`** simplified to `call_user_func(static::assetsFunction(), $path)`. `[SAFE]`
+- **`collectDates()`** docblock `@return JsonResourceManage` (TRUNCATED TYPO) → `@return JsonResourceManager`. `[RISK]` (was a real bug: native return type was `JsonResourceManage`; fixed so return statements typecheck)
+- **`extend($request)`** docblock `@param \Request` → `@param \Illuminate\Http\Request` + native `protected function extend(\Illuminate\Http\Request $request)`. `[RISK]` (was resolving to a non-existent `HZ\Illuminate\Mongez\Resources\Request`; fixes call sites passing a real `Illuminate\Http\Request`)
+- **Bulk `@param array` → `array<int|string, mixed>`** (15 occurrences via sed): `collectArray`, `collectData`, `setData`, `collectStringData`, `collectIntegerData`, `collectFloatData`, `collectLocationData`, `collectBooleanData`, `collectObjectData`, `collectLocalized`, `collectLocalizedCollection`, `collectLocalizedResources`, `collectAssets`, `collectCollectables`, `collectResources`. `[SAFE]`
+- **`locale($column)`** native `string $column`. `[SAFE]`
+- **`localeResource($column)`** native `array $column` + docblock `array<int|string, mixed> $column` + `: mixed`. `[SAFE]`
+- **`$localizedValue['text'] ?? ''` → `$value[$localeCode]['text'] ?? ''`** (2 occurrences). `[RISK]` (was referencing an undefined variable on one branch)
+- **`setDate()`** native `string $column, $value, array $options = []` + docblock `array<int|string, mixed> $options`. `[SAFE]`
+- **`new Fluent($item)` → `new Fluent((array) $item)`**. `[RISK]` (was passing a possibly-string value)
+- **Widened helper params to `int|string`** (cascade fix for `'expects string, int|string given'`): `value()`, `set()`, `ignoreEmptyColumn()`, `collect()`, `setResource()`. `[RISK]` (widened param types)
+- **3 nullable fixes (regression from tightening params)** `[RISK]`:
+  - `toArray(?\Illuminate\Http\Request $request = null)`
+  - `extend(?\Illuminate\Http\Request $request = null)`
+  - property `$request` docblock `@var \Illuminate\Http\Request|null`
+  - (Tests call `toArray()` / `extend()` with a `null` request; without these, `composer test` threw `TypeError`.)
+
+### CRITICAL gotchas learned (carry forward)
+- **No native union key types**: `array<int|string, mixed>` is NOT valid as a native type hint
+  (PHP allows only one key type). Use PHPDoc `@param array<int|string, mixed>` and keep the native hint
+  plain `array`.
+- **Tightening a param must stay nullable** if any call site passes `null` — otherwise runtime `TypeError`.
+- **Native generics still banned** (`Collection<int, TModel>` as native return → syntax error); PHPDoc only.
+
+### Review notes for app authors
+- `assetsFunction()` is now declared to return `callable`, not `string` — override return types accordingly.
+- `extend()` / `toArray()` accept `null` request (preserved), but their type is now `?\Illuminate\Http\Request`.
+- `$localizedValue` reference replaced by the explicit `$value[$localeCode]['text']` — verify localized
+  resource output shape is still correct.
+- `setDate()` `$options` is now explicitly `array`.
+
+

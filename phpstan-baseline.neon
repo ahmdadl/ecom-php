@@ -3949,174 +3949,6 @@ parameters:
 			path: src/Repository/Select.php
 
 		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectArray\(\) has parameter \$collection with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectAssets\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectBooleanData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectCollectables\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectDates\(\) has invalid return type HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManage\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectDates\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectFloatData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectIntegerData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectLocalized\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectLocalizedCollection\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectLocalizedResources\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectLocationData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectObjectData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectResources\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:collectStringData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:disable\(\) has parameter \$keys with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:info\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:locale\(\) has parameter \$column with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:localeResource\(\) has parameter \$column with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:only\(\) has parameter \$keys with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:setData\(\) has parameter \$columns with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:setDate\(\) has parameter \$options with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:subClasses\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:toArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^PHPDoc tag @return with type HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManage is not subtype of native type HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Parameter \#1 \$attributes of class Illuminate\\Support\\Fluent constructor expects iterable\<\(int\|string\), mixed\>, array\<mixed, mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Parameter \#1 \$callback of function call_user_func expects callable\(\)\: mixed, string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/Resources/JsonResourceManager.php
-
-		-
 			message: '#^Parameter \#1 \$callback of function call_user_func_array expects callable\(\)\: mixed, array\{class\-string, ''__call''\} given\.$#'
 			identifier: argument.type
 			count: 1
@@ -4129,62 +3961,8 @@ parameters:
 			path: src/Resources/JsonResourceManager.php
 
 		-
-			message: '#^Parameter \#1 \$request of method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:extend\(\) expects Request, Illuminate\\Http\\Request given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Parameter \$request of method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:extend\(\) has invalid type Request\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:\$allowedKeys type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:\$baseAllowedKeys type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:\$baseDisabledKeys type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:\$data type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:\$disabledKeys type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Property HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:\$subClassesCache type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
 			message: '#^Static method Illuminate\\Support\\Str\:\:replaceFirst\(\) invoked with 2 parameters, 3 required\.$#'
 			identifier: arguments.count
-			count: 1
-			path: src/Resources/JsonResourceManager.php
-
-		-
-			message: '#^Variable \$localizedValue on left side of \?\? is never defined\.$#'
-			identifier: nullCoalesce.variable
 			count: 1
 			path: src/Resources/JsonResourceManager.php
 
@@ -4243,6 +4021,12 @@ parameters:
 			path: src/Testing/ApiTestCase.php
 
 		-
+			message: '#^Call to an undefined method object\:\:setUp\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Testing/ApiTestCase.php
+
+		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Testing\\ApiTestCase\:\:accessTokenSettings\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -4287,6 +4071,12 @@ parameters:
 		-
 			message: '#^Method HZ\\Illuminate\\Mongez\\Testing\\ApiTestCase\:\:callTest\(\) has invalid return type HZ\\Illuminate\\Mongez\\Testing\\ApTestCase\.$#'
 			identifier: class.notFound
+			count: 1
+			path: src/Testing/ApiTestCase.php
+
+		-
+			message: '#^Method HZ\\Illuminate\\Mongez\\Testing\\ApiTestCase\:\:callTest\(\) should return HZ\\Illuminate\\Mongez\\Testing\\ApTestCase but returns object\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Testing/ApiTestCase.php
 
@@ -4967,12 +4757,6 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: tests/Fixtures/Product.php
-
-		-
-			message: '#^Parameter \#1 \$request of method HZ\\Illuminate\\Mongez\\Resources\\JsonResourceManager\:\:toArray\(\) expects Illuminate\\Http\\Request, null given\.$#'
-			identifier: argument.type
-			count: 2
-			path: tests/JsonResourceTest.php
 
 		-
 			message: '#^Access to an undefined property HZ\\Illuminate\\Mongez\\Tests\\Fixtures\\Product\:\:\$id\.$#'
