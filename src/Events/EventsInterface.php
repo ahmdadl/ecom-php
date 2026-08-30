@@ -21,11 +21,11 @@ interface EventsInterface
      * Subscribe to the given event name, or in other words add event listener
      *
      * @return  string $events
-     * @return  string|array $callback
+     * @return  string|array|callable $callback
      * @return void
      */
     /**
-     * @param string|array<int, string> $callback
+     * @param string|array<int, string>|callable $callback
      */
-    public function subscribe(string $events, string|array $callback): void;
+    public function subscribe(string $events, string|array|callable $callback): void;
 }

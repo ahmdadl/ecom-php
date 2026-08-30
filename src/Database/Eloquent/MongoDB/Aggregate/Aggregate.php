@@ -48,7 +48,7 @@ class Aggregate
     /**
      * Group By the given column
      *
-     * @param string ...$columns
+     * @param string|null ...$columns
      */
     public function groupBy(...$columns): Pipeline
     {

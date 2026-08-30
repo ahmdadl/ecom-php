@@ -145,9 +145,9 @@ class Events implements EventsInterface
      * {@inherit}
      */
     /**
-     * @param string|array<int, string> $eventListener
+     * @param string|array<int, string>|callable $eventListener
      */
-    public function subscribe(string $events, string|array $eventListener): void
+    public function subscribe(string $events, string|array|callable $eventListener): void
     {
         foreach (explode(' ', $events) as $event) {
             $this->eventsList[$event] ??= [];
