@@ -8,9 +8,11 @@ use Illuminate\Validation\Validator;
 
 class Localized
 {
+    /** @var array<mixed> */
     protected array $localeCodes = [];
 
-    protected array $localizedValue;
+    /** @var array<mixed> */
+    protected array $localizedValue = [];
 
     protected string $textAttribute = 'text';
 
@@ -21,7 +23,8 @@ class Localized
      */
     private Validator $validator;
 
-    private string $message = '';
+    /** @var string|array<mixed> */
+    private string|array $message = '';
 
     /**
      * Constructor
@@ -36,9 +39,9 @@ class Localized
      *
      * @param  string $attribute
      * @param  mixed $value
-     * @param  array $parameters
+     * @param  array<mixed> $parameters
      */
-    public function passes($attribute, $value, $parameters, Validator $validator): bool
+    public function passes($attribute, $value, array $parameters, Validator $validator): bool
     {
         $this->validator = $validator;
 
@@ -47,13 +50,13 @@ class Localized
         }
 
         if (!$this->validateValue($value, $attribute)) {
-            $this->validator->errors()->add($attribute, $this->message);
+            $this->validator->errors()->add($attribute, is_string($this->message) ? $this->message : '');
             return true;
         }
 
         $isValid = true;
 
-        collect($value)->each(function ($localized) use (&$isValid) {
+        collect((array) $value)->each(function ($localized) use (&$isValid) {
             $this->localizedValue = $localized;
 
             if ($this->validateText() && $this->validateLocaleCode()) {
@@ -66,7 +69,7 @@ class Localized
         });
 
         if ($this->message) {
-            $this->validator->errors()->add($attribute, $this->message);
+            $this->validator->errors()->add($attribute, is_string($this->message) ? $this->message : '');
         }
 
         return true;

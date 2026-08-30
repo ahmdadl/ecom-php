@@ -18,8 +18,8 @@ class HyperPayResponse implements PaymentGatewayResponse
 
     /**
      * Response info
-     * 
-     * @var array
+     *
+     * @var array<string, mixed>
      */
     private $responseData = [
         // sample of array contents
@@ -31,6 +31,8 @@ class HyperPayResponse implements PaymentGatewayResponse
 
     /**
      * Constructor
+     *
+     * @param array<string, mixed> $responseData
      */
     public function __construct(array $responseData)
     {

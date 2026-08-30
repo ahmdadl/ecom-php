@@ -51,9 +51,9 @@ class EngezTranslation extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
-        $this->fileName = $this->kebab($this->argument('file'));
+        $this->fileName = $this->kebab($this->stringArgument('file'));
     }
 
     /**

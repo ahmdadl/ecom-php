@@ -12,19 +12,24 @@ use Illuminate\Testing\TestResponse as BaseTestResponse;
 use PHPUnit\TextUI\XmlConfiguration\PHPUnit;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
+/**
+ * @extends BaseTestResponse<\Illuminate\Http\Response>
+ */
 class TestResponse extends BaseTestResponse
 {
     use Messageable;
 
     /**
      * Response object
-     * 
-     * @var \Illuminate\Testing\TestResponse
+     *
+     * @var \Illuminate\Testing\TestResponse<\Illuminate\Http\Response>
      */
     protected $response;
 
     /**
      * Request Body
+     *
+     * @var array<string, mixed>
      */
     protected array $requestBody;
 
@@ -40,6 +45,8 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Response shape
+     *
+     * @var array<string, mixed>
      */
     protected array $setResponseShape;
 
@@ -78,10 +85,25 @@ class TestResponse extends BaseTestResponse
     /**
      * Set request body
      */
+    /**
+     * Set request body
+     *
+     * @param  array<string, mixed> $requestBody
+     */
     public function setRequestBody(array $requestBody): self
     {
         $this->requestBody = $requestBody;
         return $this;
+    }
+
+    /**
+     * Get request body
+     *
+     * @return array<string, mixed>
+     */
+    public function getRequestBody(): array
+    {
+        return $this->requestBody;
     }
 
     /**
@@ -98,14 +120,6 @@ class TestResponse extends BaseTestResponse
     public function getRequestMethod(): string
     {
         return $this->requestMethod;
-    }
-
-    /**
-     * Get request body
-     */
-    public function getRequestBody(): array
-    {
-        return $this->requestBody;
     }
 
     /**
@@ -149,25 +163,27 @@ class TestResponse extends BaseTestResponse
      */
     public function getResponseBody()
     {
-        return json_decode($this->baseResponse->getContent());
+        return json_decode((string) $this->baseResponse->getContent());
     }
 
     /**
      * Get response body
-     * 
+     *
      * @return mixed
      */
     public function body()
     {
-        return json_decode($this->baseResponse->getContent());
+        return json_decode((string) $this->baseResponse->getContent());
     }
 
     /**
      * Get response as array
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
-        return json_decode($this->baseResponse->getContent(), true);
+        return json_decode((string) $this->baseResponse->getContent(), true);
     }
 
     /**
@@ -238,8 +254,8 @@ class TestResponse extends BaseTestResponse
 
     /**
      * Assert the current response to be the given response schema
-     * 
-     * @param  ResponseSchemaIterface $responseSchema
+     *
+     * @param  ResponseSchemaInterface $responseSchema
      * @return $this
      */
     public function assertResponse(ResponseSchemaInterface $responseSchema)

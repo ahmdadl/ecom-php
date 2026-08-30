@@ -69,7 +69,7 @@ trait ApiResponse
     /**
      * Send bad request data
      *
-     * @param  array|\Illuminate\Support\MessageBag $data
+     * @param  array<mixed>|\Illuminate\Support\MessageBag $data
      * @return Response
      */
     protected function badRequest($data)

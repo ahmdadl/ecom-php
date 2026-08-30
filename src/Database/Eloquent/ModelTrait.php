@@ -37,6 +37,7 @@ trait ModelTrait
      */
     public static function getTableName()
     {
+        /** @phpstan-ignore-next-line new.static */
         return (new static)->getTable();
     }
 
@@ -49,6 +50,7 @@ trait ModelTrait
      *
      * @param  string $column
      * @param  int $amount
+     * @param  array<string, mixed> $extra
      * @return int
      */
     public function increment($column, $amount = 1, array $extra = [])
@@ -65,6 +67,7 @@ trait ModelTrait
      *
      * @param  string $column
      * @param  int $amount
+     * @param  array<string, mixed> $extra
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = [])
@@ -74,6 +77,11 @@ trait ModelTrait
 
     /**
      * An alias method to `getAttributes` method
+     */
+    /**
+     * An alias method to `getAttributes` method
+     *
+     * @return array<string, mixed>
      */
     public function info(): array
     {
@@ -106,6 +114,7 @@ trait ModelTrait
      */
     public function getNid(): int
     {
+        /** @phpstan-ignore-next-line staticMethod.notFound */
         return $this->nid ?? static::getNextId();
     }
 
@@ -120,7 +129,8 @@ trait ModelTrait
     /**
      * Pluck the given keys from the model info
      *
-     * @param  array $columns
+     * @param  array<int, string> $columns
+     * @return array<string, mixed>
      */
     public function pluck(...$columns): array
     {
@@ -133,9 +143,9 @@ trait ModelTrait
 
     /**
      * Get all attributes except the given columns
-     * 
-     * @param  array $columns
-     * @return array
+     *
+     * @param  array<int, string> $columns
+     * @return array<string, mixed>
      */
     public function except(...$columns)
     {

@@ -25,13 +25,16 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Response Object
-     * 
-     * @var \Illuminate\Testing\TestResponse
+     *
+     * @var \Illuminate\Testing\TestResponse<\Illuminate\Http\Response>
      */
     protected $response;
 
     /**
      * Get full data but replace the given array keys
+     *
+     * @param  array<string, mixed> $newData
+     * @return array<string, mixed>
      */
     protected function fullDataReplace(array $newData): array
     {
@@ -40,6 +43,9 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Get full data except the given keys
+     *
+     * @param  array<int, string> $exceptKeys
+     * @return array<string, mixed>
      */
     protected function fullDataExcept(array $exceptKeys): array
     {
@@ -48,6 +54,9 @@ abstract class AdminApiTestCase extends ApiTestCase
 
     /**
      * Merge the given array with the full data
+     *
+     * @param  array<string, mixed> $otherData
+     * @return array<string, mixed>
      */
     protected function fullDataWith(array $otherData): array
     {
@@ -65,6 +74,8 @@ abstract class AdminApiTestCase extends ApiTestCase
     /**
      * Define the full data that should be fully valid.
      * This includes required and optional data
+     *
+     * @return array<string, mixed>
      */
     protected function fullData(): array
     {

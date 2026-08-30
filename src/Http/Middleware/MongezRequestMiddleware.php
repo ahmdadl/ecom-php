@@ -64,7 +64,7 @@ class MongezRequestMiddleware
             $betaDBName = 'BETA';
         }
 
-        $betaDatabase = $this->resolveBetaDatabaseName($betaDBName);
+        $betaDatabase = $this->resolveBetaDatabaseName(is_string($betaDBName) ? $betaDBName : '');
 
         if (!$betaDatabase || $betaDatabase === $originalDatabase) {
             return null;

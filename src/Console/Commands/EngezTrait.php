@@ -42,6 +42,13 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
      */
     const TYPE_REQUEST = 'request';
 
+    /**
+     * The available trait types.
+     *
+     * @var array<int, string>
+     */
+    const TRAIT_TYPES = [self::TYPE_GENERAL, self::TYPE_REQUEST];
+
 
     /**
      * Execute the console command.
@@ -52,7 +59,7 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
     {
         $this->init();
 
-        if ($this->validateArguments() === false) return;
+        $this->validateArguments();
 
         $this->create();
 
@@ -68,9 +75,9 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
-        $this->traitName = $this->argument('trait');
+        $this->traitName = $this->stringArgument('trait');
 
     }
 
@@ -84,15 +91,15 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
         parent::validateArguments();
 
         if (!in_array($this->option('type'), [static::TYPE_GENERAL, static::TYPE_REQUEST])) {
-            return $this->missingRequiredOption('This trait type does not exits, Did you mean? ' . implode(PHP_EOL, static::TRAIT_TYPES));
+            $this->missingRequiredOption('This trait type does not exits, Did you mean? ' . implode(PHP_EOL, static::TRAIT_TYPES));
+
+            return;
         }
 
         $baseDir = $this->isRequestTrait() ? 'Traits/Validation' : 'Traits';
 
         if ($this->files->exists($this->modulePath("$baseDir/$this->traitName.php"))) {
-            $this->info('You already have this trait');
-
-            return false;
+            $this->terminate('You already have this trait');
         }
     }
 
@@ -103,7 +110,7 @@ class EngezTrait extends EngezGeneratorCommand implements EngezInterface
      */
     public function create()
     {
-        $traitName = $this->argument('trait');
+        $traitName = $this->stringArgument('trait');
 
         $replacements = [
             // module name

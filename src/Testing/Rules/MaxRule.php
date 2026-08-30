@@ -41,12 +41,14 @@ class MaxRule extends UnitRule implements UnitRuleInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Get message attributes
+     *
+     * @return array<string, mixed>
      */
     public function getMessageAttributes(): array
     {
         return [
-            'max' => $this->options[0]
+            'max' => $this->options[0],
         ];
     }
 }

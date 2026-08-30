@@ -10,7 +10,7 @@ trait EngezStub
     /**
      * Get stub content
      *
-     * @param string path
+     * @param string $path
      */
     protected function getStub(string $path): string
     {
@@ -30,13 +30,13 @@ trait EngezStub
             $path .= '.stub';
         }
 
-        return new Stub($this->path($path), $this);
+        return new Stub($this->path($path));
     }
 
     /**
      * Convert the given data as array syntax
      *
-     * @param array|string $data
+     * @param string|array<int|string, mixed> $data
      */
     protected function stubStringAsArray($data,bool $newLine = false): string
     {
@@ -70,6 +70,8 @@ trait EngezStub
     /**
      * Get the content of the given stub path
      * then replace all stubs inside it with the given values
+     *
+     * @param array<string, mixed> $replacements
      */
     protected function replaceStub(string $stubPath, array $replacements): string
     {
@@ -85,6 +87,8 @@ trait EngezStub
     /**
      * Return proper value for default data that will be replaced
      * If the given data is empty, then return tab indent with double slash
+     *
+     * @param array<int, string> $data
      */
     protected function stubData(array $data, string $defaultValue = ''): string
     {

@@ -10,7 +10,11 @@ class WithUser
     /**
      * {@inheritDoc}
      */
-    public function sendUser($response)
+    /**
+     * @param array<string, mixed> $response
+     * @return array<string, mixed>
+     */
+    public function sendUser(array $response): array
     {
         $user = user();
 

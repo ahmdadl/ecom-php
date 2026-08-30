@@ -33,7 +33,16 @@ interface ResponseSchemaInterface
     public function isValid(): bool;
 
     /**
+     * Set the response value
+     *
+     * @param  mixed $value
+     */
+    public function setValue($value): ResponseSchemaInterface;
+
+    /**
      * Get errors list
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function errorsList(): array;
 }

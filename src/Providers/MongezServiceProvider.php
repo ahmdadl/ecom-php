@@ -35,7 +35,7 @@ use HZ\Illuminate\Mongez\Console\Commands\PostmanCollection;
 use HZ\Illuminate\Mongez\Console\Commands\ModuleDelete;
 use HZ\Illuminate\Mongez\Console\Commands\MongezTestCommand;
 use HZ\Illuminate\Mongez\Http\Middleware\MongezRequestMiddleware;
-use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Support\Facades\DB;
 
 class MongezServiceProvider extends ServiceProvider
@@ -69,7 +69,7 @@ class MongezServiceProvider extends ServiceProvider
     /**
      * Startup config
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $config = [];
 
@@ -94,7 +94,9 @@ class MongezServiceProvider extends ServiceProvider
 
         if (!$this->app->runningInConsole()) {
             if (!static::$middlewarePushed) {
-                $this->app->make(HttpKernel::class)->pushMiddleware(MongezRequestMiddleware::class);
+                /** @var \Illuminate\Foundation\Http\Kernel $kernel */
+                $kernel = $this->app->make(HttpKernel::class);
+                $kernel->pushMiddleware(MongezRequestMiddleware::class);
 
                 static::$middlewarePushed = true;
             }

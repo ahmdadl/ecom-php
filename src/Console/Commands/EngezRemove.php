@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 use HZ\Illuminate\Mongez\Console\Traits\EngezTrait;
 
+/**
+ * @property \Illuminate\Filesystem\Filesystem $files
+ * @property array<string, mixed> $info
+ * @property string $moduleName
+ * @property string $repositoryClassName
+ * @property string $repositoryName
+ */
 class EngezRemove extends Command
 {
     use EngezTrait;
@@ -29,7 +36,7 @@ class EngezRemove extends Command
     /**
      * info used for removing module 
      * 
-     * @var array 
+     * @var array<string, mixed>
      */
     protected $info = [];
 

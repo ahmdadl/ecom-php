@@ -6,6 +6,13 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Console\Traits\EngezTrait;
 
+/**
+ * @property \Illuminate\Filesystem\Filesystem $files
+ * @property array<string, mixed> $info
+ * @property string $moduleName
+ * @property string $repositoryClassName
+ * @property string $repositoryName
+ */
 class Postman
 {
     use EngezTrait;
@@ -27,7 +34,7 @@ class Postman
     /**
      * Module data
      *
-     * @var array
+     * @var array<int, array<string, string>>
      */
     protected $data;
 
@@ -41,7 +48,7 @@ class Postman
     /**
      * Data of PUT and Post form.
      *
-     * @var array
+     * @var array<string, array<string, mixed>>
      */
     protected $formDataArray = [];
 
@@ -55,6 +62,9 @@ class Postman
     /**
      * Create postman content.
      */
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->prepareData($data);
@@ -64,7 +74,7 @@ class Postman
     /**
      * prepare and set needed data.
      *
-     * @param array $data
+     * @param array<string, mixed> $data
      * @return void
      */
     protected function prepareData($data)
@@ -90,11 +100,11 @@ class Postman
 
         $this->formDataArray = [
             'POST' => [
-                'data' => json_decode(json_encode($this->data), false),
+                'data' => json_decode((string) json_encode($this->data), false),
                 'type' => "formdata",
             ],
             'PUT' => [
-                'data' => json_decode(json_encode($this->data), false),
+                'data' => json_decode((string) json_encode($this->data), false),
                 'type' => "urlencoded",
             ],
         ];
@@ -124,7 +134,7 @@ class Postman
         // replace routeUri
         $content = str_ireplace("{routeUri}", $routeUri, $content);
 
-        $content = json_decode($content);
+        $content = json_decode((string) $content);
 
         // Set request details
         foreach ($content->item as $item) {
@@ -135,7 +145,7 @@ class Postman
             }
         }
 
-        $this->content = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $this->content = (string) json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
     /**

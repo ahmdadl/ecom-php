@@ -10,6 +10,8 @@ trait GeneralScopes
 {
     /**
      * Scope to find by another record
+     *
+     * @param Builder<\Illuminate\Database\Eloquent\Model> $query
      */
     public function scopeFindBy(Builder $query, string $column, mixed $value, string $sign = '='): void
     {
@@ -18,6 +20,8 @@ trait GeneralScopes
 
     /**
      * Scope to find by user id
+     *
+     * @param Builder<\Illuminate\Database\Eloquent\Model> $query
      */
     public function scopeFor(Builder $query, int $id, string $key = 'user'): void
     {

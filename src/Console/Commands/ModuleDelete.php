@@ -11,15 +11,16 @@ class ModuleDelete extends EngezGeneratorCommand implements EngezInterface
     /**
      * Module info
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $info = [];
 
     /**
      * Available Options
      *
+     * @var array<int, string>
      */
-    protected $availableOptions = [];
+    protected array $availableOptions = [];
 
     /**
      * The name and signature of the console command.
@@ -42,7 +43,7 @@ class ModuleDelete extends EngezGeneratorCommand implements EngezInterface
      */
     public function handle()
     {
-        $this->setModuleName($this->argument('moduleName'));
+        $this->setModuleName($this->stringArgument('moduleName'));
 
         $this->init();
 

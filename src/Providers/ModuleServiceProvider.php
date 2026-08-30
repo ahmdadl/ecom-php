@@ -58,7 +58,7 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
     {
         $classInfo = new ReflectionClass($this);
 
-        $this->moduleBaseDirectory = realpath(dirname($classInfo->getFileName()) . '/./../');
+        $this->moduleBaseDirectory = (string) realpath(dirname((string) $classInfo->getFileName()) . '/./../');
 
         $this->mapRoutes();
 
@@ -117,7 +117,7 @@ abstract class ModuleServiceProvider extends ServiceProvider implements ModuleSe
     /**
      * Merge configurations list from config directory to the main config files
      */
-    public function mergeConfigurations()
+    public function mergeConfigurations(): void
     {
         if (!$this->app instanceof CachesConfiguration || !$this->app->configurationIsCached()) {
             $configDirectory = $this->moduleBaseDirectory . '/config';

@@ -41,12 +41,14 @@ class MinRule extends UnitRule implements UnitRuleInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Get message attributes
+     *
+     * @return array<string, mixed>
      */
     public function getMessageAttributes(): array
     {
         return [
-            'min' => $this->options[0]
+            'min' => $this->options[0],
         ];
     }
 }

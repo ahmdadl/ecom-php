@@ -23,7 +23,9 @@ trait RoutesAdapter
         $this->routesDirectory = $this->modulePath("routes");
 
         if ($this->optionHasValue('parent')) {
-            return $this->createRoutesFromParent();
+            $this->createRoutesFromParent();
+
+            return;
         }
 
         if ($this->isAdminController()) {
@@ -42,11 +44,11 @@ trait RoutesAdapter
      */
     protected function createRoutesFromParent()
     {
-        $controller = $this->studly($this->argument('controller'));
+        $controller = $this->studly((string) $this->argument('controller'));
 
         if ($this->isAdminController()) {
             $stub = new Stub($filePath = $this->modulePath('routes/admin.php'));
-            $route = $this->kebab($this->optionHasValue('route') ? $this->option('route') : $this->getModule());
+            $route = $this->kebab($this->optionHasValue('route') ? (string) $this->option('route') : $this->getModule());
 
             $routeStatement = "Route::{{ methodName }}('{{ route-path }}', {{ ControllerClass }}::class);";
 
@@ -70,7 +72,7 @@ trait RoutesAdapter
 
         if ($this->isSiteController()) {
             $stub = new Stub($filePath = $this->modulePath('routes/site.php'));
-            $route = $this->kebab($this->optionHasValue('route') ? $this->option('route') : $this->getModule());
+            $route = $this->kebab($this->optionHasValue('route') ? (string) $this->option('route') : $this->getModule());
 
             $routeStatement = "Route::get('{{ route-path }}', [{{ ControllerClass }}::class, '{{ methodName }}']);";
 
@@ -99,7 +101,7 @@ trait RoutesAdapter
      */
     protected function createAdminRoutesFile()
     {
-        $route = $this->kebab($this->optionHasValue('route') ? $this->option('route') : $this->getModule());
+        $route = $this->kebab($this->optionHasValue('route') ? (string) $this->option('route') : $this->getModule());
 
         $replacements = [
             '{{ ControllerClass }}' => $this->controllerName,
@@ -147,7 +149,7 @@ trait RoutesAdapter
      */
     protected function createSiteRoutesFile()
     {
-        $route = $this->kebab($this->optionHasValue('route') ? $this->option('route') : $this->getModule());
+        $route = $this->kebab($this->optionHasValue('route') ? (string) $this->option('route') : $this->getModule());
 
         $replacements = [
             '{{ ControllerClass }}' => $this->controllerName,
@@ -176,7 +178,7 @@ trait RoutesAdapter
     {
         $type = $this->option('type');
 
-        $controller = $this->info['controller'];
+        $controller = (string) $this->info['controller'];
 
         $this->controllerName = basename(str_replace('\\', '/', $controller));
 

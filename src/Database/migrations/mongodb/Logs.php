@@ -14,6 +14,7 @@ class Logs extends Migration
     {
         Schema::table('requestLogs', function (Blueprint $table) {
             $table->string('collection')->unique();
+            /** @phpstan-ignore-next-line method.notFound */
             $table->int('id');
             $table->string('route');
             $table->string('userAgent');
@@ -22,6 +23,7 @@ class Logs extends Migration
             $table->string('body');
             $table->string('method');
             $table->string('response');
+            /** @phpstan-ignore-next-line method.notFound */
             $table->loggers();
         });
     }

@@ -82,7 +82,10 @@ class OctaneStateResetTest extends TestCase
     {
         $this->resetOctaneProviderStaticState();
 
-        $provider = new MongezOctaneServiceProvider(\Mockery::mock(\Illuminate\Contracts\Foundation\Application::class));
+        /** @var \Illuminate\Contracts\Foundation\Application $app */
+        $app = \Mockery::mock(\Illuminate\Contracts\Foundation\Application::class);
+
+        $provider = new MongezOctaneServiceProvider($app);
 
         $this->discoverModelClasses($provider);
 
@@ -118,7 +121,7 @@ class OctaneStateResetTest extends TestCase
         $method->invoke($provider);
     }
 
-    protected function octaneProviderStaticProperty(string $property)
+    protected function octaneProviderStaticProperty(string $property): mixed
     {
         return new \ReflectionClass(MongezOctaneServiceProvider::class)->getStaticProperties()[$property];
     }
@@ -131,19 +134,26 @@ class OctaneStateResetTest extends TestCase
         $ref->setStaticPropertyValue('declaredClassesCount', -1);
     }
 
-    protected function staticProperty(string $class, string $property)
+    /**
+     * @param class-string $class
+     */
+    protected function staticProperty(string $class, string $property): mixed
     {
         return new \ReflectionClass($class)->getStaticProperties()[$property];
     }
 
-    protected function instanceProperty(object $object, string $property)
+    protected function instanceProperty(object $object, string $property): mixed
     {
         return new \ReflectionClass($object)->getProperty($property)->getValue($object);
     }
 }
 
-class ModelStub
+class ModelStub extends \Illuminate\Database\Eloquent\Model
 {
+    public const CREATED_BY = 'created_by';
+    public const UPDATED_BY = 'updated_by';
+    public const DELETED_BY = 'deleted_by';
+
     use ModelTrait;
 
     public static function setDisableUpdateTime(bool $value): void

@@ -12,6 +12,9 @@ use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
 
 /**
  * @property int|null $nid
+ * @property mixed $createdAt
+ * @property mixed $updatedAt
+ * @property mixed $deletedAt
  */
 abstract class Model extends BaseModel
 {
@@ -206,7 +209,7 @@ abstract class Model extends BaseModel
     /**
      * Disable guarded fields
      *
-     * @var array
+     * @var array<string>
      */
     protected $guarded = [];
 
@@ -227,7 +230,7 @@ abstract class Model extends BaseModel
     /**
      * Determine whether to trigger events or not on model create|update|delete
      *
-     * @var true | false | `create`|`update`|`delete`
+     * @var true|false|'create'|'update'|'delete'
      */
     protected $triggerEvents = true;
 
@@ -244,6 +247,7 @@ abstract class Model extends BaseModel
     public static function tableName()
     {
         if (empty(static::$tableName)) {
+            /** @phpstan-ignore-next-line new.static */
             $model = new static;
             static::$tableName = ($model)->getTable();
         }
@@ -340,6 +344,7 @@ abstract class Model extends BaseModel
         // but mongodb/laravel-mongodb v5 aliases root-level `id` fields to `_id`
         // on query builder writes, which would corrupt those documents or fail on
         // immutable _id, so the counter is written directly through the driver.
+        /** @phpstan-ignore-next-line method.notFound, new.static */
         $idsCollection = (new static)->getConnection()->getDatabase()->selectCollection('ids');
 
         if (!$lastId) {
@@ -374,7 +379,7 @@ abstract class Model extends BaseModel
 
         $info = $ids->where('collection', static::tableName())->first();
 
-        if (empty($info?->id)) return 0;
+        if (empty($info->id)) return 0;
 
         return $info->id;
     }
@@ -396,12 +401,18 @@ abstract class Model extends BaseModel
      */
     public static function truncate()
     {
+        /** @phpstan-ignore-next-line method.staticCall */
         static::delete();
         static::resetAutoIncrement();
     }
 
     /**
      * This method should return the info of the document that will be stored in another document, default to full info
+     */
+    /**
+     * This method should return the info of the document that will be stored in another document, default to full info
+     *
+     * @return array<string, mixed>
      */
     public function sharedInfo(): array
     {
@@ -421,6 +432,12 @@ abstract class Model extends BaseModel
      * @param  array $info
      * @return void
      */
+    /**
+     * Check if the given info data has date, then adjust it recursively
+     *
+     * @param array<string, mixed> $info
+     * @return void
+     */
     public function adjustDateInSharedInfo(&$info)
     {
         foreach ($info as &$value) {
@@ -435,29 +452,34 @@ abstract class Model extends BaseModel
     /**
      * Get shared info plus the given columns
      *
-     * @param ...string $columns
+     * @param string ...$columns
+     * @return array<string, mixed>
      */
     public function sharedInfoWith(...$columns): array
     {
-        return array_merge($this->sharedInfo(), $this->pluck($columns));
+        return array_merge($this->sharedInfo(), $this->pluck(...$columns));
     }
 
     /**
      * Get shared info except the given columns
      *
-     * @param ...string $columns
+     * @param string ...$columns
+     * @return array<string, mixed>
      */
     public function sharedInfoExcept(...$columns): array
     {
-        return array_diff_key($this->sharedInfo(), $this->pluck($columns));
+        return array_diff_key($this->sharedInfo(), $this->pluck(...$columns));
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param int|string $id
+     * @return static|null
      */
-    public static function find($id)
+    public static function find($id): ?static
     {
-        return static::where('nid', (int) $id)->first();
+        return static::query()->where('nid', (int) $id)->first();
     }
 
     /**

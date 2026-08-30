@@ -59,7 +59,8 @@ abstract class ViewController extends Controller
     /**
      * Render the given view path
      *
-     * @return string
+     * @param array<string, mixed> $data
+     * @return \Illuminate\Contracts\View\View
      */
     protected function render(string $viewPath, array $data = [])
     {
@@ -69,8 +70,8 @@ abstract class ViewController extends Controller
     /**
      * Send success data
      *
-     * @param array $data
-     * @return string
+     * @param array<string, mixed> $data
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function success($data = [])
     {
@@ -88,8 +89,8 @@ abstract class ViewController extends Controller
     /**
      * Send bad request data
      *
-     * @param  array $data
-     * @return string
+     * @param  array<string, mixed>|\Illuminate\Support\MessageBag|string $data
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function badRequest($data)
     {
@@ -117,8 +118,8 @@ abstract class ViewController extends Controller
     /**
      * Send not found request data
      *
-     * @param  array $data
-     * @return string
+     * @param  array<string, mixed>|\Illuminate\Support\MessageBag|string $data
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function notFound($data)
     {
@@ -146,7 +147,7 @@ abstract class ViewController extends Controller
     /**
      * Unauthorized data
      *
-     * @return string
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function unauthorized(string $message)
     {
@@ -162,7 +163,8 @@ abstract class ViewController extends Controller
     /**
      * Send Response
      *
-     * @return string
+     * @param array<string, mixed> $message
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function send(int $statusCode, array $message)
     {

@@ -71,9 +71,9 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
-        $this->modelName = $this->modelClass($this->argument('model'));
+        $this->modelName = $this->modelClass($this->stringArgument('model'));
     }
 
     /**
@@ -103,7 +103,7 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
 
         // Add shared info constant in mongodb driver
         if ($this->isMongoDB()) {
-            $sharedColumns = $this->optionHasValue('share') ? $this->option('share') : 'nid';
+            $sharedColumns = $this->optionHasValue('share') ? $this->stringOption('share') : 'nid';
 
             $data[] = $this->replaceStub('Models/shared-info', [
                 '{{ columns }}' => $this->stubStringAsArray($sharedColumns),
@@ -111,15 +111,7 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
         }
 
         if ($this->optionHasValue('date')) {
-            $dateColumns = explode(',', $this->option('date'));
-
-            foreach ($dateColumns as $key => $dateColumn) {
-                $index = $key;
-                $key = $dateColumn;
-                $dateColumn = 'datetime'; 
-                $dateColumns[$key] = $dateColumn;
-                unset($dateColumns[$index]);
-            }
+            $dateColumns = array_fill_keys(explode(',', $this->stringOption('date')), 'datetime');
 
             $data[] = $this->replaceStub('Models/casts', [
                 '{{ columns }}' => $this->stubStringAsArray($dateColumns, true),
@@ -143,7 +135,6 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
     /**
      * Create migration file of table 
      *
-     * @param string $dataFileName
      * @return void 
      */
     protected function createMigration()
@@ -162,7 +153,6 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
     /**
      * Create schema of table in mongo 
      *
-     * @param string $dataFileName
      * @return void 
      */
     protected function createSchema()
@@ -176,14 +166,12 @@ class EngezModel extends EngezGeneratorCommand implements EngezInterface
 
         $this->makeDirectory($path);
 
-        $stringData = explode(',', $this->option('string')) ?? [];
-
-        unset($stringData['nid'], $stringData['id'], $stringData['_id']);
+        $stringData = array_diff(explode(',', $this->stringOption('string')), ['nid', 'id', '_id']);
 
         $stringData = array_fill_keys($stringData, 'string');
 
         $content = array_merge($defaultContent, $stringData);
 
-        $this->createFile("$path/{$this->modelName}.json", json_encode($content, JSON_PRETTY_PRINT), 'Schema');
+        $this->createFile("$path/{$this->modelName}.json", (string) json_encode($content, JSON_PRETTY_PRINT), 'Schema');
     }
 }

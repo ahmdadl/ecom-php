@@ -2,6 +2,8 @@
 
 namespace HZ\Illuminate\Mongez\Repository;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Aggregate\Aggregate;
 
@@ -61,11 +63,11 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
     /**
      * Get Aggregation framework
-     * 
-     * @param  ?QueryBuilder $query
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<TModel>|null $query
      * @return Aggregate
      */
-    public function aggregate($query = null)
+    public function aggregate(?\Illuminate\Database\Eloquent\Builder $query = null)
     {
         return new Aggregate($query ?: $this->getQuery());
     }
@@ -73,9 +75,10 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * Get shared info data for the given options
      *
-     * @return array
+     * @param array<string, mixed> $options
+     * @return array<int, mixed>
      */
-    public function listSharedInfo(array $options, string $sharedInfoMethod = 'sharedInfo')
+    public function listSharedInfo(array $options, string $sharedInfoMethod = 'sharedInfo'): array
     {
         return $this->listModels($options)->map(fn($model) => $model->$sharedInfoMethod())->toArray();
     }
@@ -96,7 +99,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * {@inheritDoc}
      */
-    protected function setData($model, $request) {}
+    protected function setData($model, Request $request): void {}
 
     /**
      * {@inheritDoc}
@@ -134,7 +137,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
             if ($location) {
                 $model->$locationKey = [
                     'type' => 'Point',
-                    'coordinates' => [(float) $location['lat'] ?? 0, (float) $location['lng'] ?? 0],
+                    'coordinates' => [(float) $location['lat'], (float) $location['lng']],
                     'address' => $location['address'] ?? null,
                 ];
             }
@@ -180,13 +183,13 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
         if (!$location) return;
 
-        $this->query->whereLocationNear($column, [(float) $location['lat'], (float) $location['lng']], $distance);
+            $this->query->whereLocationNear($column, [(float) $location['lat'], (float) $location['lng']], $distance); // @phpstan-ignore method.notFound
     }
 
     /**
      * A shorthand method for filtering data if they are available
      */
-    protected function whereBool(string $column, ?string $option = null): self
+    protected function whereBool(string $column, ?string $option = null): static
     {
         if (!$option) {
             $option = $column;
@@ -248,7 +251,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * {@inheritDoc}
      */
-    public function disassociate($id, $model, $key)
+    public function disassociate(int $id, Model $model, string $key): void
     {
         $model = $this->getModel($id);
 
@@ -260,7 +263,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     /**
      * {@inheritDoc}
      */
-    public function reassociate($id, $model, $key)
+    public function reassociate(int $id, Model $model, string $key): void
     {
         $model = $this->getModel($id);
 

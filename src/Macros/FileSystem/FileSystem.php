@@ -13,9 +13,9 @@ class FileSystem
      * 
      * @param string $path
      * @param bool $assoc
-     * @return array|stdClass
+     * @return \Closure
      */
-    public function getJson()
+    public function getJson(string $path = '', bool $assoc = true): \Closure
     { 
         return function ($path, $assoc = true) {
             $content = $this->get($path);
@@ -30,14 +30,14 @@ class FileSystem
      * Put json content.  
      * 
      * @param string $path
-     * @param array|object $content
+     * @param array<mixed>|object $content
      * @param int $flags
-     * @return void
+     * @return \Closure
      */
-    public function putJson()
+    public function putJson(string $path = '', $content = null, int $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES): \Closure
     { 
         return function (string $path, $content, $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) {
-            $this->put($path, json_encode($content, $flags));
+            $this->put($path, (string) json_encode($content, $flags));
         };
     }
 }

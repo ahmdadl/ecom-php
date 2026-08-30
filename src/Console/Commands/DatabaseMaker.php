@@ -30,6 +30,8 @@ class DatabaseMaker extends Command
 
     /**
      * Execute the console command.
+     *
+     * @return void
      */
     public function handle()
     {
@@ -70,7 +72,7 @@ class DatabaseMaker extends Command
      * @param  string $password
      * @return PDO
      */
-    private function getPDOConnection($driver, $host, $port, $username, $password)
+    private function getPDOConnection(string $driver, $host, $port, $username, $password)
     {
         return new PDO(sprintf("$driver:host=%s;port=%d;", $host, $port), $username, $password);
     }

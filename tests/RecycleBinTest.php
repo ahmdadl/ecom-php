@@ -29,13 +29,16 @@ final class RecycleBinTest extends TestCase
         $trashRecords = DB::table('productsTrash')->where('primaryId', $nid)->get();
 
         $this->assertCount(1, $trashRecords);
-        $this->assertSame('Trash Me', $trashRecords->first()->record['name']);
+        $firstTrashRecord = $trashRecords->first();
+        $this->assertNotNull($firstTrashRecord);
+        $this->assertSame('Trash Me', $firstTrashRecord->record['name']);
     }
 
     public function test_find_deleted_locates_trashed_record_by_nid(): void
     {
         $product = Product::query()->create(['name' => 'Find Me']);
         $nid = $product->nid;
+        $this->assertNotNull($nid);
 
         $product->delete();
 

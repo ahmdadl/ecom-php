@@ -15,14 +15,17 @@ interface EventsInterface
      * @return  mixed ...$callbackArguments
      * @return mixed
      */
-    public function trigger(string $events, ...$callbackArguments);
+    public function trigger(string $events, mixed ...$callbackArguments): mixed;
 
     /**
      * Subscribe to the given event name, or in other words add event listener
-     * 
+     *
      * @return  string $events
      * @return  string|array $callback
      * @return void
      */
-    public function subscribe(string $events, $callback);
+    /**
+     * @param string|array<int, string> $callback
+     */
+    public function subscribe(string $events, string|array $callback): void;
 }

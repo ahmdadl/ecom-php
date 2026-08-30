@@ -30,7 +30,7 @@ abstract class UIController
     /**
      * Repository OBject
      * 
-     * @var RepositoryInterface
+     * @var \HZ\Illuminate\Mongez\Repository\RepositoryManager<\Illuminate\Database\Eloquent\Model>
      */
     protected $repository;
 
@@ -57,7 +57,8 @@ abstract class UIController
     /**
      * Render the given view path
      *
-     * @return string
+     * @param array<string, mixed> $data
+     * @return \Illuminate\Contracts\View\View
      */
     protected function render(string $viewPath, array $data = [])
     {
@@ -67,8 +68,8 @@ abstract class UIController
     /**
      * Send success data
      *
-     * @param array $data
-     * @return string
+     * @param array<string, mixed> $data
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function success($data = [])
     {
@@ -86,8 +87,8 @@ abstract class UIController
     /**
      * Send bad request data
      *
-     * @param  array $data
-     * @return string
+     * @param  array<string, mixed>|\Illuminate\Support\MessageBag|string $data
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function badRequest($data)
     {
@@ -115,8 +116,8 @@ abstract class UIController
     /**
      * Send not found request data
      *
-     * @param  array $data
-     * @return string
+     * @param  array<string, mixed>|\Illuminate\Support\MessageBag|string $data
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function notFound($data)
     {
@@ -144,7 +145,7 @@ abstract class UIController
     /**
      * Unauthorized data
      *
-     * @return string
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function unauthorized(string $message)
     {
@@ -160,7 +161,8 @@ abstract class UIController
     /**
      * Send Response
      *
-     * @return string
+     * @param array<string, mixed> $message
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function send(int $statusCode, array $message)
     {

@@ -17,6 +17,7 @@ class MongezOctaneServiceProvider extends ServiceProvider
     /**
      * Cached list of declared classes that use the ModelTrait.
      */
+    /** @var array<int, class-string> */
     protected static array $modelClasses = [];
 
     /**
@@ -42,11 +43,11 @@ class MongezOctaneServiceProvider extends ServiceProvider
 
             JsonResourceManager::snapshotBaseState();
 
-            $this->app['events']->listen(RequestReceived::class, function () {
+            $this->app['events']->listen(RequestReceived::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible, class.notFound
                 $this->resetApplicationState();
             });
 
-            $this->app['events']->listen(RequestTerminated::class, function () {
+            $this->app['events']->listen(RequestTerminated::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible, class.notFound
                 $this->cleanupApplicationState();
             });
         });

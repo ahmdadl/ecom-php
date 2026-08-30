@@ -36,6 +36,8 @@ class BaseImage
 
     /**
      * Image Object
+     *
+     * @var mixed
      */
     protected $imageObject;
 
@@ -57,10 +59,10 @@ class BaseImage
      * Get image object
      *
      * @param string $imagePath
-     * @return void
+     * @return mixed
      */
     public function getImageObject($imagePath)
     {
-        return Image::make($imagePath);
+        return Image::make($imagePath); // @phpstan-ignore class.notFound
     }
 }

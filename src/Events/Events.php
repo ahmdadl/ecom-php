@@ -8,15 +8,15 @@ class Events implements EventsInterface
 {
     /**
      * Events List
-     * 
-     * @var array
+     *
+     * @var array<string, array<int, string|callable>>
      */
     protected $eventsList = [];
 
     /**
      * Classes List
-     * 
-     * @var array
+     *
+     * @var array<string, object>
      */
     protected $classesList = [];
 
@@ -28,7 +28,7 @@ class Events implements EventsInterface
      * under Laravel Octane, `reset` restores this baseline so boot-time
      * listeners survive while per-request listeners are discarded.
      *
-     * @var array
+     * @var array<string, array<int, string|callable>>
      */
     protected $baseEventsList = [];
 
@@ -37,7 +37,7 @@ class Events implements EventsInterface
      * 
      * @see $this->trigger
      */
-    public static function emit(...$args)
+    public static function emit(mixed ...$args): mixed
     {
         return App::make(static::class)->trigger(...$args);
     }
@@ -75,7 +75,7 @@ class Events implements EventsInterface
     /** 
      * {@inheritDoc}
      */
-    public function trigger(string $events, ...$callbackArguments)
+    public function trigger(string $events, mixed ...$callbackArguments): mixed
     {
         $return = '';
         foreach (explode(' ', $events) as $event) {
@@ -132,7 +132,7 @@ class Events implements EventsInterface
      * If the class doesn't have the method name i.e classPath@methodName
      * the `handle` method will be called instead
      *
-     * @return array [$classObject, $methodName]
+     * @return array{0: object, 1: string} [$classObject, $methodName]
      */
     protected function get(string $class): array
     {
@@ -144,7 +144,10 @@ class Events implements EventsInterface
     /**
      * {@inherit}
      */
-    public function subscribe(string $events, $eventListener)
+    /**
+     * @param string|array<int, string> $eventListener
+     */
+    public function subscribe(string $events, string|array $eventListener): void
     {
         foreach (explode(' ', $events) as $event) {
             $this->eventsList[$event] ??= [];

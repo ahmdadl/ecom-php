@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HZ\Illuminate\Mongez\Testing\Rules;
 
+use DateTime;
 use HZ\Illuminate\Mongez\Testing\UnitRuleInterface;
 
 class IsDateTimeRule extends UnitRule implements UnitRuleInterface

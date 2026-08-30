@@ -24,9 +24,9 @@ class Expression
     /**
      * Constructor
      *
-     * @param int|float|string|string[]|Expression $column
+     * @param int|float|string|array<string>|Expression $column
      */
-    public function __construct(string $operator, $column, string $returnAs = '')
+    public function __construct(string $operator, int|float|string|array|Expression $column, string $returnAs = '')
     {
         $this->operator($operator);
         $this->column($column);
@@ -45,7 +45,7 @@ class Expression
     /**
      * Set column
      *
-     * @param string|string[] $column
+     * @param int|float|string|array<string>|Expression $column
      */
     public function column($column): Expression
     {
@@ -64,6 +64,8 @@ class Expression
 
     /**
      * Prase expression
+     *
+     * @return array<int, mixed>
      */
     public function parse(): array
     {

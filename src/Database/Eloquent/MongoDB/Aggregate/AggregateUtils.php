@@ -21,6 +21,8 @@ class AggregateUtils
 
     /**
      * Map the data into proper mongodb aggregate framework format
+     *
+     * @return array<string, mixed>
      */
     public function map(): array
     {
@@ -42,6 +44,8 @@ class AggregateUtils
 
     /**
      * returnAs to map method
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -147,7 +151,7 @@ class AggregateUtils
     /**
      * Create new Expression
      *
-     * @param  mixed $column
+     * @param int|float|string|array<string>|Expression $column
      */
     public function expression(string $operator, $column, string $returnAs = ''): Expression
     {

@@ -13,9 +13,9 @@ class Str
      * 
      * @param string $needle
      * @param string $object
-     * @return string
+     * @return \Closure
      */
-    public static function removeFirst()
+    public static function removeFirst(string $needle = '', string $object = ''): \Closure
     {
         return fn(string $needle, string $object): string => static::replaceFirst($needle, '', $object);
     }

@@ -36,13 +36,15 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Rule options
+     *
+     * @var array<int, mixed>
      */
     protected array $options = [];
 
     /**
      * Set rule unit
      *
-     * @var  UnitType $unit
+     * @param  UnitType $unit
      */
     public function setUnit(UnitType $unit): UnitRule
     {
@@ -71,6 +73,8 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Rule options that can be passe
+     *
+     * @param  array<int, mixed> $options
      */
     public function setOptions(array $options): UnitRuleInterface
     {
@@ -81,8 +85,6 @@ abstract class UnitRule implements UnitRuleInterface
 
     /**
      * Determine if the rule is valid
-     *
-     * @param  mixed $value
      */
     public function isValid(): bool
     {

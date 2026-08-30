@@ -11,6 +11,12 @@ use HZ\Illuminate\Mongez\Console\Traits\ModuleData;
 use HZ\Illuminate\Mongez\Console\Traits\SharedNames;
 use HZ\Illuminate\Mongez\Console\Traits\DatabaseConcerns;
 
+/**
+ * @property array<string, mixed> $info
+ * @property string $moduleName
+ * @property string $repositoryClassName
+ * @property string $repositoryName
+ */
 abstract class EngezGeneratorCommand extends Command implements EngezInterface
 {
     /**
@@ -133,11 +139,13 @@ abstract class EngezGeneratorCommand extends Command implements EngezInterface
     public function validateArguments()
     {
         if (!$this->optionHasValue('module') && !$this->argumentHasValue('module')) {
-            return $this->info('module option is required');
+            $this->info('module option is required');
+
+            return;
         }
 
         if (!$this->moduleExists()) {
-            return $this->terminate('This module is not available');
+            $this->terminate('This module is not available');
         }
     }
 

@@ -9,12 +9,14 @@ class Select
     /**
      * list
      *
-     * @param array
+     * @var \Illuminate\Support\Collection<int|string, mixed>
      */
-    protected $list = [];
+    protected $list = new Collection();
 
     /**
      * Constructor
+     *
+     * @param array<int|string, mixed> $selectList
      */
     public function __construct(array $selectList)
     {
@@ -24,9 +26,9 @@ class Select
     /**
      * Add one or more column to list
      *
-     * @param  string $key
+     * @param  mixed ...$columns
      */
-    public function add(...$columns): self
+    public function add(mixed ...$columns): self
     {
         $this->list = $this->list->merge($columns);
 
@@ -40,7 +42,7 @@ class Select
      */
     public function remove($column): self
     {
-        $this->list->remove($column);
+        $this->list->remove($column); // @phpstan-ignore method.notFound
 
         return $this;
     }
@@ -73,7 +75,7 @@ class Select
     /**
      * Return select list array
      *
-     * @return array $list
+     * @return array<int|string, mixed> $list
      */
     public function list(): array
     {

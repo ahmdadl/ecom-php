@@ -38,7 +38,7 @@ class Model extends BaseModel
     /**
      * Disable guarded fields
      *
-     * @var array
+     * @var array<string>
      */
     protected $guarded = [];
 

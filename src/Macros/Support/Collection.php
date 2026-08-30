@@ -5,17 +5,24 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as IlluminateCollection;
 
 /**
- * @mixin IlluminateCollection
+ * @mixin IlluminateCollection<int|string, mixed>
  */
 class Collection
 {
     /**
+     * The collection items, available when this macro is bound to a collection at runtime.
+     *
+     * @var array<int, mixed>
+     */
+    protected $items;
+
+    /**
      * Execute the given callback on the collection items without returning new collection
      * 
      * @param callable $callback
-     * @return void
+     * @return \Closure
      */
-    public function walk()
+    public function walk(?callable $callback = null): \Closure
     {
         return function ($callback) {
             array_walk($this->items, $callback);
@@ -26,9 +33,10 @@ class Collection
      * Add one ore element to the beginning of the collection
      * 
      * @param  mixed ...$value
-     * @return void
+     * @return \Closure
      */
-    public function unshift() {
+    public function unshift(...$value): \Closure
+    {
         return function (...$value) {
             array_unshift($this->items, ...$value);
         };
@@ -39,12 +47,12 @@ class Collection
      * 
      * @param  mixed $value
      * @param  bool $removeFirstOnly
-     * @return void
+     * @return \Closure
      */
-    public function remove() 
+    public function remove($value = null, bool $removeFirstOnly = false): \Closure
     {
         return function ($value, bool $removeFirstOnly = false) {
-            $this->items = Arr::remove($value, $this->items, $removeFirstOnly);
+            $this->items = Arr::remove($value, $this->items, $removeFirstOnly); // @phpstan-ignore staticMethod.notFound
         };
     }
 }

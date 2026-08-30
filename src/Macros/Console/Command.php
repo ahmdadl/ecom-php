@@ -15,9 +15,9 @@ class Command
      * Check if the argument exists and has a value.  
      * 
      * @param string $argument
-     * @return bool
+     * @return \Closure
      */
-    public function argumentHasValue()
+    public function argumentHasValue(string $argument = ''): \Closure
     {
         return fn(string $argument): bool => $this->hasArgument($argument) && $this->argument($argument);
     }
@@ -26,9 +26,9 @@ class Command
      * Check if the option exists and has a value.  
      * 
      * @param string $option
-     * @return bool
+     * @return \Closure
      */
-    public function optionHasValue()
+    public function optionHasValue(string $option = ''): \Closure
     { 
         return fn(string $option): bool => $this->hasOption($option) && $this->option($option);
     }

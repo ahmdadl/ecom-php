@@ -10,6 +10,9 @@ class ResponseSchema extends ObjectUnit implements ResponseSchemaInterface
 {
     /**
      * Constructor
+     *
+     * @param  array<string, mixed> $unitsList
+     * @param  array<string, mixed> $options
      */
     public function __construct(array $unitsList = [], array $options = [])
     {

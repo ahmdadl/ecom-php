@@ -6,6 +6,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 
+/**
+ * @method bool argumentHasValue(string $argument)
+ */
 class EngezMigrate extends Command
 {
     /**
@@ -25,26 +28,26 @@ class EngezMigrate extends Command
     /**
      * The module name
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $availableModules = [];
 
     /**
      * The module path
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $paths = [];
 
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return void
      */
     public function handle()
     {
         if ($this->argumentHasValue('modules')) {
-            $this->availableModules = explode(',', $this->argument('modules'));
+            $this->availableModules = explode(',', $this->stringArgument('modules'));
         } else {
             $this->paths[] = Mongez::packagePath('src/Database/migrations/' . config('database.default'));
             $this->availableModules = Mongez::getStored('modules');
@@ -58,7 +61,7 @@ class EngezMigrate extends Command
     /**
      * {@inheritDoc}
      */
-    public function init()
+    public function init(): void
     {
     }
 
@@ -71,7 +74,17 @@ class EngezMigrate extends Command
     {
         Artisan::call('migrate', ['--path' => $this->paths, '--realpath' => true]);
 
-        return $this->info('Migrate tables has been created Successfully ');
+        $this->info('Migrate tables has been created Successfully ');
+    }
+
+    /**
+     * Get the given console argument value as a string.
+     */
+    protected function stringArgument(string $key): string
+    {
+        $value = $this->argument($key);
+
+        return is_array($value) ? '' : (string) $value;
     }
 
     /**

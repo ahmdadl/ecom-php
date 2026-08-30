@@ -15,22 +15,22 @@ class ArrayOfUnit extends ArrayUnit
 
     /**
      * The unit type that should be contained in the array
-     * 
-     * @var unitTypeClass
+     *
+     * @var string
      */
     protected string $unitTypeClass;
 
     /**
      * Perform operation on each unit class in the array list
-     * 
-     * @var rarray
+     *
+     * @var array<int, Closure>
      */
     private array $callbacks = [];
 
     /**
      * Append a callback to each unit type
      *
-     * @param  \Clouse $callback
+     * @param  Closure $callback
      */
     public function each(Closure $callback): ArrayOfUnit
     {
@@ -61,6 +61,7 @@ class ArrayOfUnit extends ArrayUnit
         $class = $this->unitTypeClass;
 
         foreach ($this->value as $index => $singleValue) {
+            /** @var UnitType $unitType */
             $unitType = new $class();
 
             $unitType->setKeyNamespace($this->fullKeyPath())

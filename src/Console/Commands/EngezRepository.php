@@ -40,7 +40,7 @@ class EngezRepository extends EngezGeneratorCommand implements EngezInterface
     /**
      * Search filters list
      *
-     * @var string
+     * @var array<string, array<int|string, string>>
      */
     protected array $searchFilters = [];
 
@@ -174,7 +174,10 @@ class EngezRepository extends EngezGeneratorCommand implements EngezInterface
      *
      * @return void
      */
-    protected function setSearchFilters(string $filterName, array $searchFilters)
+    /**
+     * @param array<int|string, string> $searchFilters
+     */
+    protected function setSearchFilters(string $filterName, array $searchFilters): void
     {
         if ($searchFilters === []) return;
 

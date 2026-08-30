@@ -87,6 +87,10 @@ trait ModuleData
      * Return a full data types options with the given options
      * If second parameter is not empty, then its value will be taken as well from
      * the passed options list
+     *
+     * @param array<string, mixed> $options
+     * @param array<int, string> $moreOptions
+     * @return array<string, mixed>
      */
     protected function withDataTypes(array $options, array $moreOptions = []): array
     {

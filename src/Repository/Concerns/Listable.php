@@ -72,7 +72,7 @@ trait Listable
     /**
      * Use the given resource class
      */
-    public function useResource(string $resourceClass): self
+    public function useResource(string $resourceClass): static
     {
         $this->currentResource = $resourceClass;
 
@@ -170,7 +170,7 @@ trait Listable
 
         $this->select();
 
-        $filterManger = new FilterManager($this->query, $options, static::FILTER_BY);
+        $filterManger = new FilterManager($this->query, $options, static::FILTER_BY); // @phpstan-ignore argument.type
         $filterManger->filter(array_merge(static::FILTERS, config('mongez.filters', [])));
 
         $this->filter();
@@ -434,7 +434,7 @@ trait Listable
     /**
      * A shorthand method for filtering data if they are available
      */
-    protected function where(string $column, ?string $option = null): self
+    protected function where(string $column, ?string $option = null): static
     {
         if (!$option) {
             $option = $column;
@@ -452,7 +452,7 @@ trait Listable
     /**
      * A shorthand method for filtering data if they are available
      */
-    protected function whereIn(string $column, ?string $option = null): self
+    protected function whereIn(string $column, ?string $option = null): static
     {
         if (!$option) {
             $option = $column;
@@ -470,7 +470,7 @@ trait Listable
     /**
      * A shorthand method for filtering data if they are available
      */
-    protected function whereInInt(string $column, ?string $option = null): self
+    protected function whereInInt(string $column, ?string $option = null): static
     {
         if (!$option) {
             $option = $column;

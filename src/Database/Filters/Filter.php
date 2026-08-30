@@ -64,7 +64,7 @@ class Filter
     /**
      * Filter by columns 
      * 
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value
      * @param string $operator
      * @return void 
@@ -79,7 +79,7 @@ class Filter
     /**
      * Filter Like.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -99,7 +99,7 @@ class Filter
     /**
      * Filter IN array.
      * 
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -113,7 +113,7 @@ class Filter
     /**
      * Filter null
      * 
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -127,7 +127,7 @@ class Filter
     /**
      * Filter not null
      * 
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -141,7 +141,7 @@ class Filter
     /**
      * Filter IN array.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -155,7 +155,7 @@ class Filter
     /**
      * Filter NOT IN array.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -169,7 +169,7 @@ class Filter
     /**
      * Filter NOT IN array.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value
      * @return void
      */
@@ -183,7 +183,7 @@ class Filter
     /**
      * Filter With Date
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value
      * @param string $operator
      * @return void
@@ -199,7 +199,7 @@ class Filter
     /**
      * Filter with exact date
      * 
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value
      * @return void
      */
@@ -215,7 +215,8 @@ class Filter
     /**
      * Filter with exact datetime
      *
-     * @param array $columns
+     * @param array<int, string> $columns
+     * @param array<int, string> $dates
      * @return void
      */
     public function filterDateBetween($columns, array $dates)
@@ -230,7 +231,7 @@ class Filter
     /**
      * Filter With Date and Time
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value
      * @param string $operator
      * @return void
@@ -246,7 +247,7 @@ class Filter
     /**
      * Get all available filters map 
      * 
-     * @return array 
+     * @return array<string, string>
      */
     public function filterMap()
     {

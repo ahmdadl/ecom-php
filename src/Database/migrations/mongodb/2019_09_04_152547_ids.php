@@ -14,6 +14,7 @@ class Ids extends Migration
     {
         Schema::table('ids', function (Blueprint $table) {
             $table->string('collection')->unique();
+            /** @phpstan-ignore-next-line method.notFound */
             $table->int('id');
         });
     }

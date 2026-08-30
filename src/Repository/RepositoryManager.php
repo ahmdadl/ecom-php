@@ -509,11 +509,14 @@ abstract class RepositoryManager implements RepositoryInterface
      * @param  array<string,mixed> $data
      * @return TModel
      */
-    public function newModel($data = [])
+    public function newModel($data = []): Model
     {
         $modelName = static::MODEL;
 
-        return new $modelName($data);
+        /** @var TModel $model */
+        $model = new $modelName($data);
+
+        return $model;
     }
 
     /**

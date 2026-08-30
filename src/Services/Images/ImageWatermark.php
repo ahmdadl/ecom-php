@@ -47,7 +47,6 @@ class ImageWatermark extends BaseImage
     /**
      * Check if watermark image has been existed
      *
-     * @param string $waterImagePath
      * @return bool
      */
     protected function imageHasWatermark()

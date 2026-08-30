@@ -13,10 +13,10 @@ class Router
      * 
      * @param  string  $name
      * @param  string  $controller
-     * @param  array  $options
-     * @return \Illuminate\Routing\PendingResourceRegistration
+     * @param  array<string, mixed>  $options
+     * @return \Closure
      */
-    public function restfulApi()
+    public function restfulApi(string $name = '', string $controller = '', array $options = []): \Closure
     {
         return function ($name, $controller, array $options = []) {
             $this->patch($name . '/{id}', [$controller , 'patch']);

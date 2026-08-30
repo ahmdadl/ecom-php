@@ -16,13 +16,15 @@ class Aggregate
 
     /**
      * Query Builder
+     *
+     * @var mixed
      */
     protected $query;
 
     /**
      * Pipelines list
-     * 
-     * @var array
+     *
+     * @var array<int, Pipeline>
      */
     protected $pipelines = [];
 
@@ -35,6 +37,8 @@ class Aggregate
 
     /**
      * Constructor
+     *
+     * @param mixed $query
      */
     public function __construct($query)
     {
@@ -44,7 +48,7 @@ class Aggregate
     /**
      * Group By the given column
      *
-     * @param ...string $columns
+     * @param string ...$columns
      */
     public function groupBy(...$columns): Pipeline
     {
@@ -148,12 +152,10 @@ class Aggregate
     }
 
     /**
-     * Where clause 
-     * 
-     * @param string $column 
-     * @param string $operator|$value 
-     * @param mixed $value
-     * @return Pipeline 
+     * Where clause
+     *
+     * @param mixed ...$args
+     * @return Pipeline
      */
     public function where(...$args)
     {
@@ -179,15 +181,16 @@ class Aggregate
         }
 
         return $this->pipeline('match')->data([
-            $column => new Regex($regex, 'i'),
+            $column => new Regex((string) $regex, 'i'),
         ]);
     }
 
     /**
      * Order returned records
      *
-     * @param array $columns
-     * @return Pipeline
+     * @param string $column
+     * @param string $order
+     * @return Aggregate
      */
     public function orderBy($column, $order = 'asc')
     {
@@ -233,9 +236,9 @@ class Aggregate
      * @param string $from
      * @param string $localField
      * @param string $foreignField
-     * @param string $as
-     * 
-     * @return void
+     * @param string|null $as
+     *
+     * @return Pipeline
      */
     public function join($from, $localField, $foreignField, $as = null)
     {
@@ -246,6 +249,7 @@ class Aggregate
      * Limit number of records
      *
      * @param int $number
+     * @param int|null $offset
      * @return Pipeline
      */
     public function limit($number, $offset = null)
@@ -270,9 +274,9 @@ class Aggregate
 
     /**
      * Offset number of records
-     * 
-     * @param int $number
-     * @return $this
+     *
+     * @param int $offset
+     * @return Pipeline
      */
     public function offset($offset)
     {
@@ -282,7 +286,7 @@ class Aggregate
     /**
      * Select items
      *
-     * @param array ...$columns
+     * @param string ...$columns
      */
     public function select(...$columns): Pipeline
     {
@@ -291,8 +295,6 @@ class Aggregate
 
     /**
      * Select items
-     *
-     * @param array ...$columns
      */
     public function project(): Pipeline
     {
@@ -304,6 +306,7 @@ class Aggregate
      */
     public function pipeline(string $pipelineName): Pipeline
     {
+        /** @phpstan-ignore-next-line new.noConstructor */
         $this->currentPipeline = new Pipeline($this, $pipelineName);
 
         $this->pipelines[] = $this->currentPipeline;
@@ -337,8 +340,8 @@ class Aggregate
 
     /**
      * Log the query
-     * 
-     * @return array
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function getQueryLog()
     {
@@ -355,15 +358,25 @@ class Aggregate
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $name
+     * @param array<int, mixed> $arguments
+     * @return mixed
      */
     public function __call($name, $arguments)
     {
         // for all where clause
         if (Str::startsWith($name, 'where')) {
-            return call_user_func_array([$this->pipeline('match'), $name], $arguments);
+            /** @var callable $callback */
+            $callback = [$this->pipeline('match'), $name];
+
+            return call_user_func_array($callback, $arguments);
         }
 
-        return call_user_func_array([$this->currentPipeline, $name], $arguments);
+        /** @var callable $callback */
+        $callback = [$this->currentPipeline, $name];
+
+        return call_user_func_array($callback, $arguments);
     }
 
     /**

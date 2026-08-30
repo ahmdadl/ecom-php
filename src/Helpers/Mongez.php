@@ -53,8 +53,8 @@ class Mongez
 
     /**
      * Mongez file content
-     * 
-     * @var array
+     *
+     * @var array<string, mixed>|null
      */
     protected static $mongezContent;
 
@@ -152,9 +152,9 @@ class Mongez
      */
     public static function install()
     {
-        File::MakeDirectory(static::getMongezStorageDirectory(), 0777);
+        File::makeDirectory(static::getMongezStorageDirectory(), 0777);
 
-        File::put(static::getMongezStorageFilePath(), json_encode(static::MONGEZ_STORAGE_FILE_DEfAULT_CONTENT, JSON_PRETTY_PRINT));
+        File::put(static::getMongezStorageFilePath(), (string) json_encode(static::MONGEZ_STORAGE_FILE_DEfAULT_CONTENT, JSON_PRETTY_PRINT));
     }
 
     /**
@@ -198,12 +198,12 @@ class Mongez
 
     /**
      * Set storage file content.
-     * 
-     * @array $array  
+     *
+     * @param array<string, mixed>|null $content
      */
-    protected static function setStorageFileContent(array $content)
+    protected static function setStorageFileContent(array|null $content): void
     {
-        File::putJson(static::getMongezStorageFilePath(), $content);
+        File::putJson(static::getMongezStorageFilePath(), $content); // @phpstan-ignore staticMethod.notFound
     }
 
     /**
@@ -211,7 +211,7 @@ class Mongez
      *
      * @return mixed
      */
-    public static function getStored($key)
+    public static function getStored(string $key)
     {
         if (!static::$mongezContent) {
             static::$mongezContent = static::getStorageFileContent();
@@ -227,7 +227,7 @@ class Mongez
      */
     protected static function getStorageFileContent()
     {
-        return File::getJson(static::getMongezStorageFilePath());
+        return File::getJson(static::getMongezStorageFilePath()); // @phpstan-ignore staticMethod.notFound
     }
 
     /**
@@ -287,7 +287,7 @@ class Mongez
     /**
      * Remove value from an arrayable key
      * 
-     * @param string $moduleName
+     * @param string $key
      * @return void
      */
     public static function remove(string $key, string $value)

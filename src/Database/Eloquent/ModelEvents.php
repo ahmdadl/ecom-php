@@ -9,6 +9,7 @@ trait ModelEvents
 {
     public static string $modelClass;
 
+    /** @var array<int, array<string, mixed>> */
     public static array $modelOptions = [];
 
     public static string $sharedInfoMethod = 'sharedInfo';
@@ -30,10 +31,10 @@ trait ModelEvents
     /**
      * Handle model create events.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handleCreated($model)
+    public static function handleCreated(Model $model)
     {
         static::handleCreateSingleModel($model);
 
@@ -43,10 +44,10 @@ trait ModelEvents
     /**
      * Handle model update events.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handleUpdated($model)
+    public static function handleUpdated(Model $model)
     {
         static::handleUpdateSingleModel($model);
 
@@ -56,10 +57,10 @@ trait ModelEvents
     /**
      * Handle model delete events.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handleDeleted($model)
+    public static function handleDeleted(Model $model)
     {
         static::handleUnsetSingleModel($model);
 
@@ -101,10 +102,10 @@ trait ModelEvents
     /**
      * Handle create model record as array of documents in related models.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handleCreateArrayModel($model)
+    public static function handleCreateArrayModel(Model $model)
     {
         $arrayModelsList = array_merge(
             config('mongez.database.onModel.createArray.' . static::class, []),
@@ -198,10 +199,10 @@ trait ModelEvents
     /**
      * Handle unset model record as documents in related models.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handleUnsetSingleModel($model)
+    public static function handleUnsetSingleModel(Model $model)
     {
         $singleModelsList = array_merge(
             config('mongez.database.onModel.deleteUnset.' . static::class, []),
@@ -231,10 +232,10 @@ trait ModelEvents
     /**
      * Handle pull model record as array of documents in related models.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handlePullArrayModel($model)
+    public static function handlePullArrayModel(Model $model)
     {
         $arrayModelsList = array_merge(
             config('mongez.database.onModel.deletePull.' . static::class, []),
@@ -260,10 +261,10 @@ trait ModelEvents
     /**
      * Handle delete related models of the model record.
      *
-     * @param $model
+     * @param Model $model
      * @return void
      */
-    public static function handleDeleteSingleModel($model)
+    public static function handleDeleteSingleModel(Model $model)
     {
         $singleModelsList = array_merge(
             config('mongez.database.onModel.delete.' . static::class, []),
@@ -289,11 +290,11 @@ trait ModelEvents
     /**
      * Set model options on create events.
      *
-     * @param $model
-     * @param $options
+     * @param Model $model
+     * @param string|array<int, mixed> $options
      * @return void
      */
-    public static function setCreateModelOptions($model, $options)
+    public static function setCreateModelOptions(Model $model, string|array $options)
     {
         $options = static::getOptionsArray($options);
 
@@ -303,7 +304,7 @@ trait ModelEvents
             switch (count($option)) {
                 case 1:
                     // resolves related (Model::class) namespace to camelCase model name (model)
-                    $relationalModel = Str::camel(str_replace('Models\\', '', strstr(static::$modelClass, 'Models')));
+                    $relationalModel = Str::camel(str_replace('Models\\', '', (string) strstr(static::$modelClass, 'Models')));
 
                     // searching in the model attributes for key asymptotic to resolved (Model::class) name to get the searching key
                     $foreignColumn = array_key_exists($relationalModel, $model->toArray()) ? $relationalModel :
@@ -330,10 +331,10 @@ trait ModelEvents
     /**
      * Set model options on update and delete events.
      *
-     * @param $options
+     * @param string|array<int, mixed> $options
      * @return void
      */
-    public static function setModelOptions($options)
+    public static function setModelOptions(string|array $options)
     {
         $options = static::getOptionsArray($options);
 
@@ -363,29 +364,30 @@ trait ModelEvents
     /**
      * Get model options as array of arrays.
      *
-     * @param $options
-     * @return array|mixed
+     * @param string|array<int, mixed> $options
+     * @return array<int, array<int, string>>
      */
-    public static function getOptionsArray($options)
+    public static function getOptionsArray(string|array $options): array
     {
         static::$modelOptions = [];
 
-        switch ($options) {
-            case is_string($options):
-                $options = [(array) $options];
-
-                break;
-            case is_array($options) && count($options) === count($options, COUNT_RECURSIVE):
-                $options = [$options];
+        if (is_string($options)) {
+            $normalized = [(array) $options];
+        } elseif (count($options) === count($options, COUNT_RECURSIVE)) {
+            $normalized = [$options];
+        } else {
+            $normalized = $options;
         }
 
-        return $options;
+        /** @var array<int, array<int, string>> $normalized */
+        return $normalized;
     }
 
     /**
      * Get related models records on create events.
      *
-     * @return mixed
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Database\Eloquent\Collection<int, Model>
      */
     public static function getCreateRelatedModels(Model $model, array $options)
     {
@@ -398,7 +400,8 @@ trait ModelEvents
     /**
      * Get related models records on update and delete events.
      *
-     * @return mixed
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Database\Eloquent\Collection<int, Model>
      */
     public static function getRelatedModels(Model $model, array $options)
     {

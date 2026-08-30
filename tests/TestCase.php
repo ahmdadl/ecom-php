@@ -59,7 +59,10 @@ abstract class TestCase extends Testbench
      */
     protected function dropCollections(string ...$collections): void
     {
-        $database = $this->app['db']->connection('mongodb')->getMongoDB();
+        $app = $this->app;
+        $this->assertNotNull($app);
+
+        $database = $app['db']->connection('mongodb')->getMongoDB();
 
         foreach ($collections as $collection) {
             $database->dropCollection($collection);

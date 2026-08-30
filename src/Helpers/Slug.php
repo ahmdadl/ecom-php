@@ -19,9 +19,9 @@ class Slug
     /**
      * slug by arabic latter
      *
-     * @param $string
+     * @param string $string
      */
-    public static function arabicSlug($string): string
+    public static function arabicSlug(string $string): string
     {
         $slug = new Slugify(['regexp' => '/([^\p{Arabic}a-zA-Z0-9]+|-+)/u']);
 

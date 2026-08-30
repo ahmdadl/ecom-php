@@ -12,12 +12,12 @@ class Arr
     /**
      * Remove from array by the given value 
      * 
+     * @param  array<mixed> $array
      * @param  mixed $value
-     * @param  array $array
      * @param  bool $removeFirstOnly
-     * @return array
+     * @return \Closure
      */
-    public static function remove()
+    public static function remove(array $array = [], $value = null, bool $removeFirstOnly = false): \Closure
     {
         return function (array $array, $value, bool $removeFirstOnly = false): array {
             foreach ($array as $key => $arrayValue) {
@@ -34,10 +34,10 @@ class Arr
     /**
      * Get the all values that are not duplicated in the given arrays
      * 
-     * @param  ...$arrays
-     * @return array 
+     * @param  mixed ...$arrays
+     * @return \Closure
      */
-    public static function outer()
+    public static function outer(...$arrays): \Closure
     {
         return fn(...$arrays) => array_diff(array_merge(...$arrays), array_intersect(...$arrays));
     }

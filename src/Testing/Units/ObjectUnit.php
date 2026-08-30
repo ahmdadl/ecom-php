@@ -18,11 +18,15 @@ class ObjectUnit extends UnitType
 
     /**
      * Unit innner units list
+     *
+     * @var array<string, mixed>
      */
     protected array $unitsList = [];
 
     /**
      * Constructor
+     *
+     * @param  array<string, mixed> $unitsList
      */
     public function __construct(array $unitsList = [])
     {
@@ -43,9 +47,9 @@ class ObjectUnit extends UnitType
     /**
      * Set units list
      *
-     * @param  array $unitsList
+     * @param  array<string, mixed> $unitsList
      */
-    public function setUnits($unitsList): UnitType
+    public function setUnits(array $unitsList): UnitType
     {
         $this->unitsList = $unitsList;
 
@@ -55,7 +59,7 @@ class ObjectUnit extends UnitType
     /**
      * {@inheritdoc}
      */
-    public function validate(): self
+    public function validate(): UnitType
     {
         parent::validate();
 
@@ -136,6 +140,7 @@ class ObjectUnit extends UnitType
             throw new InvalidUnitTypeException(sprintf('%s Unit is not listed in the mongez.testing.units list, please define it there first', $this->color($unitName, 'cyan')));
         }
 
+        /** @var UnitType $unit */
         return $unit;
     }
 }

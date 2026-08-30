@@ -22,7 +22,7 @@ class MongoDBFilter extends Filter
     /**
      * Filter integer values.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -36,7 +36,7 @@ class MongoDBFilter extends Filter
     /**
      * Filter float values.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -50,7 +50,7 @@ class MongoDBFilter extends Filter
     /**
      * Filter boolean values.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -68,7 +68,7 @@ class MongoDBFilter extends Filter
     /**
      * Filter in boolean boolean values.
      *
-     * @param array $columns
+     * @param array<int, string> $columns
      * @param string $value     
      * @return void
      */
@@ -82,7 +82,7 @@ class MongoDBFilter extends Filter
     /**
      * Get all available filters map 
      * 
-     * @return array 
+     * @return array<string, string>
      */
     public function filterMap()
     {

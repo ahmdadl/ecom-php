@@ -10,6 +10,8 @@ trait Messageable
 {
     /**
      * Get colored key
+     *
+     * @param  array<int|string, mixed> $options
      */
     public function color(string $text, string $color = '', array $options = []): string
     {

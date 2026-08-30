@@ -58,9 +58,9 @@ class EngezRequest extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
-        $this->requestName = $this->argument('request');
+        $this->requestName = $this->stringArgument('request');
 
     }
 

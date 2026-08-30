@@ -6,6 +6,13 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Console\Traits\EngezTrait;
 
+/**
+ * @property \Illuminate\Filesystem\Filesystem $files
+ * @property array<string, mixed> $info
+ * @property string $moduleName
+ * @property string $repositoryClassName
+ * @property string $repositoryName
+ */
 class Markdown
 {
     /**
@@ -24,7 +31,7 @@ class Markdown
     /**
      * Module data
      * 
-     * @var array
+     * @var array<string, mixed>
      */
     protected $data = [];
 
@@ -38,6 +45,9 @@ class Markdown
     /**
      * For setting required data to generate MarkDown file 
      */
+    /**
+     * @param array<string, mixed> $data
+     */
     public function __construct(array $data)
     {
         $this->prepareData($data);
@@ -47,7 +57,7 @@ class Markdown
     /**
      * prepare and set needed data.
      * 
-     * @param array $data
+     * @param array<string, mixed> $data
      * @return void
      */
     protected function prepareData($data)
@@ -88,13 +98,13 @@ class Markdown
 
         $content = str_ireplace("data", $data, $content);
 
-        return $this->content = $content;
+        $this->content = $content;
     }
 
     /**
      * 
      */
-    protected function updateParentDocs()
+    protected function updateParentDocs(): void
     {
         $content = File::get($this->modulePath("docs/README.md"));
 

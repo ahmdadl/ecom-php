@@ -1,7 +1,7 @@
 <?php
 namespace HZ\Illuminate\Mongez\Services\Images;
 
-Use File;
+use Illuminate\Support\Facades\File;
 use Image;
 
 class ImageResize extends BaseImage {
@@ -34,7 +34,7 @@ class ImageResize extends BaseImage {
      * @param int $height
      * @return string
      */
-    public function resize($width, $height, $quality = 100)
+    public function resize($width, $height, int $quality = 100)
     {
         $this->width = $width;
         $this->height = $height;

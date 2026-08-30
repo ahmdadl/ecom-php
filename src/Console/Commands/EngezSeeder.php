@@ -51,9 +51,9 @@ class EngezSeeder extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
-        $this->seederClass = $this->studly($this->argument('seeder') . 'Seeder');
+        $this->seederClass = $this->studly($this->stringArgument('seeder') . 'Seeder');
     }
 
     /**

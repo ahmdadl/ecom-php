@@ -33,9 +33,9 @@ class UniqueEmail implements Rule
     /**
      * Except column
      * 
-     * @var string
+     * @var string|null
      */
-    protected $exceptColumn;
+    protected ?string $exceptColumn = null;
 
     /**
      * Except column value
@@ -47,10 +47,10 @@ class UniqueEmail implements Rule
     /**
      * Constructor
      * 
-     * @param  \Illuminate\Contracts\Repositories\Repository $repository
+     * @param  RepositoryManager<\Illuminate\Database\Eloquent\Model> $repository
      * @param  string $column
      * @param mixed $exceptColumnValue
-     * @param string $exceptColumn
+     * @param string|null $exceptColumn
      */
     public function __construct($repository, $column, $exceptColumnValue = null, $exceptColumn = null)
     {
@@ -85,8 +85,10 @@ class UniqueEmail implements Rule
      *
      * @return string
      */
-    public function message()
+    public function message(): string
     {
-        return trans('mongez::validation.uniqueEmail', ['attribute' => $this->attribute]);
+        $message = trans('mongez::validation.uniqueEmail', ['attribute' => $this->attribute]);
+
+        return is_string($message) ? $message : '';
     }
 }

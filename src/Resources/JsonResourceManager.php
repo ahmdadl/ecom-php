@@ -931,7 +931,7 @@ abstract class JsonResourceManager extends JsonResource
      * Set date
      *
      * @param mixed $value
-     * @param array<int|string, mixed> $options
+     * @param array<string, mixed> $options
      * @return void
      */
     protected function setDate(string $column, $value, array $options = [])

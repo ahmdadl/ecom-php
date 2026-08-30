@@ -33,9 +33,9 @@ if (!function_exists('user')) {
      * 
      * @return mixed
      */
-    function user($guard = null)
+    function user(?string $guard = null)
     {
-        return auth($guard)->user();
+        return auth($guard)->user(); // @phpstan-ignore method.notFound
     }
 }
 
@@ -48,7 +48,7 @@ if (!function_exists('to_json')) {
      */
     function to_json($data): string
     {
-        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return (string) json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }
 
@@ -119,13 +119,13 @@ if (!function_exists('array_remove')) {
      * Remove from array by the given value
      * 
      * @param  mixed $value
-     * @param  array $array
+     * @param  array<int|string, mixed> $array
      * @param  bool $removeFirstOnly
-     * @return array
+     * @return array<int|string, mixed>
      */
-    function array_remove($value, array $array, bool $removeFirstOnly = false): array
+    function array_remove(mixed $value, array $array, bool $removeFirstOnly = false): array
     {
-        return Arr::remove($value, $array, $removeFirstOnly);
+        return Arr::remove($value, $array, $removeFirstOnly); // @phpstan-ignore staticMethod.notFound
     }
 }
 
@@ -133,13 +133,13 @@ if (!function_exists('str_remove_first')) {
     /**
      * Remove from the given object the first occurrence for the given needle
      * 
-     * @param mixed $needle
+     * @param string $needle
      * @param string $object
      * @return string
      */
     function str_remove_first(string $needle, string $object)
     {
-        return Str::removeFirst($needle, $object);
+        return Str::removeFirst($needle, $object); // @phpstan-ignore staticMethod.notFound
     }
 }
 
@@ -148,9 +148,9 @@ if (!function_exists('parse_date')) {
      * Convert the given date to a Datetime object
      * 
      * @param  mixed $date
-     * @return \DateTime | null
+     * @return \DateTimeInterface|null
      */
-    function parse_date($date)
+    function parse_date(mixed $date): ?DateTimeInterface
     {
         if ($date instanceof UTCDateTime) {
             $date = $date->toDateTime();
@@ -163,12 +163,12 @@ if (!function_exists('parse_date')) {
                 $timestamp = $date['$date']['$numberLong'] / 1000;
                 $date = new DateTime("@{$timestamp}");
             } else {
-                return;
+                return null;
             }
         } elseif (is_string($date)) {
             $date = new DateTime($date);
         } elseif (!$date instanceof DateTimeInterface) {
-            return;
+            return null;
         }
 
         return $date;
@@ -180,10 +180,10 @@ if (!function_exists('date_response')) {
      * Parse the date and return more readable data
      * 
      * @param  mixed $date
-     * @param  array $options
+     * @param  array<string, mixed> $options
      * @return mixed
      */
-    function date_response($date, array $options = [])
+    function date_response(mixed $date, array $options = []): mixed
     {
         $options = array_merge([
             'format' =>  config('mongez.resources.date.format', 'd-m-Y h:i:s a'),
@@ -203,16 +203,16 @@ if (!function_exists('date_response')) {
                 $timestamp = $date['$date']['$numberLong'] / 1000;
                 $date = new DateTime("@{$timestamp}");
             } else {
-                return;
+                return null;
             }
         } elseif (is_string($date)) {
             $date = new DateTime($date);
         } elseif (!$date instanceof DateTimeInterface) {
-            return;
+            return null;
         }
 
         $timezone = new \DateTimeZone(config('app.timezone'));
-        $date->setTimezone($timezone);
+        $date->setTimezone($timezone); // @phpstan-ignore method.notFound
 
         if (!$options['humanTime'] && !$options['timestamp']) {
             $intlFormat = $options['intlFormat'] ?? null;
@@ -281,7 +281,7 @@ if (!function_exists('localized_date')) {
             $timeType,
         );
 
-        return $formatter->format($date);
+        return (string) $formatter->format($date);
     }
 }
 
@@ -290,11 +290,11 @@ if (!function_exists('get_localized_value')) {
     /**
      * Get localized string from localized array based on locale code.
      *
-     * @param array|string $localized
+     * @param array<string, mixed>|string $localized
      * @param string $localeCode
      * @return mixed
      */
-    function get_localized_value($localized, string $localeCode, string $textColumn = 'text')
+    function get_localized_value(array|string $localized, string $localeCode, string $textColumn = 'text')
     {
         if (!$localized || is_string($localized)) return $localized;
 
@@ -308,11 +308,11 @@ if (!function_exists('carbon')) {
      * A wrapper around Carbon to set timezone correctly
      * 
      * @param  mixed $time
-     * @param  mixed $timezone
+     * @param  string|null $tz
      * @param  boolean $immutable
-     * @return Carbon
+     * @return \Carbon\CarbonInterface
      */
-    function carbon($time = null, $tz = null, bool $immutable = true)
+    function carbon(mixed $time = null, ?string $tz = null, bool $immutable = true): \Carbon\CarbonInterface
     {
         $timezone = new \DateTimeZone($tz ?: config('app.timezone'));
 

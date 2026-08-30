@@ -8,11 +8,14 @@ class Database
 {
     /**
      * Get all collections list
+     *
+     * @return array<int, string>
      */
     public static function collectionsList(): array
     {
         $collections = [];
 
+        /** @phpstan-ignore-next-line method.notFound */
         $collectionList = DB::connection()->getDatabase()->listCollections();
 
         foreach ($collectionList as $collection) {

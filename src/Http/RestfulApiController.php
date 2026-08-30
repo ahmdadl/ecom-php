@@ -133,7 +133,7 @@ abstract class RestfulApiController extends ApiController
      */
     public function update(Request $request, $id)
     {
-        $model = $this->repository->getModel($id);
+        $model = $this->repository->getModel((int) $id);
 
         if (!$model) {
             return $this->notFound();
@@ -194,7 +194,7 @@ abstract class RestfulApiController extends ApiController
      */
     public function patch(Request $request, $id)
     {
-        $model = $this->repository->getModel($id);
+        $model = $this->repository->getModel((int) $id);
 
         if (!$model) {
             return $this->notFound();
@@ -261,7 +261,7 @@ abstract class RestfulApiController extends ApiController
             $totalDeleted = 0;
 
             foreach ($ids as $id) {
-                $model = $this->repository->getModel($id);
+                $model = $this->repository->getModel((int) $id);
 
                 if (!$model) {
                     $errors[] = [
@@ -296,7 +296,7 @@ abstract class RestfulApiController extends ApiController
             ]);
         }
 
-        $model = $this->repository->getModel($id);
+        $model = $this->repository->getModel((int) $id);
 
         if (!$model) {
             return $this->notFound();

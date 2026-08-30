@@ -8,6 +8,8 @@ class ErrorsListUnit extends ArrayOfUnit
 {
     /**
      * {@inheritDoc}
+     *
+     * @param  array<int, string> $errorsKeys
      */
     public function __construct(array $errorsKeys)
     {

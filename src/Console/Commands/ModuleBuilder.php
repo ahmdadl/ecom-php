@@ -12,7 +12,8 @@ use HZ\Illuminate\Mongez\Console\EngezGeneratorCommand;
 // class ModuleBuilder extends EngezGeneratorCommand
 class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 {
-    public $module;
+    public ?string $module = null;
+
     /**
      * User module is exist
      *
@@ -23,15 +24,16 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
     /**
      * Module info
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $info = [];
 
     /**
      * Available Options
      *
+     * @var array<int, string>
      */
-    protected $availableOptions = [];
+    protected array $availableOptions = [];
 
     /**
      * The name and signature of the console command.
@@ -72,7 +74,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
      */
     public function handle()
     {
-        $this->setModuleName($this->argument('moduleName'));
+        $this->setModuleName($this->stringArgument('moduleName'));
 
         if ($this->optionHasValue('data')) {
             $this->terminate('data option is deprecated, use instead: --string | --int | --bool | --date | --uploads');
@@ -128,9 +130,8 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
         }
 
         if ($this->moduleExists()) {
-            return $this->terminate('This module is already created');
+            $this->terminate('This module is already created');
         }
-        return null;
     }
 
     /**
@@ -208,7 +209,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
     {
         foreach (static::DATA_TYPES as $option) {
             if ($this->optionHasValue($option)) {
-                $value = $this->option($option);
+                $value = $this->stringOption($option);
                 $this->info[$option] = explode(',', $value);
             }
         }
@@ -389,7 +390,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
      */
     protected function createServiceProvider()
     {
-        $types = $this->option('type');
+        $types = $this->stringOption('type');
 
         if ($types === 'all') {
             $types = 'admin,site';
@@ -399,7 +400,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
             // Module Name, also the class name suffixed with ServiceProvider
             '{{ ModuleName }}' => $moduleName = $this->getModule(),
             // routes types
-            '{{ routesTypes }}' => $this->stubStringAsArray($types),
+            '{{ routesTypes }}' => $this->stubStringAsArray((string) $types),
             // build mode: api|ui
             '{{ buildMode }}' => $this->buildMode,
             '{{ viewable }}' => $this->buildMode === 'ui' ? $this->replaceStub('Providers/viewable', [
@@ -424,16 +425,16 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
     protected function setData($option)
     {
         // repository
-        $optionValue = $this->option($option);
+        $optionValue = $this->stringOption($option);
 
-        $module = ucfirst($this->module);
+        $module = ucfirst((string) $this->module);
 
         if (!$optionValue) {
             // get it from the module name
             $optionValue = "{$module}\\{$module}";
         }
 
-        $this->info[$option] = Str::studly(str_replace('/', '\\', $optionValue));
+        $this->info[$option] = Str::studly(str_replace('/', '\\', (string) $optionValue));
     }
 
     /**
@@ -503,7 +504,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 
         foreach ($dataOptions as $dataOption => $value) {
             if ($this->optionHasValue($dataOption)) {
-                foreach (explode(',', $this->option($dataOption)) as $option) {
+                foreach (explode(',', $this->stringOption($dataOption)) as $option) {
                     $options[$option] = $value;
                 }
             }
@@ -555,7 +556,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
 
         foreach ($dataOptions as $dataOption => $value) {
             if ($this->optionHasValue($dataOption)) {
-                foreach (explode(',', $this->option($dataOption)) as $option) {
+                foreach (explode(',', $this->stringOption($dataOption)) as $option) {
                     $options[$option] = $value;
                 }
             }
@@ -600,7 +601,7 @@ class ModuleBuilder extends EngezGeneratorCommand implements EngezInterface
     protected function topParentModule(): string
     {
         return $this->hasParentModule() ? $this->plural(
-            $this->studly($this->option('parent'))
+            $this->studly($this->stringArgument('parent'))
         ) : $this->getModule();
     }
 

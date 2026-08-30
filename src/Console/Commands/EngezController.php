@@ -39,7 +39,7 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
     /**
      * The controller types
      *
-     * @var array
+     * @var array<int, string>
      */
     const CONTROLLER_TYPES = ['admin', 'site', 'all'];
 
@@ -65,7 +65,7 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
     /**
      * info used for creating controller
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $info = [];
 
@@ -110,15 +110,15 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
         $this->controllerName = $this->plural(
                 $this->studly(
-                    str_replace('Controller', '', $this->argument('controller'))
+                    str_replace('Controller', '', $this->stringArgument('controller'))
                 )
             ) . 'Controller';
 
-        $this->controllerType = $this->option('type');
+        $this->controllerType = $this->stringOption('type');
     }
 
     /**
@@ -143,7 +143,9 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
         }
 
         if (!in_array($this->option('type'), static::CONTROLLER_TYPES)) {
-            return $this->missingRequiredOption('This controller type does not exits, Did you mean? ' . implode(PHP_EOL, static::CONTROLLER_TYPES));
+            $this->missingRequiredOption('This controller type does not exits, Did you mean? ' . implode(PHP_EOL, static::CONTROLLER_TYPES));
+
+            return;
         }
     }
 
@@ -183,11 +185,14 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
 
         $moduleName = $this->getModule();
 
+        $storeRequest = $updateRequest = $patchRequest = '';
+
         if ($this->optionHasValue('request')) {
             $requestOptions = $this->option('request');
-            $storeRequest = $requestOptions['store'];
-            $updateRequest = $requestOptions['update'];
-            $patchRequest = $requestOptions['patch'];
+
+            $storeRequest = is_array($requestOptions) ? $requestOptions['store'] : '';
+            $updateRequest = is_array($requestOptions) ? $requestOptions['update'] : '';
+            $patchRequest = is_array($requestOptions) ? $requestOptions['patch'] : '';
         }
 
         $replaces = [
@@ -199,7 +204,7 @@ class EngezController extends EngezGeneratorCommand implements EngezInterface
             '{{ serviceClass }}' => $this->optionHasValue('serviceClass') ? 'use ' . $this->option('serviceClass') . ';' : "''",
             '{{ serviceName }}' => $this->option('service') ?: "''",
             // repository
-            '{{ repositoryName }}' =>  $this->optionHasValue('repository') ? $this->repositoryName($this->option('repository')) : "''",
+            '{{ repositoryName }}' =>  $this->optionHasValue('repository') ? $this->repositoryName($this->stringOption('repository')) : "''",
             '{{ storeRequestName }}' => $storeRequest,
             '{{ updateRequestName }}' => $updateRequest,
             '{{ patchRequestName }}' => $patchRequest,

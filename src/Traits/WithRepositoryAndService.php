@@ -33,7 +33,7 @@ trait WithRepositoryAndService
         // check if the trait in a sub-class and the parent has __get method
         $parent = get_parent_class($this);
         if ($parent !== false && method_exists($parent, '__get')) {
-            return parent::__get($key);
+            return parent::__get($key); // @phpstan-ignore class.noParent
         }
 
         throw new Exception(sprintf('Call to undefined property %s', $key));

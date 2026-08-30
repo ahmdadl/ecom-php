@@ -56,10 +56,11 @@ abstract class ApiTestCase extends TestCase
     /**
      * Call another test unit
      *
-     * @return  ApTestCase
+     * @return  ApiTestCase
      */
     public function callTest(string $unitTestClass)
     {
+        /** @var ApiTestCase $class */
         $class = new $unitTestClass('');
 
         $class->setUp();
@@ -93,6 +94,12 @@ abstract class ApiTestCase extends TestCase
     /**
      * Handle Authorization Header
      */
+    /**
+     * Handle Authorization Header
+     *
+     * @param  array<string, mixed>  $headers
+     * @return array<string, mixed>
+     */
     protected function handleAuthorizationHeader(array $headers): array
     {
         // merge headers with default config headers
@@ -109,77 +116,106 @@ abstract class ApiTestCase extends TestCase
      * Visit the given URI with a GET request, expecting a JSON response.
      *
      * @param  string  $uri
+     * @param  array<string, mixed>  $headers
      */
     public function get($uri, array $headers = []): TestResponse
     {
         $headers = $this->handleAuthorizationHeader($headers);
 
-        return parent::getJson($uri, $headers);
+        /** @var TestResponse $response */
+        $response = parent::getJson($uri, $headers);
+
+        return $response;
     }
 
     /**
      * Visit the given URI with a POST request, expecting a JSON response.
      *
      * @param  string  $uri
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function post($uri, array $data = [], array $headers = [])
     {
         $headers = $this->handleAuthorizationHeader($headers);
 
-        return parent::postJson($uri, $data, $headers);
+        /** @var TestResponse $response */
+        $response = parent::postJson($uri, $data, $headers);
+
+        return $response;
     }
 
     /**
      * Visit the given URI with a PUT request, expecting a JSON response.
      *
      * @param  string  $uri
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function put($uri, array $data = [], array $headers = [])
     {
         $headers = $this->handleAuthorizationHeader($headers);
 
-        return parent::putJson($uri, $data, $headers);
+        /** @var TestResponse $response */
+        $response = parent::putJson($uri, $data, $headers);
+
+        return $response;
     }
 
     /**
      * Visit the given URI with a PATCH request, expecting a JSON response.
      *
      * @param  string  $uri
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function patch($uri, array $data = [], array $headers = [])
     {
         $headers = $this->handleAuthorizationHeader($headers);
 
-        return parent::patchJson($uri, $data, $headers);
+        /** @var TestResponse $response */
+        $response = parent::patchJson($uri, $data, $headers);
+
+        return $response;
     }
 
     /**
      * Visit the given URI with a DELETE request, expecting a JSON response.
      *
      * @param  string  $uri
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function delete($uri, array $data = [], array $headers = [])
     {
         $headers = $this->handleAuthorizationHeader($headers);
 
-        return parent::deleteJson($uri, $data, $headers);
+        /** @var TestResponse $response */
+        $response = parent::deleteJson($uri, $data, $headers);
+
+        return $response;
     }
 
     /**
      * Visit the given URI with an OPTIONS request, expecting a JSON response.
      *
      * @param  string  $uri
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $headers
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
     public function options($uri, array $data = [], array $headers = [])
     {
         $headers = $this->handleAuthorizationHeader($headers);
 
-        return parent::optionsJson($uri, $data, $headers);
+        /** @var TestResponse $response */
+        $response = parent::optionsJson($uri, $data, $headers);
+
+        return $response;
     }
 
     /**
@@ -187,10 +223,10 @@ abstract class ApiTestCase extends TestCase
      *
      * @param  string  $method
      * @param  string  $route
-     * @param  array  $parameters
-     * @param  array  $cookies
-     * @param  array  $files
-     * @param  array  $server
+     * @param  array<mixed>  $parameters
+     * @param  array<mixed>  $cookies
+     * @param  array<mixed>  $files
+     * @param  array<mixed>  $server
      * @param  string|null  $content
      * @return \HZ\Illuminate\Mongez\Testing\TestResponse
      */
@@ -198,6 +234,7 @@ abstract class ApiTestCase extends TestCase
     {
         $uri = $this->prepareUri($route);
 
+        /** @var TestResponse $response */
         $response = parent::call($method, $uri, $parameters, $cookies, $files, $server, $content);
 
         $response->setRoute($route);
@@ -237,13 +274,14 @@ abstract class ApiTestCase extends TestCase
             return strtolower((string) preg_replace('/(?<!^)[A-Z]/', '-$0', $segment));
         }, $uri);
 
-        return $uri;
+        return (string) $uri;
     }
 
     /**
      * Generate data for the given keys and return corresponding data
      *
-     * @return array
+     * @param  array<string, mixed>  $filling
+     * @return array<string, mixed>
      */
     protected function fill(array $filling)
     {
@@ -273,6 +311,8 @@ abstract class ApiTestCase extends TestCase
 
     /**
      * Append more headers to each request
+     *
+     * @return array<string, mixed>
      */
     public function appendHeaders(): array
     {

@@ -10,7 +10,7 @@ class LogResponse
     /**
      * {@inheritDoc}
      */
-    public function log($response, $statusCode)
+    public function log(mixed $response, int $statusCode): mixed
     {
         $request = request();
 
@@ -18,14 +18,14 @@ class LogResponse
 
         if ($user = user()) {
             $userInfo = $user->sharedInfo();
-            if ($user instanceof UserAccountTypeContract) {
-                $userInfo['accountType'] = $user->getAccountType();
+            if ($user instanceof UserAccountTypeContract) { // @phpstan-ignore class.notFound
+                $userInfo['accountType'] = $user->getAccountType(); // @phpstan-ignore class.notFound
             }
         }
 
-        $response = json_decode(response($response)->getContent(), true);
+        $response = json_decode((string) (new \Illuminate\Http\Response($response))->getContent(), true);
 
-        ResponseLog::create([
+        ResponseLog::create([ // @phpstan-ignore method.staticCall
             'response' => $response,
             'statusCode' => $statusCode,
             'request' => $request->all(),

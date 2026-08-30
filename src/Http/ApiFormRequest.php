@@ -13,12 +13,13 @@ class ApiFormRequest extends FormRequest
 {
     use ApiResponse, WithRepositoryAndService, Translatable;
 
-//    /**
-    //     * Define request inputs to cast to integer before validation.
-    //     *
-    //     * @var array
-    //     */
-    //    public array $intInputs = [];
+    /**
+     * Define request inputs to cast to integer before validation.
+     *
+     * @var array<mixed>
+     */
+    protected array $intInputs = [];
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -38,6 +39,9 @@ class ApiFormRequest extends FormRequest
 
     /**
      * Merge the given rules with the common rules between store and update
+     *
+     * @param array<mixed> $rules
+     * @return array<mixed>
      */
     public function withCommonRules(array $rules = []): array
     {
@@ -58,6 +62,8 @@ class ApiFormRequest extends FormRequest
      * Set int values from request inputs.
      * Help to validate IDs by convert them to int values.
      * If using ApiFormRequest class you have to pass the request to have the int values.
+     *
+     * @param array<int, string> $inputs
      */
     public function setIntInputs(array $inputs): void
     {

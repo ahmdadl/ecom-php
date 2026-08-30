@@ -12,13 +12,15 @@ class ErrorsMessagesParser
 
     /**
      * Errors list
-     * 
-     * @return array
+     *
+     * @var array<int, array<string, mixed>>
      */
     protected array $errors;
 
     /**
      * Constructor
+     *
+     * @param  array<int, array<string, mixed>> $errors
      */
     public function __construct(array $errors)
     {
@@ -27,6 +29,8 @@ class ErrorsMessagesParser
 
     /**
      * Parse the errors and return a clean message
+     *
+     * @return array<int, string>
      */
     public function parse(): array
     {

@@ -6,6 +6,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 
+/**
+ * @method bool optionHasValue(string $option)
+ */
 class PostmanCollection extends Command
 {
     /**
@@ -26,16 +29,16 @@ class PostmanCollection extends Command
     /**
      * Postman Files.
      *
-     * @var array
+     * @var array<int, string>
      */
-    private $postmanFiles = [];
+    private array $postmanFiles = [];
 
     /**
      * Content of each postman file module.
      *
-     * @var array
+     * @var array<int, array<string, mixed>>
      */
-    private $filesContent = [];
+    private array $filesContent = [];
 
     /**
      * The name and signature of the console command.
@@ -76,7 +79,7 @@ class PostmanCollection extends Command
     {
         $modulePath = $this->getModulePath();
 
-        $this->postmanFiles = array_filter(glob($modulePath . '/*/' . self::DOCS_DIRECTORY_NAME . '/*.postman.json'));
+        $this->postmanFiles = array_filter((array) glob($modulePath . '/*/' . self::DOCS_DIRECTORY_NAME . '/*.postman.json'));
 
         $this->info('Successfully Loaded Postman Files...');
     }
@@ -129,7 +132,8 @@ class PostmanCollection extends Command
 
         $collection['variable'] = $this->getGlobalVariables();
 
-        $fileName = $this->optionHasValue('fileName') ? $this->option('fileName') : self::DEFAULT_GENERATED_FILE_NAME;
+        $fileNameOption = $this->option('fileName');
+        $fileName = is_string($fileNameOption) ? $fileNameOption : self::DEFAULT_GENERATED_FILE_NAME;
         
         if(!File::exists($postmanDirectory = public_path('/postman'))) {
             File::makeDirectory($postmanDirectory, 0755, true, true);
@@ -145,8 +149,8 @@ class PostmanCollection extends Command
     /**
      * Get Global Variables
      * 
-     * @return array
-    */
+     * @return array<int, mixed>
+     */
     private function getGlobalVariables()
     {
         $allGlobalVariables = [];
@@ -165,8 +169,8 @@ class PostmanCollection extends Command
     /**
      * Get global variables from config
      * 
-     * @return array
-    */
+     * @return array<string, mixed>
+     */
     private function getConfigGlobalVariables()
     {
         $allGlobalVariables = [];
@@ -188,13 +192,13 @@ class PostmanCollection extends Command
      * parsing file from text to json
      * 
      * @param string $file
-     * @return array
-    */
+     * @return array<string, mixed>
+     */
     private function pareFileToJson($file)
     {
         $content = file_get_contents($file);
 
-        return json_decode($content, true);
+        return json_decode((string) $content, true);
     }
     
     /**
@@ -222,6 +226,6 @@ class PostmanCollection extends Command
 
         Mongez::updateStorageFile();
 
-        return $newVersion;
+        return (float) $newVersion;
     }
 }

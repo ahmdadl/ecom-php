@@ -7,7 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 
 class Stub implements \Stringable
 {
-    public $content;
+    public string $content;
     /**
      * Stub Path
      */
@@ -37,6 +37,8 @@ class Stub implements \Stringable
 
     /**
      * Replace the given data
+     *
+     * @param array<string, mixed> $replacements
      */
     public function replace(array $replacements): Stub
     {
@@ -52,7 +54,7 @@ class Stub implements \Stringable
     /**
      * Mutate the given array to string
      *
-     * @param string|array $data
+     * @param string|array<int, string> $data
      */
     public function stringAsArray($data): string
     {
@@ -69,6 +71,8 @@ class Stub implements \Stringable
     /**
      * Return proper value for data that will be replaced
      * If the given data is empty, then return tab indent with double slash
+     *
+     * @param array<int, string> $data
      */
     public function data(array $data): string
     {
@@ -158,7 +162,7 @@ class Stub implements \Stringable
     {
         $pattern = '/^\s\s+|\s\s+$/';
 
-        return preg_replace($pattern, '', $text);
+        return (string) preg_replace($pattern, '', $text);
     }
 
     /**

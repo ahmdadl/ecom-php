@@ -41,13 +41,15 @@ class MinLengthRule extends UnitRule implements UnitRuleInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Get message attributes
+     *
+     * @return array<string, mixed>
      */
     public function getMessageAttributes(): array
     {
         return [
             'lengthValue' => count($this->value),
-            'length' => $this->options[0]
+            'length' => $this->options[0],
         ];
     }
 }

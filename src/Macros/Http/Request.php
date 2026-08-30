@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 
 /**
  * @mixin IlluminateRequest
+ * @method array<int, string> authorization()
  */
 class Request
 {
@@ -20,11 +21,18 @@ class Request
     const AUTO = true;
 
     /**
+     * The converted files, available when this macro is bound to a request at runtime.
+     *
+     * @var array<string, UploadedFile>
+     */
+    protected $convertedFiles;
+
+    /**
      * Get request referer
      * 
-     * @return string
+     * @return \Closure
      */
-    public function referer()
+    public function referer(): \Closure
     {
         return fn() => $this->server('HTTP_REFERER');
     }
@@ -32,23 +40,24 @@ class Request
     /**
      * Get request uri
      * 
-     * @return string
+     * @return \Closure
      */
-    public function uri()
+    public function uri(): \Closure
     {
         return function () {
-            $script = str_replace('/index.php', '', $this->server('SCRIPT_NAME'));
+            $scriptName = $this->server('SCRIPT_NAME');
+            $script = str_replace('/index.php', '', is_string($scriptName) ? $scriptName : '');
 
-            return '/' . ltrim(Str::removeFirst($script, $this->server('REQUEST_URI')), '/');
+            return '/' . ltrim(Str::removeFirst($script, $this->server('REQUEST_URI')), '/'); // @phpstan-ignore staticMethod.notFound
         };
     }
 
     /**
      * Get the value of the Authorization header
      * 
-     * @return array
+     * @return \Closure
      */
-    public function authorization()
+    public function authorization(): \Closure
     {
         return function (): array {
             $authorization = $this->server('HTTP_AUTHORIZATION') ?: $this->server('REDIRECT_HTTP_AUTHORIZATION');
@@ -64,7 +73,7 @@ class Request
                 return [];
             }
 
-            return explode(' ', $authorization);
+            return explode(' ', is_string($authorization) ? $authorization : '');
         };
     }
 
@@ -74,9 +83,9 @@ class Request
      * @param string $fileName
      * @param UploadedFile $file
      * 
-     * @return void
+     * @return \Closure
      */
-    public function addFile()
+    public function addFile(string $fileName = '', ?UploadedFile $file = null): \Closure
     {
         return function (string $fileName, UploadedFile $file) {
             $this->convertedFiles[$fileName] = $file;
@@ -91,9 +100,9 @@ class Request
      * If the passed argument is set false, then the whole value will be returned
      * 
      * @param  string|bool $authorizationType
-     * @return string|null
+     * @return \Closure
      */
-    public function authorizationValue()
+    public function authorizationValue($authorizationType = null): \Closure
     {
         return function ($authorizationType = Request::AUTO) {
             $authorization = $this->authorization();

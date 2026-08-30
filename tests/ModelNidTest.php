@@ -30,6 +30,7 @@ final class ModelNidTest extends TestCase
 
         $counter = DB::table('ids')->where('collection', 'products')->first();
 
+        $this->assertNotNull($counter);
         $this->assertSame($secondProduct->nid, (int) $counter->id);
     }
 
@@ -51,7 +52,7 @@ final class ModelNidTest extends TestCase
 
         $found = Product::find($product->nid);
 
-        $this->assertSame($product->nid, $found->getKey());
+        $this->assertSame($product->nid, $found->getKey()); // @phpstan-ignore method.nonObject
 
         $this->assertNull(Product::find($product->nid + 1000000));
     }
@@ -73,6 +74,7 @@ final class ModelNidTest extends TestCase
         $firstPeekedNid = new Product()->getNid();
         $secondPeekedNid = new Product()->getNid();
 
+        /** @phpstan-ignore-next-line method.alreadyNarrowedType */
         $this->assertIsInt($firstPeekedNid);
         $this->assertSame($firstPeekedNid, $secondPeekedNid);
     }

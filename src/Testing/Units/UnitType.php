@@ -11,6 +11,15 @@ use HZ\Illuminate\Mongez\Testing\Traits\StrictUnit;
 use HZ\Illuminate\Mongez\Testing\Traits\WithKeyAndValue;
 use HZ\Illuminate\Mongez\Testing\UnitRuleInterface;
 
+/**
+ * @method UnitType min(int|float $value)
+ * @method UnitType max(int|float $value)
+ * @method UnitType length(int $value)
+ * @method UnitType minLength(int $value)
+ * @method UnitType maxLength(int $value)
+ * @method UnitType equal(mixed $value)
+ * @method UnitType setUnits(array<string, mixed> $unitsList)
+ */
 class UnitType
 {
     use StrictUnit;
@@ -19,13 +28,15 @@ class UnitType
 
     /**
      * Unit type name
-     * 
+     *
      * @const string
      */
     const NAME = '';
 
     /**
      * Errors List
+     *
+     * @var array<int, array<string, mixed>>
      */
     protected array $errorsList = [];
 
@@ -36,6 +47,8 @@ class UnitType
 
     /**
      * Rules list
+     *
+     * @var array<int, UnitRuleInterface>
      */
     protected array $rules = [];
 
@@ -51,6 +64,8 @@ class UnitType
 
     /**
      * Rules options
+     *
+     * @var array<string, array<int, mixed>>
      */
     protected array $rulesOptions = [];
 
@@ -131,7 +146,7 @@ class UnitType
     /**
      * Add ruels to the current unit
      *
-     * @param  UnitRule[] $rules
+     * @param  array<int, UnitRuleInterface> $rules
      */
     public function addRules(array $rules): UnitType
     {
@@ -189,6 +204,8 @@ class UnitType
 
     /**
      * Get rule options
+     *
+     * @return array<int, mixed>
      */
     public function getRuleOptions(UnitRuleInterface $rule): array
     {
@@ -197,6 +214,8 @@ class UnitType
 
     /**
      * Add error to errors list
+     *
+     * @param  array<string, mixed> $messageAttributes
      */
     public function addError(string $ruleError, string $errorMessage, array $messageAttributes = []): UnitType
     {
@@ -215,6 +234,7 @@ class UnitType
     /**
      * Get base message attributes
      *
+     * @return array<string, mixed>
      */
     public function getBaseUnitMessageAttributes(): array
     {
@@ -224,7 +244,7 @@ class UnitType
             $type = gettype($this->value);
         }
 
-        if ($type === 'array' && is_object((object) $this->value)) {
+        if ($type === 'array') {
             $type = 'object';
         }
 
@@ -248,8 +268,10 @@ class UnitType
 
     /**
      * Set Rules options, also add additional rules on the fly if not exist in the unit rule
+     *
+     * @param  array<int, mixed> $ruleOptions
      */
-    public function __call($rule, $ruleOptions)
+    public function __call(string $rule, array $ruleOptions): UnitType
     {
         if (!$this->hasRule($rule)) {
             if (static::isListedRule($rule)) {
@@ -282,7 +304,11 @@ class UnitType
     public static function resolveRule(string $rule): UnitRuleInterface
     {
         $unitRule = config("mongez.testing.rules.$rule");
-        return new $unitRule;
+
+        /** @var UnitRuleInterface $resolved */
+        $resolved = new $unitRule;
+
+        return $resolved;
     }
 
     /**
@@ -300,7 +326,11 @@ class UnitType
     public static function resolveUnit(string $unit): UnitType
     {
         $unitRule = config("mongez.testing.units.$unit");
-        return new $unitRule;
+
+        /** @var UnitType $resolved */
+        $resolved = new $unitRule;
+
+        return $resolved;
     }
 
     /**
@@ -313,6 +343,8 @@ class UnitType
 
     /**
      * Get Errors List
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function errorsList(): array
     {

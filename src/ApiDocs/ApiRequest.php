@@ -324,7 +324,7 @@ class ApiRequest
     /**
      * Create a table head
      *
-     * @param array<string, mixed> $columns
+     * @param array<int, string> $columns
      */
     protected function tableHead(array $columns): ApiRequest
     {
@@ -355,7 +355,7 @@ class ApiRequest
     /**
      * Create a table row
      *
-     * @param array<string, mixed> $columns
+     * @param array<int, string> $columns
      */
     protected function tableRow(array $columns): ApiRequest
     {
@@ -498,6 +498,7 @@ class ApiRequest
     /**
      * Set response body table
      *
+     * @param array<int, array<string, mixed>> $responseBody
      * @return void
      */
     protected function setResponseBodyTable(array $responseBody, int $responseStatusCode, string $parent = '')
@@ -506,7 +507,7 @@ class ApiRequest
             $this->appendLine("#### Response $responseStatusCode " . $parent);
         }
 
-        $this->appendLine('The following table illustrates the response payload structure. for ' . ("`$parent`" ?: 'Response Body'));
+        $this->appendLine('The following table illustrates the response payload structure. for ' . "`$parent`");
 
         $this->tableHead([
             'Key', 'Type', 'Description', 'Nullable', 'Presentable', 'Allowed Values',
@@ -515,7 +516,7 @@ class ApiRequest
         foreach ($responseBody as $param) {
             $nullable = empty($param['nullable']) ? 'No' : 'Yes';
 
-            if ($param['Presentable'] ?? true === false) {
+            if (!($param['Presentable'] ?? false)) {
                 $presentable = 'No';
             } else {
                 $presentable = 'Yes';
@@ -577,6 +578,7 @@ class ApiRequest
     /**
      * Set response body as json strcture
      *
+     * @param array<string, mixed> $response
      * @return void
      */
     protected function setResponseBodyJsonStructure(array $response)
@@ -588,6 +590,9 @@ class ApiRequest
 
     /**
      * Create json shape from the given response body
+     *
+     * @param array<int, array<string, mixed>> $response
+     * @return array<string, mixed>
      */
     protected function createJsonShape(array $response): array
     {
@@ -614,12 +619,12 @@ class ApiRequest
 
     /**
      * Add a json structure
-     * 
-     * @param  array $json
+     *
+     * @param  array<string, mixed> $json
      * @param  int $responseStatusCode
      * @return void
      */
-    protected function appendJsonStructure($json, $responseStatusCode)
+    protected function appendJsonStructure(array $json, int $responseStatusCode): void
     {
         $this->appendLine("#### Response $responseStatusCode JSON Structure");
 
@@ -640,7 +645,7 @@ class ApiRequest
     /**
      * Save to the given file path
      */
-    public function saveTo(string $filePath)
+    public function saveTo(string $filePath): void
     {
         File::put($filePath, $this->parse());
     }

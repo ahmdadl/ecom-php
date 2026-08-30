@@ -55,7 +55,7 @@ class MongezTestCommand extends Command
         $databaseTest = config('database.connections.testing.database');
 
         if (!$databaseTest) {
-            echo $this->error('No database set in `database.connection.testing.database`');
+            $this->error('No database set in `database.connection.testing.database`');
 
             return 1;
         }
@@ -68,6 +68,7 @@ class MongezTestCommand extends Command
 
         DB::reconnect();
 
+        // @phpstan-ignore-next-line method.notFound
         $db = DB::connection('mongodb')->getDatabase();
 
         $this->info(sprintf('Dropping Testing Database <comment>%s</comment>', $databaseTest));

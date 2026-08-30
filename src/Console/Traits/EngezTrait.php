@@ -2,11 +2,61 @@
 
 namespace HZ\Illuminate\Mongez\Console\Traits;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 
+/**
+ * @property array<string, mixed> $info
+ * @property string $moduleName
+ * @method bool confirm(string $message)
+ * @method void error(string $message)
+ * @method string getModule()
+ * @method mixed option(string $key = null)
+ * @method mixed argument(string $key = null)
+ * @method bool optionHasValue(string $option)
+ * @method bool argumentHasValue(string $argument)
+ */
 trait EngezTrait
 {
+    /**
+     * File manager instance (provided by the using command class).
+     */
+    protected Filesystem $files;
+
+    /**
+     * Repository class short name (provided by the using command class).
+     */
+    protected string $repositoryClassName;
+
+    /**
+     * Repository name (provided by the using command class).
+     */
+    protected string $repositoryName;
+
+    /**
+     * Get the given console option value as a string.
+     *
+     * The base Command::option() return type includes array, but options in
+     * this package are always strings, so we narrow it here safely.
+     */
+    protected function stringOption(string $key): string
+    {
+        $value = $this->option($key);
+
+        return is_array($value) ? '' : (string) $value;
+    }
+
+    /**
+     * Get the given console argument value as a string.
+     */
+    protected function stringArgument(string $key): string
+    {
+        $value = $this->argument($key);
+
+        return is_array($value) ? '' : (string) $value;
+    }
+
     /**
      * Create the file
      * 
@@ -128,6 +178,9 @@ trait EngezTrait
 
     /**
      * Get options values for the given array
+     *
+     * @param array<int, string> $keys
+     * @return array<string, mixed>
      */
     protected function optionsValues(array $keys): array
     {
@@ -159,6 +212,7 @@ trait EngezTrait
     {
         try {
             $permissionsRepo = repo('permissions');
+            // @phpstan-ignore-next-line method.notFound
             $permissionsRepo->insertModulePermissions($this->moduleName);
         } catch (\Throwable) {
             // this wil silent the not found repository if there is no permissions repository 

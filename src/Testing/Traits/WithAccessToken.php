@@ -54,6 +54,8 @@ trait WithAccessToken
 
     /**
      * Get access token settings
+     *
+     * @return array<string, mixed>
      */
     protected function accessTokenSettings(): array
     {

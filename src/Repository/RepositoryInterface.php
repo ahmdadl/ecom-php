@@ -14,7 +14,7 @@ interface RepositoryInterface
     /**
      * Create new record
      *
-     * @param  \Illuminate\Http\Request|array $data
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
      * @return TModel
      */
     public function create($data);
@@ -23,7 +23,7 @@ interface RepositoryInterface
      * Update a the given record id or model
      *
      * @param  int|\Illuminate\Database\Eloquent\Model $id
-     * @param  \Illuminate\Http\Request|array $data
+     * @param  \Illuminate\Http\Request|array<string, mixed> $data
      * @return TModel|null
      */
     public function update($id, $data);
@@ -38,7 +38,7 @@ interface RepositoryInterface
     /**
      * Return List of records
      *
-     * @param  array $options
+     * @param  array<string, mixed> $option
      * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function list(array $option): Collection;
@@ -60,7 +60,7 @@ interface RepositoryInterface
     /**
      * Get the query handler
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<TModel>
      */
     public function getQuery();
 }

@@ -53,9 +53,9 @@ class EngezResource extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName($this->stringOption('module'));
 
-        $this->resourceName = $this->resourceClass($this->argument('resource'));
+        $this->resourceName = $this->resourceClass($this->stringArgument('resource'));
     }
 
     /**
@@ -91,19 +91,19 @@ class EngezResource extends EngezGeneratorCommand implements EngezInterface
                 $typeValue = $this->option($type);
 
                 if ($type === 'int') {
-                    if ($typeValue === true) {
-                        $typeValue = 'nid';
-                    } else {
-                        $typeValue .= ',nid';
-                    }
+                if ($typeValue === true) {
+                    $typeValue = 'nid';
+                } else {
+                    $typeValue = (string) $typeValue . ',nid';
+                }
                 }
 
                 // replace data
-                $data = $this->stubStringAsArray(explode(',', $typeValue));
+                $data = $this->stubStringAsArray(explode(',', (string) $typeValue));
             }
 
             if ($type === 'uploads') {
-                $type =  $type === 'uploads' ? 'assets' : $type;
+                $type = 'assets';
             }
 
             $replacements["{{ $type }}"] = $data;

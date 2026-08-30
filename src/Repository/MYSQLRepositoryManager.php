@@ -122,7 +122,6 @@ abstract class MYSQLRepositoryManager extends RepositoryManager implements Repos
      * Set localized data automatically from the LOCALIZED_DATA array
      *
      * @param  TModel $model
-     * @param  \Request $request
      * @return void
      */
     protected function setLocalizedData($model)

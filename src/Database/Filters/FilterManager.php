@@ -10,30 +10,30 @@ class FilterManager
     /**
      * Query Builder Object
      *
-     * @var \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     * @var \Illuminate\Database\Query\Builder
      */
     public $query;
 
     /**
      * Sended options to filtered
-     * 
-     * @var array  
+     *
+     * @var array<string, mixed>
      */
     public $options = [];
 
     /**
      * All options that enable to filter with
-     * 
-     * @var array  
+     *
+     * @var array<string, mixed>
      */
     public $filterBy = [];
 
     /**
      * Set required data for filters
      *
-     * @param \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder $query
-     * @param array  $options
-     * @param array  $filterBy
+     * @param \Illuminate\Database\Query\Builder $query
+     * @param array<string, mixed> $options
+     * @param array<string, mixed> $filterBy
      */
     public function __construct($query, $options, $filterBy)
     {
@@ -45,6 +45,7 @@ class FilterManager
     /**
      * Filter by the given classes
      *
+     * @param array<int, string> $filterClasses
      * @return void
      */
     public function filter(array $filterClasses)
@@ -65,20 +66,22 @@ class FilterManager
 
                 $filterFunction = $filtersList[$option['operator']];
 
-                foreach ($option['columns'] as $column) {
-                    if (empty($column['filteredColumns'])) continue;
+                    foreach ($option['columns'] as $column) {
+                        if (empty($column['filteredColumns'])) continue;
 
-                    call_user_func_array([$filterObject, $filterFunction], [$column['filteredColumns'], $column['value'], $option['operator']]);
-                }
+                        /** @var callable $callback */
+                        $callback = [$filterObject, $filterFunction];
+
+                        call_user_func_array($callback, [$column['filteredColumns'], $column['value'], $option['operator']]);
+                    }
             }
         }
     }
 
     /**
      * Remove un sended options
-     * 
-     * @param array filterByOptions
-     * @return array 
+     *
+     * @return array<int, array<string, mixed>>
      */
     protected function getRequestedOptions()
     {

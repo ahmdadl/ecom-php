@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @method \Symfony\Component\HttpFoundation\Response success(?array<string, mixed> $data = null)
+ * @method \Symfony\Component\HttpFoundation\Response badRequest($data)
+ * @method \Symfony\Component\HttpFoundation\Response notFound($data = null)
+ */
 abstract class AdminUIController
 {
     /**
@@ -54,7 +59,7 @@ abstract class AdminUIController
     /**
      * Get List of records
      *
-     * @return string
+     * @return \Illuminate\Contracts\View\View
      */
     public function index(Request $request)
     {
@@ -70,7 +75,8 @@ abstract class AdminUIController
     /**
      * Render the given view path
      *
-     * @return string
+     * @param array<string, mixed> $data
+     * @return \Illuminate\Contracts\View\View
      */
     protected function render(string $viewPath, array $data = [])
     {
@@ -79,6 +85,8 @@ abstract class AdminUIController
 
     /**
      * Get  options
+     *
+     * @return array<string, mixed>
      */
     protected function listOptions(Request $request): array
     {
@@ -89,7 +97,7 @@ abstract class AdminUIController
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Symfony\Component\HttpFoundation\Response
      */
     public function show($id)
     {
@@ -117,7 +125,7 @@ abstract class AdminUIController
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function store(Request $request)
     {
@@ -146,7 +154,7 @@ abstract class AdminUIController
      * Remove the specified resource from storage.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return \Symfony\Component\HttpFoundation\Response|\Illuminate\Http\RedirectResponse
      */
     public function destroy($id, Request $request)
     {
@@ -159,19 +167,22 @@ abstract class AdminUIController
 
         $this->repository->delete((int) $id);
 
-        return $request->isAjax() ? $this->success() : redirect()->back();
+        return $request->isAjax() ? $this->success() : redirect()->back(); // @phpstan-ignore method.notFound
     }
 
     /**
      * Validate if this model has depended on another these tables .
      *
-     * @param  array $deleteDependenceTables
+     * @param  array<mixed> $deleteDependenceTables
      * @param  int   $modelId
-     * @return array $errors
+     * @return array<int, mixed> $errors
      */
     public function validateBeforeDeleting($deleteDependenceTables, $modelId): array
     {
         $errors = [];
+
+        /** @var mixed $validationRules */
+        $validationRules = [];
 
         $isUsingSoftDelete = $this->repository->isUsingSoftDelete();
 
@@ -192,7 +203,7 @@ abstract class AdminUIController
             $validationRules['messages']['unique.' . $table['tableName'] . '_id'] = $table['message'];
         }
 
-        $validator = Validator::make($validationRules['data'], $validationRules['rules'], $validationRules['messages']);
+        $validator = Validator::make((array) $validationRules['data'], (array) $validationRules['rules'], (array) $validationRules['messages']);
 
         if ($validator->fails()) {
             $errors[] = $validator->errors();
@@ -205,7 +216,7 @@ abstract class AdminUIController
      * Update the specified resource in storage.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Symfony\Component\HttpFoundation\Response
      */
     public function update(Request $request, $id)
     {
@@ -252,6 +263,7 @@ abstract class AdminUIController
      * Make custom validation for update
      *
      * @param  int $id
+     * @return array<string, mixed>
      */
     protected function updateValidation($id, Request $request): array
     {
@@ -261,8 +273,8 @@ abstract class AdminUIController
     /**
      * Make custom validation for store
      *
-     * @param int $id
      * @param mixed $request
+     * @return array<string, mixed>
      */
     protected function storeValidation($request): array
     {

@@ -26,27 +26,32 @@ trait RecycleBin
         ]);
 
         parent::delete();
+
+        return null;
     }
 
     /**
      * Get the deleted records
-     * 
-     * @return Collection
+     *
+     * @return Collection<int, static>
      */
     public static function getDeleted()
     {
         $records = DB::table(static::trashTable())->pluck('record');
 
-        return $records->map(fn($record) => new static((array) $record));
+        return $records->map(function ($record) {
+            /** @phpstan-ignore-next-line new.static */
+            return new static((array) $record);
+        });
     }
 
     /**
      * Find the deleted record for the given id
      *
      * @param  int $id
-     * @return static
+     * @return static|null
      */
-    public static function findDeleted($id)
+    public static function findDeleted($id): ?static
     {
         $record = DB::table(static::trashTable())->where('primaryId', (int) $id)->first();
 
@@ -55,13 +60,14 @@ trait RecycleBin
         // mongodb/laravel-mongodb v5 returns documents as stdClass objects
         $recordData = is_array($record) ? $record['record'] : $record->record;
 
+        /** @phpstan-ignore-next-line new.static */
         return new static((array) $recordData);
     }
 
     /**
      * Restore all deleted records
-     * 
-     * @return Collection
+     *
+     * @return Collection<int, static>
      */
     public static function restoreAll()
     {

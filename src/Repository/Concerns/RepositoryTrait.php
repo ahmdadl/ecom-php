@@ -29,7 +29,7 @@ trait RepositoryTrait
         // check if the trait in a sub-class and the parent has __get method
         $parentClass = get_parent_class($this);
         if ($parentClass !== false && method_exists($parentClass, '__get')) {
-            return parent::__get($key);
+            return parent::__get($key); // @phpstan-ignore class.noParent, staticMethod.notFound
         }
 
         return null;

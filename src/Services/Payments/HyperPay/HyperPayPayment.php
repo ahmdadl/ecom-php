@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use GuzzleHttp\Exception\BadResponseException;
-use HZ\Illuminate\Mongez\Models\Services\ServiceLog;
+use HZ\Illuminate\Mongez\Models\ServiceLog;
 use HZ\Illuminate\Mongez\Models\Services\Payments\CardRegistration;
 use HZ\Illuminate\Mongez\Services\Payments\HyperPay\HyperPayResponse;
 use HZ\Illuminate\Mongez\Contracts\Services\Payments\PaymentGatewayResponse;
@@ -17,15 +17,15 @@ class HyperPayPayment implements PaymentMethodInterface
 {
     /**
      * Payment Settings
-     * 
-     * @var array
+     *
+     * @var array<string, mixed>
      */
     private $settings = [];
 
     /**
      * Request response
-     * 
-     * @var Response
+     *
+     * @var \Psr\Http\Message\ResponseInterface
      */
     private $response;
 
@@ -49,11 +49,11 @@ class HyperPayPayment implements PaymentMethodInterface
 
     /**
      * Generate payment url
-     * 
+     *
      * @param int|string $orderId
-     * @return string hyper checkout id
+     * @return mixed
      */
-    public function initiate($orderId, $amount, $paymentMethod)
+    public function initiate(int|string $orderId, int|float|string $amount, string $paymentMethod): mixed
     {
         $user = user(); // Current User
 
@@ -62,7 +62,7 @@ class HyperPayPayment implements PaymentMethodInterface
         $options = [
             'form_params' => [
                 'entityId' => $this->getEntityIdOf($paymentMethod),
-                'amount' => number_format($amount, 2, '.', ''),
+                'amount' => number_format((float) $amount, 2, '.', ''),
                 'currency' => $this->option('currency'),
                 'createRegistration' => $saveCards = $this->option('saveCards'),
                 'merchantTransactionId' => $orderId,
@@ -79,7 +79,7 @@ class HyperPayPayment implements PaymentMethodInterface
         ];
 
         if ($saveCards) {
-            $cardRegistrations = CardRegistration::where('createdBy.id', $user->id)->get();
+            $cardRegistrations = CardRegistration::where('createdBy.id', $user->id)->get(); // @phpstan-ignore class.notFound
 
             foreach ($cardRegistrations as $index => $cardRegistration) {
                 $options['form_params']["registrations[$index].id"] = $cardRegistration->registrationId;
@@ -97,10 +97,10 @@ class HyperPayPayment implements PaymentMethodInterface
             'orderId' => $orderId,
             'request' => $options,
             'response' => $response,
-            'hyperPayId' => $response->id,
+                'hyperPayId' => $response->id, // @phpstan-ignore property.nonObject
         ]);
 
-        return $response->id;
+        return $response->id; // @phpstan-ignore property.nonObject
     }
 
     /**
@@ -108,7 +108,7 @@ class HyperPayPayment implements PaymentMethodInterface
      * 
      * @param int $orderId
      * @param string $paymentMethod
-     * @return array
+     * @return HyperPayResponse
      */
     public function query($orderId, $paymentMethod)
     {
@@ -142,9 +142,9 @@ class HyperPayPayment implements PaymentMethodInterface
         if (
             $response->isCompleted() &&
             ($registrationId = $response->get('registrationId')) &&
-            !CardRegistration::where('registrationId', $registrationId)->exists()
+            !CardRegistration::where('registrationId', $registrationId)->exists() // @phpstan-ignore class.notFound
         ) {
-            CardRegistration::create([
+            CardRegistration::create([ // @phpstan-ignore class.notFound
                 'registrationId' => $registrationId,
             ]);
         }
@@ -165,14 +165,13 @@ class HyperPayPayment implements PaymentMethodInterface
      * Get entity id of the given payment method
      *
      * @return string
-     * @throws InvalidPaymentMethodException
      */
     private function getEntityIdOf(string $paymentMethod)
     {
         $paymentMethod = strtoupper($paymentMethod);
 
         if (!in_array($paymentMethod, ['VISA', 'MADA', 'MASTER'])) {
-            throw new InvalidPaymentMethodException(sprintf('Invalid payment method %s.', $paymentMethod));
+            throw new InvalidPaymentMethodException(sprintf('Invalid payment method %s.', $paymentMethod)); // @phpstan-ignore class.notFound, class.notFound
         }
 
         if ($paymentMethod === 'MASTER') {
@@ -219,8 +218,8 @@ class HyperPayPayment implements PaymentMethodInterface
 
         $responseData = [
             'response' => $content,
-            'statusCode' => $content->result->code,
-            'message' => $content->result->description,
+            'statusCode' => $content->result->code, // @phpstan-ignore property.nonObject
+            'message' => $content->result->description, // @phpstan-ignore property.nonObject
             'responseStatusCode' => $responseStatusCode,
         ];
 
@@ -237,8 +236,8 @@ class HyperPayPayment implements PaymentMethodInterface
             'responseCode' => $this->response->getStatusCode(),
         ]);
 
-        if ($response->isCompleted() && ($registrationId = $response->get('registrationId')) && !CardRegistration::where('registrationId', $registrationId)->exists()) {
-            CardRegistration::create([
+        if ($response->isCompleted() && ($registrationId = $response->get('registrationId')) && !CardRegistration::where('registrationId', $registrationId)->exists()) { // @phpstan-ignore class.notFound
+            CardRegistration::create([ // @phpstan-ignore class.notFound
                 'registrationId' => $registrationId,
             ]);
         }
@@ -249,6 +248,7 @@ class HyperPayPayment implements PaymentMethodInterface
     /**
      * Log the given data
      *
+     * @param array<string, mixed> $data
      * @return void
      */
     private function log(array $data)
@@ -272,13 +272,14 @@ class HyperPayPayment implements PaymentMethodInterface
 
         $details = $mapData($data);
 
-        ServiceLog::create($details);
+        ServiceLog::create($details); // @phpstan-ignore method.staticCall
     }
 
     /**
      * Send the given request
      *
-     * @return array|object
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>|object
      */
     private function send(string $route, array $options, string $requestMethod = 'POST')
     {

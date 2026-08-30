@@ -18,7 +18,7 @@ class IsUrlRule extends UnitRule implements UnitRuleInterface
      */
     public function isValid(): bool
     {
-        return filter_var((string) $this->value, FILTER_VALIDATE_URL);
+        return (bool) filter_var((string) $this->value, FILTER_VALIDATE_URL);
     }
 
     /**

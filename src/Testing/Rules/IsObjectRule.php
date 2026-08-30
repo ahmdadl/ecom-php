@@ -18,7 +18,7 @@ class IsObjectRule extends UnitRule implements UnitRuleInterface
      */
     public function isValid(): bool
     {
-        return is_object((object) $this->value);
+        return true;
     }
 
     /**

@@ -2,21 +2,28 @@
 
 namespace HZ\Illuminate\Mongez\Macros\Database\Query;
 
-use DB;
 use Exception;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Facades\DB;
 
 /**
- * @mixin EloquentBuilder
+ * @mixin EloquentBuilder<\Illuminate\Database\Eloquent\Model>
  */
 class Builder
 {
     /**
+     * The model instance, available when this macro is bound to an Eloquent builder at runtime.
+     *
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $model;
+
+    /**
      * Get the next auto increment id of current table.
      *
-     * @return int
+     * @return \Closure
      */
-    public function getNextId()
+    public function getNextId(): \Closure
     {
         return function () {
             // if the form property doesn't exist, then it means we're executing this 
@@ -38,9 +45,9 @@ class Builder
      *
      * @param  string $column
      * @param  mixed $value
-     * @return $this
+     * @return \Closure
      */
-    public function whereLike()
+    public function whereLike(string $column = '', $value = null): \Closure
     {
         return fn(string $column, $value) => $this->where($column, 'LIKE', "%$value%");
     }
@@ -50,9 +57,9 @@ class Builder
      *
      * @param  string $column
      * @param  mixed $value
-     * @return $this
+     * @return \Closure
      */
-    public function orWhereLike()
+    public function orWhereLike(string $column = '', $value = null): \Closure
     {
         return fn(string $column, $value) => $this->orWhere($column, 'LIKE', "%$value%");
     }
@@ -65,12 +72,12 @@ class Builder
      * @example: $this->whereLocationNear('location', [20,59221, 4], 40, 'miles'); // search in location column for the given [lat, lng] coordinates in 40 miles radius
      * 
      * @param  string $column
-     * @param  array $coordinates
+     * @param  array<float> $coordinates
      * @param  float $distance
      * @param  string $distanceType
-     * @return $this
+     * @return \Closure
      */
-    public function whereLocationNear()
+    public function whereLocationNear(string $column = '', array $coordinates = [], float $distance = 0.0, string $distanceType = 'km'): \Closure
     {
         return fn(string $column, array $coordinates, float $distance, string $distanceType = 'km') => $this->where($column, 'geoWithin', $this->locationNear($coordinates, $distance, $distanceType));
     }
@@ -84,12 +91,12 @@ class Builder
      * @example: $this->whereLocationNear('location', [20,59221, 4], 40, 'miles'); // search in location column for the given [lat, lng] coordinates in 40 miles radius
      * 
      * @param  string $column
-     * @param  array $coordinates
+     * @param  array<float> $coordinates
      * @param  float $distance
      * @param  string $distanceType
-     * @return $this
+     * @return \Closure
      */
-    public function orWhereLocationNear()
+    public function orWhereLocationNear(string $column = '', array $coordinates = [], float $distance = 0.0, string $distanceType = 'km'): \Closure
     {
         return fn(string $column, array $coordinates, float $distance, string $distanceType = 'km') => $this->orWhere($column, 'geoWithin', $this->locationNear($coordinates, $distance, $distanceType));
     }
@@ -98,9 +105,11 @@ class Builder
      * Get location near by the given options
      * It has to be private function so it can not be read when reading all class methods to inject method macros
      *
+     * @param  array<float> $coordinates
      * @param  float $distance
+     * @return array<string, mixed>
      */
-    private function locationNear(array $coordinates, $distance, string $distanceType): array
+    private function locationNear(array $coordinates, float $distance, string $distanceType): array
     {
         $distance = (float) $distance;
         $distanceInRadian = $distance;

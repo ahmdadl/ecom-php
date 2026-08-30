@@ -24,21 +24,21 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
     /**
      * The test types
      *
-     * @var array
+     * @var array<int, string>
      */
     const TEST_TYPES = ['admin', 'site', 'all'];
 
     /**
      * The admin test files
      *
-     * @var array
+     * @var array<int, string>
      */
     const ADMIN_TEST_FILES = ['list', 'show', 'create', 'update', 'delete'];
 
     /**
      * The user test files
      *
-     * @var array
+     * @var array<int, string>
      */
     const CUSTOMER_TEST_FILES = ['list', 'show'];
 
@@ -97,9 +97,9 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
     {
         parent::init();
 
-        $this->setModuleName($this->option('module'));
+        $this->setModuleName((string) $this->option('module'));
 
-        $this->testType = $this->option('type');
+        $this->testType = (string) $this->option('type');
     }
 
     /**
@@ -133,7 +133,7 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
 
             foreach ($CustomersFiles as $CustomersFile) {
 
-                $capitalizeTestFile = ucfirst($adminFile);
+                $capitalizeTestFile = ucfirst($CustomersFile);
 
                 if ($this->files->exists($this->modulePath('Tests/Site/' . $capitalizeTestFile . $moduleName . '.php'))) {
                     $this->terminate('You already have this test');
@@ -142,7 +142,9 @@ class EngezTest extends EngezGeneratorCommand implements EngezInterface
         }
 
         if (!in_array($this->option('type'), static::TEST_TYPES)) {
-            return $this->missingRequiredOption('This test type does not exits, Did you mean? ' . implode(PHP_EOL, static::TEST_TYPES));
+            $this->missingRequiredOption('This test type does not exits, Did you mean? ' . implode(PHP_EOL, static::TEST_TYPES));
+
+            return;
         }
     }
 

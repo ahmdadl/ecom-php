@@ -16,9 +16,12 @@ class Blueprint
      * Create the logger columns which are:
      * created_at | created_by | updated_at | updated_b | deleted_at | deleted_by
      * 
-     * @return void
+     * @param string $createdBy
+     * @param string $updatedBy
+     * @param string $deletedBy
+     * @return \Closure
      */
-    public function loggers()
+    public function loggers(string $createdBy = 'created_by', string $updatedBy = 'updated_by', string $deletedBy = 'deleted_by'): \Closure
     {
         return function (string $createdBy = 'created_by', string $updatedBy = 'updated_by', string $deletedBy = 'deleted_by') {
             $this->integer($createdBy)->nullable()->index();
