@@ -30,7 +30,7 @@ abstract class UIController
     /**
      * Repository OBject
      * 
-     * @var \HZ\Illuminate\Mongez\Repository\RepositoryManager<\Illuminate\Database\Eloquent\Model>
+     * @var \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model>
      */
     protected $repository;
 

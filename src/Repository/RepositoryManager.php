@@ -20,7 +20,7 @@ use HZ\Illuminate\Mongez\Traits\WithRepositoryAndService;
 use HZ\Illuminate\Mongez\Translation\Traits\Translatable;
 
 /**
- * @template TModel of Model
+ * @template TModel of \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model
  * @implements RepositoryInterface<TModel>
  */
 abstract class RepositoryManager implements RepositoryInterface
@@ -509,7 +509,7 @@ abstract class RepositoryManager implements RepositoryInterface
      * @param  array<string,mixed> $data
      * @return TModel
      */
-    public function newModel($data = []): Model
+    public function newModel($data = []): \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model
     {
         $modelName = static::MODEL;
 

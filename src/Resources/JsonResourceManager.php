@@ -15,6 +15,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use HZ\Illuminate\Mongez\Translation\Traits\Translatable;
 use HZ\Illuminate\Mongez\Traits\WithRepositoryAndService;
 
+/**
+ * @property int|null $nid
+ */
 abstract class JsonResourceManager extends JsonResource
 {
     use WithRepositoryAndService, Translatable;

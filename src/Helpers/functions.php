@@ -100,7 +100,7 @@ if (!function_exists('repo')) {
      * Get repository object for the given repository name
      *
      * @param string $repository
-     * @return RepositoryManager<\Illuminate\Database\Eloquent\Model>
+     * @return \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model>
      */
     function repo(string $repository)
     {

@@ -32,7 +32,7 @@ abstract class ViewController extends Controller
     /**
      * Repository OBject
      * 
-     * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
+     * @var \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model>
      */
     protected $repository;
 

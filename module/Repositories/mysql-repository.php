@@ -10,10 +10,10 @@ use App\Modules\ModuleName\{
 
 use HZ\Illuminate\Mongez\Repository\{
     RepositoryInterface,
-    MYSQLRepositoryManager
+    MongoDBRepositoryManager
 };
 
-class RepositoryNameRepository extends MYSQLRepositoryManager implements RepositoryInterface
+class RepositoryNameRepository extends MongoDBRepositoryManager implements RepositoryInterface
 {
     /**
      * Repository Name

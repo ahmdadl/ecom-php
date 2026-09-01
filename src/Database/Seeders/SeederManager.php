@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\File;
 use HZ\Illuminate\Mongez\Repository\Concerns\RepositoryTrait;
 
 /**
- * @property \HZ\Illuminate\Mongez\Repository\RepositoryManager<\Illuminate\Database\Eloquent\Model> $repo
+ * @property \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model> $repo
  * @property \stdClass $data
      * @property array<int|string,mixed> $dataLocal
  */

@@ -33,7 +33,7 @@ abstract class ApiController
      * Repository Object
      * Can be filled when REPOSITORY_NAME is provided.
      *
-     * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
+     * @var \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model>
      */
     protected $repository;
 

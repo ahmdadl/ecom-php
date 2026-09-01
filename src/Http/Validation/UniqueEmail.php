@@ -12,7 +12,7 @@ class UniqueEmail implements Rule
     /**
      * Repository object
      * 
-     * @var RepositoryManager<\Illuminate\Database\Eloquent\Model>
+     * @var \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model>
      */
     protected $repository;
 
@@ -47,7 +47,7 @@ class UniqueEmail implements Rule
     /**
      * Constructor
      * 
-     * @param  RepositoryManager<\Illuminate\Database\Eloquent\Model> $repository
+     * @param  \HZ\Illuminate\Mongez\Repository\MongoDBRepositoryManager<\HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model> $repository
      * @param  string $column
      * @param mixed $exceptColumnValue
      * @param string|null $exceptColumn

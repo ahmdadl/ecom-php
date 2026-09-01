@@ -4,6 +4,7 @@ namespace HZ\Illuminate\Mongez\Repository;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Aggregate\Aggregate;
 
@@ -283,5 +284,138 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     protected function column(string $column): string
     {
         return $column;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param  int|array<string, mixed>|\Illuminate\Database\Eloquent\Model $id
+     * @return TModel|null
+     */
+    public function getModel($id)
+    {
+        return parent::getModel($id);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param int $id
+     * @return TModel|null
+     */
+    public function find(int $id)
+    {
+        return parent::find($id);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param int $id
+     * @return TModel|null
+     */
+    public function getPublishedModel($id)
+    {
+        return parent::getPublishedModel($id);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return TModel|null
+     */
+    public function first(array $options)
+    {
+        return parent::first($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param string $column
+     * @param mixed $value
+     * @return TModel|null
+     */
+    public function getByModel($column, $value)
+    {
+        return parent::getByModel($column, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listModels(array $options)
+    {
+        return parent::listModels($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listPublished(array $options = [])
+    {
+        return parent::listPublished($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function published(array $options = [])
+    {
+        return parent::published($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listAll(array $options = [])
+    {
+        return parent::listAll($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listAllPublished(array $options = [])
+    {
+        return parent::listAllPublished($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listAllModels(array $options)
+    {
+        return parent::listAllModels($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listAllPublishedModels(array $options)
+    {
+        return parent::listAllPublishedModels($options);
     }
 }

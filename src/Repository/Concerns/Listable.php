@@ -12,7 +12,7 @@ use HZ\Illuminate\Mongez\Database\Filters\FilterManager;
 /**
  * @phpstan-require-extends \HZ\Illuminate\Mongez\Repository\RepositoryManager
  *
- * @template TModel of \Illuminate\Database\Eloquent\Model
+ * @template TModel of \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model
  */
 trait Listable
 {
