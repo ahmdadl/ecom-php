@@ -6,6 +6,6 @@ if (!function_exists("{{ repositoryName }}Repo")) {
      */
     function {{ repositoryName }}Repo(): \App\Modules\{{ ModuleName }}\Repositories\{{ RepositoryName }}Repository
     {
-        return repo("{{ repositoryName }}");
+        return repo(\App\Modules\{{ ModuleName }}\Repositories\{{ RepositoryName }}Repository::NAME);
     }
 }
