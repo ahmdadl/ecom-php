@@ -129,27 +129,41 @@ final class ModelCacheManager
 
         $modelClass = $model::class;
         $version = $this->getVersion($modelClass);
+        $nid = (int) $model->getKey();
+
+        // Remove indexes written for an earlier value (for example, an old
+        // slug) before replacing this record's cache entry.
+        $this->forgetById($modelClass, $nid);
 
         $payload = $model->toArray();
         $payload['__cacheVersion'] = $version;
 
         $this->driver()->put(
-            $this->recordKey($modelClass, (int) $model->getKey()),
+            $this->recordKey($modelClass, $nid),
             $payload,
             $this->ttl()
         );
+
+        $alternateKeys = [];
 
         foreach ($this->alternateKeys($model) as $column) {
             $value = $model->getAttribute($column);
 
             if ($value === null) continue;
 
+            $alternateKeys[] = ['column' => $column, 'value' => $value];
             $this->driver()->put(
                 $this->columnKey($modelClass, $column, $value),
-                ['__cacheVersion' => $version, 'nid' => (int) $model->getKey()],
+                ['__cacheVersion' => $version, 'nid' => $nid],
                 $this->ttl()
             );
         }
+
+        $this->driver()->put(
+            $this->recordMetadataKey($modelClass, $nid),
+            ['keys' => $alternateKeys],
+            $this->ttl()
+        );
     }
 
     /**
@@ -170,8 +184,22 @@ final class ModelCacheManager
     public function forgetById(Model|string $model, int $nid): void
     {
         $modelClass = $this->modelClass($model);
+        $driver = $this->driver();
+        $metadataKey = $this->recordMetadataKey($modelClass, $nid);
+        $metadata = $driver->get($metadataKey);
 
-        $this->driver()->forget($this->recordKey($modelClass, $nid));
+        if (is_array($metadata)) {
+            foreach ($metadata['keys'] ?? [] as $key) {
+                if (!is_array($key) || !isset($key['column'], $key['value'])) {
+                    continue;
+                }
+
+                $driver->forget($this->columnKey($modelClass, (string) $key['column'], $key['value']));
+            }
+        }
+
+        $driver->forget($this->recordKey($modelClass, $nid));
+        $driver->forget($metadataKey);
     }
 
     /**
@@ -207,8 +235,13 @@ final class ModelCacheManager
     public function invalidateAll(Model|string $model): void
     {
         $modelClass = $this->modelClass($model);
+        $driver = $this->driver();
+        $versionKey = $this->versionKey($modelClass);
 
-        $this->driver()->put($this->versionKey($modelClass), $this->newVersion(), $this->ttl());
+        // add() initializes the generation atomically; increment() makes
+        // repeated invalidations effective within the same second.
+        $driver->add($versionKey, 1, $this->ttl());
+        $driver->increment($versionKey);
     }
 
     /**
@@ -307,6 +340,14 @@ final class ModelCacheManager
     /**
      * @param class-string<Model> $modelClass
      */
+    private function recordMetadataKey(string $modelClass, int $nid): string
+    {
+        return $this->prefix($modelClass) . 'meta:' . $nid;
+    }
+
+    /**
+     * @param class-string<Model> $modelClass
+     */
     private function versionKey(string $modelClass): string
     {
         return $this->prefix($modelClass) . 'version';
@@ -330,11 +371,6 @@ final class ModelCacheManager
         $version = $this->driver()->get($this->versionKey($modelClass));
 
         return $version !== null ? (int) $version : 1;
-    }
-
-    private function newVersion(): int
-    {
-        return time();
     }
 
     /**

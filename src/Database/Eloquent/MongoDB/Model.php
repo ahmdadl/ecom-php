@@ -274,9 +274,14 @@ abstract class Model extends BaseModel
     protected $triggerEvents = true;
 
     /**
-     * Cached table name
+     * Cached table names keyed by model class.
+     *
+     * A single inherited static string would be shared by every model
+     * subclass and could route one model to another model's collection.
+     *
+     * @var array<class-string, string>
      */
-    protected static string $tableName = '';
+    protected static array $tableNames = [];
 
     /**
      * Get table name and cache it
@@ -285,13 +290,15 @@ abstract class Model extends BaseModel
      */
     public static function tableName()
     {
-        if (empty(static::$tableName)) {
+        $modelClass = static::class;
+
+        if (!isset(self::$tableNames[$modelClass])) {
             /** @phpstan-ignore-next-line new.static */
             $model = new static;
-            static::$tableName = ($model)->getTable();
+            self::$tableNames[$modelClass] = $model->getTable();
         }
 
-        return static::$tableName;
+        return self::$tableNames[$modelClass];
     }
 
     /**
@@ -446,32 +453,31 @@ abstract class Model extends BaseModel
      */
     public static function nextId(): int
     {
-        $lastId = static::lastInsertId();
-
-        $newId = $lastId + static::$autoIncrementIdBy;
-
         $collection = static::tableName();
 
-        // The ids collection documents hold their counter value in an `id` field,
-        // but mongodb/laravel-mongodb v5 aliases root-level `id` fields to `_id`
-        // on query builder writes, which would corrupt those documents or fail on
-        // immutable _id, so the counter is written directly through the driver.
+        // The ids collection documents hold their counter value in an `id` field.
+        // Use one atomic update so concurrent Octane requests and queue workers
+        // cannot read and write the same counter value.
         /** @phpstan-ignore-next-line method.notFound, new.static */
         $idsCollection = (new static)->getConnection()->getDatabase()->selectCollection('ids');
 
-        if (!$lastId) {
-            $idsCollection->insertOne([
-                'collection' => $collection,
-                'id' => static::$initialId ?: mt_rand(100000, 999999),
-            ]);
-        } else {
-            $idsCollection->updateOne(
-                ['collection' => $collection],
-                ['$set' => ['id' => $newId]]
-            );
+        $idsCollection->createIndex(['collection' => 1], ['unique' => true]);
+
+        $counter = $idsCollection->findOneAndUpdate(
+            ['collection' => $collection],
+            ['$inc' => ['id' => static::$autoIncrementIdBy]],
+            [
+                'upsert' => true,
+                'returnDocument' => 'after',
+                'typeMap' => ['root' => 'array', 'document' => 'array'],
+            ]
+        );
+
+        if (!is_array($counter) || !isset($counter['id'])) {
+            throw new \RuntimeException("Unable to allocate nid for collection [{$collection}]");
         }
 
-        return $newId;
+        return (int) $counter['id'];
     }
 
     /**

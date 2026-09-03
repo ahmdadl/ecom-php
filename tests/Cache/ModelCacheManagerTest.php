@@ -94,11 +94,26 @@ class ModelCacheManagerTest extends TestCase
         $manager->put($model);
         $manager->forgetById(CachedTestModel::class, 2);
 
+        $this->assertFalse(Cache::has('mongez:cached_test_models:col:slug:by-slug'));
+
         $resolved = $manager->rememberByColumn(CachedTestModel::class, 'slug', 'by-slug', function () {
             return null;
         });
 
         $this->assertNull($resolved);
+    }
+
+    public function test_put_removes_an_old_alternate_index_for_the_same_record(): void
+    {
+        $manager = app(ModelCacheManager::class);
+        $model = $this->makeModel(['nid' => 6, 'name' => 'Product', 'slug' => 'old-slug']);
+
+        $manager->put($model);
+        $model->setAttribute('slug', 'new-slug');
+        $manager->put($model);
+
+        $this->assertFalse(Cache::has('mongez:cached_test_models:col:slug:old-slug'));
+        $this->assertTrue(Cache::has('mongez:cached_test_models:col:slug:new-slug'));
     }
 
     public function test_invalidating_all_records_bumps_version(): void
@@ -115,6 +130,22 @@ class ModelCacheManagerTest extends TestCase
         });
 
         $this->assertNull($resolved);
+    }
+
+    public function test_repeated_invalidate_all_calls_use_distinct_versions(): void
+    {
+        $manager = app(ModelCacheManager::class);
+        $model = $this->makeModel(['nid' => 5, 'name' => 'Will Expire']);
+
+        $manager->put($model);
+        $manager->invalidateAll(CachedTestModel::class);
+        $firstVersion = Cache::get('mongez:cached_test_models:version');
+        $manager->invalidateAll(CachedTestModel::class);
+        $secondVersion = Cache::get('mongez:cached_test_models:version');
+
+        $this->assertIsInt($firstVersion);
+        $this->assertIsInt($secondVersion);
+        $this->assertGreaterThan($firstVersion, $secondVersion);
     }
 
     public function test_disabled_caching_skips_cache(): void

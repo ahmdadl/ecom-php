@@ -78,4 +78,15 @@ final class ModelNidTest extends TestCase
         $this->assertIsInt($firstPeekedNid);
         $this->assertSame($firstPeekedNid, $secondPeekedNid);
     }
+
+    public function test_each_model_class_resolves_its_own_collection_name(): void
+    {
+        $this->assertSame('products', Product::tableName());
+        $this->assertSame('categories', Category::tableName());
+    }
+}
+
+final class Category extends \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model
+{
+    protected $table = 'categories';
 }

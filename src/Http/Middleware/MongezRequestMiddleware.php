@@ -29,9 +29,9 @@ class MongezRequestMiddleware
 
         $originalDatabase = $this->switchBetaDatabase($request);
 
-        $this->prepareLocaleCode($request);
-
         try {
+            $this->prepareLocaleCode($request);
+
             return $next($request);
         } finally {
             if ($originalDatabase !== null) {

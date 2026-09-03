@@ -15,6 +15,7 @@ class EnsureNidIndexes extends Command
     public function handle(): int
     {
         $database = Database::getDatabase();
+        $failed = false;
 
         foreach ($database->listCollections() as $metadata) {
             $name = $metadata->getName();
@@ -24,26 +25,55 @@ class EnsureNidIndexes extends Command
             }
 
             $collection = $database->selectCollection($name);
-            $hasIndex = false;
+            $nidIndex = null;
 
             foreach ($collection->listIndexes() as $index) {
                 $keys = $index->getKey();
                 if (isset($keys['nid']) && $keys['nid'] === 1) {
-                    $hasIndex = true;
+                    $nidIndex = $index;
                     break;
                 }
             }
 
-            if ($hasIndex) {
-                $this->info("{$name}: nid index exists");
+            if ($nidIndex !== null && $nidIndex->isUnique()) {
+                $this->info("{$name}: unique nid index exists");
                 continue;
             }
 
-            $this->warn("{$name}: nid index is missing");
+            $duplicates = $collection->aggregate([
+                ['$match' => ['nid' => ['$exists' => true]]],
+                ['$group' => [
+                    '_id' => '$nid',
+                    'count' => ['$sum' => 1],
+                ]],
+                ['$match' => ['count' => ['$gt' => 1]]],
+                ['$limit' => 1],
+            ])->toArray();
+
+            if ($duplicates !== []) {
+                $failed = true;
+                $this->error("{$name}: duplicate nid values found; resolve them before creating a unique index");
+                continue;
+            }
+
+            if ($nidIndex !== null) {
+                $this->warn("{$name}: non-unique nid index must be replaced");
+            } else {
+                $this->warn("{$name}: unique nid index is missing");
+            }
 
             if ($this->option('execute')) {
-                $collection->createIndex(['nid' => 1]);
-                $this->info("{$name}: nid index created");
+                try {
+                    if ($nidIndex !== null) {
+                        $collection->dropIndex($nidIndex->getName());
+                    }
+
+                    $collection->createIndex(['nid' => 1], ['unique' => true]);
+                    $this->info("{$name}: unique nid index created");
+                } catch (\Throwable $exception) {
+                    $failed = true;
+                    $this->error("{$name}: unable to create unique nid index: {$exception->getMessage()}");
+                }
             }
         }
 
@@ -51,6 +81,6 @@ class EnsureNidIndexes extends Command
             $this->comment('Dry run only. Pass --execute to create indexes.');
         }
 
-        return self::SUCCESS;
+        return $failed ? self::FAILURE : self::SUCCESS;
     }
 }
