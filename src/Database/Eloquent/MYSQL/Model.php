@@ -36,6 +36,21 @@ class Model extends BaseModel
     const DELETED_BY = 'deleted_by';
 
     /**
+     * Enable or disable model caching for this model class.
+     * null = fall back to linked repository or global config.
+     *
+     * @var bool|null
+     */
+    const USING_CACHE = null;
+
+    /**
+     * Additional columns that should be indexed as cache lookup keys.
+     *
+     * @var array<int, string>
+     */
+    const CACHE_ALTERNATE_KEYS = [];
+
+    /**
      * Disable guarded fields
      *
      * @var array<string>
@@ -43,8 +58,20 @@ class Model extends BaseModel
     protected $guarded = [];
 
     /**
+     * Boot the model and its cache hooks.
+     *
+     * @return void
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::bootCacheableModel();
+    }
+
+    /**
      * Get user id that will be used with created by, updated by and deleted by
-     * 
+     *
      * @return int
      */
     protected function byUser()

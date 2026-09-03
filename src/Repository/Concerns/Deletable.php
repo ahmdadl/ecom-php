@@ -2,6 +2,8 @@
 
 namespace HZ\Illuminate\Mongez\Repository\Concerns;
 
+use HZ\Illuminate\Mongez\Cache\ModelCacheManager;
+
 /**
  * @phpstan-require-extends \HZ\Illuminate\Mongez\Repository\RepositoryManager
  *
@@ -42,7 +44,7 @@ trait Deletable
 
         $model->delete();
 
-        if ($this->isCacheable()) $this->forgetCache($model->getKey());
+        // Cache invalidation is handled by the model's deleted event (CacheableModel).
 
         $this->trigger("delete", $model, $model->getKey());
 
@@ -57,11 +59,6 @@ trait Deletable
         return !empty($this->deleteDependenceTables);
     }
 
-    /**
-     * Get model deleting depended tables
-     *
-     * @return array
-     */
     /**
      * Get model deleting depended tables
      *
@@ -85,6 +82,9 @@ trait Deletable
      */
     public function isCacheable(): bool
     {
-        return static::USING_CACHE;
+        /** @var class-string<TModel> $modelClass */
+        $modelClass = static::MODEL;
+
+        return app(ModelCacheManager::class)->isEnabled($modelClass);
     }
 }

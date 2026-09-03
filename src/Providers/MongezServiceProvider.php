@@ -13,6 +13,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Artisan;
 use HZ\Illuminate\Mongez\Events\Events;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
+use HZ\Illuminate\Mongez\Cache\ModelCacheManager;
 use Illuminate\Support\Facades\Validator;
 use HZ\Illuminate\Mongez\Console\Commands\EngezTrait;
 use HZ\Illuminate\Mongez\Console\Commands\EngezTest;
@@ -203,6 +204,8 @@ class MongezServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(Events::class);
+
+        $this->app->singleton(ModelCacheManager::class);
 
         // register macros
         $this->registerMacros();

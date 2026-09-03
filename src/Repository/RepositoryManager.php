@@ -46,6 +46,7 @@ abstract class RepositoryManager implements RepositoryInterface
     /**
      * Caching
      */
+    /** @use Cacheable<TModel> */
     use Cacheable;
 
     /**
@@ -753,9 +754,7 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $this->saveActionType = '';
 
-        if (static::USING_CACHE) {
-            $this->setCache((string) $model->getKey(), $model);
-        }
+        // Cache revalidation is handled by the model's saved event (CacheableModel).
     }
 
     /**
@@ -805,6 +804,8 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $model->newQuery()->whereKey($model->getKey())->increment($column, $incrementBy);
 
+        $model->refresh();
+
         return $model;
     }
 
@@ -825,6 +826,8 @@ abstract class RepositoryManager implements RepositoryInterface
         $model->{$column} = ($model->{$column} ?? 0) - $decrementBy;
 
         $model->newQuery()->whereKey($model->getKey())->decrement($column, $decrementBy);
+
+        $model->refresh();
 
         return $model;
     }

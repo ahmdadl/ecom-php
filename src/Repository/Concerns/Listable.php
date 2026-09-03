@@ -217,6 +217,112 @@ trait Listable
     }
 
     /**
+     * Cache-first find by id.
+     *
+     * @param int $id
+     * @return TModel|null
+     */
+    public function findCached(int $id)
+    {
+        return $this->getCachedModel($id, function () use ($id): ?Model {
+            /** @var TModel|null $model */
+            $model = $this->find($id);
+
+            return $model;
+        });
+    }
+
+    /**
+     * Cache-first get by id, wrapped as a resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Resources\Json\JsonResource|null
+     */
+    public function getCached(int $id)
+    {
+        $record = $this->findCached($id);
+
+        return $record ? $this->wrap($record) : null;
+    }
+
+    /**
+     * Cache-first get model by id.
+     *
+     * @param int|array<string, mixed>|\Illuminate\Database\Eloquent\Model $id
+     * @return TModel|null
+     */
+    public function getModelCached($id)
+    {
+        if ($id instanceof Model) {
+            /** @var TModel $id */
+            return $id;
+        }
+
+        return $this->findCached((int) $id);
+    }
+
+    /**
+     * Cache-first get by column, wrapped as a resource.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @return \Illuminate\Http\Resources\Json\JsonResource|null
+     */
+    public function getByCached($column, $value)
+    {
+        $record = $this->getByModelCached($column, $value);
+
+        return $record ? $this->wrap($record) : null;
+    }
+
+    /**
+     * Cache-first get model by column.
+     *
+     * @param string $column
+     * @param mixed $value
+     * @return TModel|null
+     */
+    public function getByModelCached($column, $value)
+    {
+        return $this->getCachedModelBy($column, $value, function () use ($column, $value): ?Model {
+            /** @var TModel|null $model */
+            $model = $this->getByModel($column, $value);
+
+            return $model;
+        });
+    }
+
+    /**
+     * Cache-first get published model by id.
+     *
+     * @param int $id
+     * @return TModel|null
+     */
+    public function getPublishedModelCached($id)
+    {
+        $model = $this->getModelCached($id);
+
+        if (!$model || !$model->{$this->getPublishedColumn()}) return null;
+
+        return $model;
+    }
+
+    /**
+     * Cache-first get published item by id, wrapped as a resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Resources\Json\JsonResource|null
+     */
+    public function getPublishedCached($id)
+    {
+        $record = $this->getPublishedModelCached($id);
+
+        if (!$record) return null;
+
+        return $this->wrap($record);
+    }
+
+    /**
      * Get published items
      *
      * @param array<string, mixed> $options
@@ -250,9 +356,13 @@ trait Listable
      */
     public function publish($id, $publishState)
     {
-        $this->getQuery()->where('nid', (int) $id)->update([
-            $this->getPublishedColumn() => (bool) $publishState
-        ]);
+        $model = $this->getModel($id);
+
+        if (!$model) return;
+
+        $model->{$this->getPublishedColumn()} = (bool) $publishState;
+
+        $model->save();
     }
 
     /**
@@ -558,23 +668,6 @@ trait Listable
      */
     public function getBy($column, $value)
     {
-        if ($this->isCachable()) {
-            $cacheKey = static::NAME . '_' . $column . '_' . $value;
-            $record = $this->getCache($cacheKey);
-
-            if (!$record) {
-                $record = $this->getByModel($column, $value);
-
-                if (!$record) return null;
-
-                $this->setCache($cacheKey, $record->toArray());
-            } else {
-                $record = $this->newModel($record);
-            }
-
-            return $this->wrap($record);
-        }
-
         $record = $this->getByModel($column, $value);
 
         return $record ? $this->wrap($record) : null;

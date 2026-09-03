@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 trait ModelTrait
 {
+    use CacheableModel;
     /**
      * Set table prefix
      * If set to null, then config:mongez.database.prefix will be used instead

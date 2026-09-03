@@ -226,8 +226,17 @@ return [
     |--------------------------------------------------------------------------
     | Cache configurations
     |--------------------------------------------------------------------------
-    | When enabling caching in repositories, set the driver that will be used
-    | Available drivers are the available ones in Laravel config/cache.php drivers list
+    | When enabling caching in models/repositories, set the driver that will be used.
+    | Available drivers are the available ones in Laravel config/cache.php drivers list.
+    | An empty driver uses the default cache store.
+    |
+    | 'enabled' is the global kill-switch.
+    | 'ttl' is in seconds; null means forever.
+    | 'alternateKeys' maps model classes to additional columns that should be
+    |   indexed as cache lookup keys (e.g. ['slug', 'sku']).
+    |
+    | 'repository.cache.driver' is kept as a deprecated alias for the old
+    | repository-only cache configuration.
     |
     |--------------------------------------------------------------------------
     | Pagination configurations
@@ -237,6 +246,16 @@ return [
     | Any value listed below will be applied on all repositories unless repository/method-call override.
     |
     */
+    'cache' => [
+        'enabled' => env('MONGEZ_CACHE_ENABLED', false),
+        'driver' => env('MONGEZ_CACHE_DRIVER', ''),
+        'prefix' => env('MONGEZ_CACHE_PREFIX', 'mongez'),
+        'ttl' => env('MONGEZ_CACHE_TTL', 3600),
+        'alternateKeys' => [
+            // Example: Product::class => ['slug', 'sku'],
+        ],
+    ],
+
     'repository' => [
         'cache' => [
             'driver' => '',

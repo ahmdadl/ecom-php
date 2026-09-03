@@ -1,8 +1,10 @@
 # Unified Caching Plan — Models & Repositories
 
-> **Status:** Planning  
+> **Status:** Implemented  
 > **Scope:** Mongez package (`hassanzohdy/mongez`)  
 > **Goal:** Cache lives on the **model** side. Eloquent `save` / `delete` automatically revalidate. Query-builder writes (no Eloquent events) must call a manual invalidate API. Repositories expose `*Cached` read helpers that share the same model cache.
+
+> **Implementation note:** The plan below was implemented in the current branch. Key files: `src/Cache/ModelCacheManager.php`, `src/Database/Eloquent/CacheableModel.php`, `src/Repository/Concerns/Cacheable.php`, `src/Repository/Concerns/Listable.php`, `src/Repository/Concerns/Deletable.php`, `src/Repository/RepositoryManager.php`, `src/Database/Eloquent/ModelTrait.php`, `src/Database/Eloquent/MongoDB/Model.php`, `src/Database/Eloquent/MYSQL/Model.php`, `src/Providers/MongezServiceProvider.php`, `files/config/mongez.php`. Unit tests: `tests/Cache/ModelCacheManagerTest.php`.
 
 ---
 
@@ -50,7 +52,7 @@ Also, `save()` stores the full model object while `getBy()` stores `$record->toA
 
 1. **Model owns caching** — automatic revalidation happens only from Eloquent model events (`saved`, `deleted`, `restored`). Repositories do **not** write cache on their own after `save()`.
 2. **One source of truth** — `ModelCacheManager` owns key format, read, write, and forget. Model + repository read helpers both delegate to it.
-3. **Eloquent = automatic; query builder = manual** — any write that does not go through `$model->save()` / `$model->delete()` must call `invalidateCache()` (or equivalent) explicitly.
+3. **Eloquent = automatic; query builder = manual** — any write that does not go through `$model->save()` / `$model->delete()` must call `invalidateModelCache()` / `invalidateCache($nid)` / `invalidateAll()` explicitly.
 4. **Opt-in, backward compatible** — existing `find()`, `get()`, `getBy()` stay DB-first. New `*Cached` methods are the explicit cached API.
 5. **Write-through on Eloquent saves** — on create/update via Eloquent, refresh cache with fresh data. On delete, forget keys for that record.
 6. **Octane-safe** — no request-leaking static state; any reverse maps can be reset via the existing Octane provider.
@@ -79,7 +81,7 @@ Trying to auto-detect every query-builder write is fragile. Making invalidate ex
 │  repo('products')        │  Product::findCached(1)          │
 │  ->findCached(1)         │  $product->save()                │
 │  ->update($id, $data)    │  $product->refresh()             │
-│  (Eloquent path)         │  $product->invalidateCache()     │
+│  (Eloquent path)         │  $product->invalidateModelCache()│
 └────────────┬─────────────┴──────────────┬───────────────────┘
              │ $model->save()             │
              ▼                            ▼
@@ -87,7 +89,7 @@ Trying to auto-detect every query-builder write is fragile. Making invalidate ex
 │              Model CacheableModel trait                    │
 │  saved / deleted / restored  →  put / forget               │
 │  refresh() / fresh()         →  reload DB + put            │
-│  invalidateCache()           →  forget + refresh()         │
+│  invalidateModelCache()      →  forget + refresh()         │
 │  invalidateCache($nid)       →  forget (static / mass)     │
 └────────────────────────────┬───────────────────────────────┘
                              ▼
@@ -148,9 +150,9 @@ final class ModelCacheManager
     public function forget(Model $model): void;
 
     // Manual invalidation (query-builder / mass / raw writes)
-    public function invalidate(Model|string $model, int $nid): void;
-    public function invalidateMany(Model|string $model, array $nids): void;
-    public function invalidateByColumn(Model|string $model, string $column, mixed $value): void;
+    public function forgetById(Model|string $model, int $nid): void;
+    public function forgetByIds(Model|string $model, array $nids): void;
+    public function forgetByColumn(Model|string $model, string $column, mixed $value): void;
     public function invalidateAll(Model|string $model): void; // flush every cached record for this model/table
 }
 ```
@@ -163,7 +165,7 @@ Responsibilities:
 
 Static `invalidate*` methods **forget** keys (safe after mass/query-builder mutations without a model instance).
 
-Instance `invalidateCache()` is bound to Eloquent reload: it **forgets**, then calls `refresh()` so the in-memory model and cache both match the DB (warm write-through).
+Instance `invalidateModelCache()` is bound to Eloquent reload: it **forgets**, then calls `refresh()` so the in-memory model and cache both match the DB (warm write-through).
 
 ### `invalidateAll` — flush the whole model cache
 
@@ -246,29 +248,28 @@ $model->refresh(); // reload from DB + put into cache
 | Method | Description |
 |--------|-------------|
 | `invalidateCache(int $nid): void` | **Static:** forget cache keys for that `nid` |
-| `invalidateCache(): static` | **Instance:** forget keys, then `refresh()` (reload from DB + `put`) — returns `$this` |
+| `invalidateModelCache(): static` | **Instance:** forget keys, then `refresh()` (reload from DB + `put`) — returns `$this` |
 | `invalidateCacheByIds(array $nids): void` | Static: forget many records |
 | `invalidateCacheBy(string $column, mixed $value): void` | Static: forget via alternate key index |
 | `invalidateAll(): void` | Static: flush **all** cached entries for this model (mass QB updates) |
-| `refreshCache(): static` | Instance: `put($this)` with current in-memory attributes (no DB round-trip) |
-| `forgetCache(): static` | Instance: forget keys only (no reload) |
+| `refreshModelCache(): static` | Instance: `put($this)` with current in-memory attributes (no DB round-trip) |
+| `forgetModelCache(): static` | Instance: forget keys only (no reload) |
 | `isCachable(): bool` | Whether caching is enabled for this model |
 
-Instance `invalidateCache()` composition:
+Instance `invalidateModelCache()` composition:
 
 ```php
-public function invalidateCache(): static
+public function invalidateModelCache(): static
 {
-    // when called as instance method (no args)
-    $this->forgetCache();
+    $this->forgetModelCache();
     $this->refresh(); // parent reload + put via overridden refresh()
 
     return $this;
 }
 ```
 
-Use static `invalidateCache($nid)` when you have no model instance (mass / raw updates).  
-Use instance `invalidateCache()` or `refresh()` when you already have the model after a query-builder write.
+Use static `invalidateCache($nid)` / `invalidateCacheByIds` / `invalidateAll()` when you have no model instance (mass / raw updates).  
+Use instance `invalidateModelCache()` or `refresh()` when you already have the model after a query-builder write.
 
 #### Query-builder usage pattern
 
@@ -279,7 +280,7 @@ $product->save(); // automatic put
 
 // Atomic query mutation + reload/cache sync
 $product->newQuery()->whereKey($product->getKey())->increment('views', 1);
-$product->refresh(); // or $product->invalidateCache();
+$product->refresh(); // or $product->invalidateModelCache();
 
 // Mass / raw update without instances — forget only those IDs, or flush all
 $ids = Product::query()->where('status', 'old')->pluck('nid')->all();
@@ -310,7 +311,7 @@ Remove cache put/forget from:
 
 | New method | Mirrors | Returns |
 |------------|---------|---------|
-| `findCached(int $id)` | `find()` | Raw model (`MODEL::findCached`) |
+| `findCached(int $id)` | `find()` | Raw model (`query()->where('nid', $id)->first()`) |
 | `getCached(int $id)` | `get()` | JsonResource (wrap cached model) |
 | `getModelCached($id)` | `getModel()` | Raw model |
 | `getByCached($column, $value)` | `getBy()` | JsonResource |
@@ -345,7 +346,7 @@ public function invalidateAll(): void
 |----------|---------|-----------------|
 | `Listable::publish()` | `query()->update(...)` | **Rewrite to Eloquent `save()`** — load model, set published column, `$model->save()` (cache via `saved`) |
 | `RepositoryManager::increment/decrement()` | atomic query `increment`/`decrement` | Keep atomic query (concurrency), then `$model->refresh()` (reloads + puts cache). Do **not** switch to plain `save()` |
-| App / custom code using query builder | — | With instance: `$model->refresh()` or `$model->invalidateCache()`. Without instance: `MODEL::invalidateCache($nid)` / `invalidateCacheByIds` |
+| App / custom code using query builder | — | With instance: `$model->refresh()` or `$model->invalidateModelCache()`. Without instance: `MODEL::invalidateCache($nid)` / `invalidateCacheByIds` |
 
 #### Target implementations
 
@@ -423,7 +424,7 @@ Keep `mongez.repository.cache.driver` as a deprecated alias that falls back to `
 | Embedded sync | `ModelEvents` → `$record->save()` | Automatic `put` on that related model |
 | Publish | `repo->publish()` | `$model->save()` → automatic `put` |
 | Increment / decrement | atomic query + `$model->refresh()` | `refresh()` reloads DB + `put` |
-| Instance after query write | `$model->invalidateCache()` | forget + `refresh()` (same as reload + warm cache) |
+| Instance after query write | `$model->invalidateModelCache()` | forget + `refresh()` (same as reload + warm cache) |
 | Mass / raw query | `where()->update()`, `DB::` | `invalidateCacheByIds` when IDs known; else `invalidateAll()` |
 
 No double-write on repo Eloquent paths: repository no longer calls `setCache` itself.
@@ -505,7 +506,7 @@ $product->save();
 $product->newQuery()->whereKey($product->getKey())->increment('views', 1);
 $product->refresh();
 // same effect:
-// $product->invalidateCache();
+// $product->invalidateModelCache();
 
 // Mass update without instances — static forget
 Product::query()->whereIn('nid', $ids)->update(['status' => 'new']);
@@ -533,7 +534,7 @@ repo('products')->update(1, ['name' => 'Updated']);
 
 // Custom repo method with a model instance:
 $model->newQuery()->whereKey($model->getKey())->increment('views', 1);
-$model->refresh(); // or $model->invalidateCache();
+$model->refresh(); // or $model->invalidateModelCache();
 
 // Mass / no instance:
 $this->getQuery()->where('nid', $id)->update(['flag' => true]);
@@ -557,7 +558,7 @@ Product::invalidateCache($id);
 2. `$model->save()` then `repo->findCached()` returns fresh data.
 3. Query `update` without invalidate/refresh → cached read may be stale.
 4. Atomic increment + `$model->refresh()` → cache matches DB; `findCached` returns new value.
-5. Instance `$model->invalidateCache()` forgets then refreshes (warm cache).
+5. Instance `$model->invalidateModelCache()` forgets then refreshes (warm cache).
 6. `publish` uses `save()`; `increment`/`decrement` use query + `refresh()`.
 7. Existing `find()` / `get()` unchanged when caching disabled.
 
@@ -582,14 +583,16 @@ Product::invalidateCache($id);
 | `src/Cache/ModelCacheManager.php` | **Create** |
 | `src/Database/Eloquent/CacheableModel.php` | **Create** (events + reads + invalidate) |
 | `src/Database/Eloquent/ModelTrait.php` | **Compose** `CacheableModel` |
-| `src/Repository/Concerns/Cacheable.php` | **Refactor** → delegate / invalidate wrappers |
-| `src/Repository/Concerns/Listable.php` | **Add** `*Cached` reads; fix `publish()` |
-| `src/Repository/RepositoryManager.php` | **Remove** write-side cache; fix increment/decrement |
+| `src/Database/Eloquent/MongoDB/Model.php` | **Add** `USING_CACHE` / `CACHE_ALTERNATE_KEYS`; call `bootCacheableModel()` |
+| `src/Database/Eloquent/MYSQL/Model.php` | **Add** `USING_CACHE` / `CACHE_ALTERNATE_KEYS`; call `bootCacheableModel()` |
+| `src/Repository/Concerns/Cacheable.php` | **Refactor** → generic read helpers + invalidate wrappers |
+| `src/Repository/Concerns/Listable.php` | **Add** `*Cached` reads; rewrite `publish()` to `save()`; remove broken `getBy()` cache |
+| `src/Repository/RepositoryManager.php` | **Remove** write-side cache from `save()`; `increment/decrement` call `refresh()` |
 | `src/Repository/Concerns/Deletable.php` | **Remove** write-side forget (model handles it) |
-| `src/Providers/MongezServiceProvider.php` | **Register** manager |
-| `src/Providers/MongezOctaneServiceProvider.php` | **Reset** static maps if any |
+| `src/Providers/MongezServiceProvider.php` | **Register** manager singleton |
+| `src/Providers/MongezOctaneServiceProvider.php` | **Reset** `ModelCacheManager` repository map between requests |
 | `files/config/mongez.php` | **Add** `cache` section |
-| `tests/Cache/*.php` | **Create** |
+| `tests/Cache/ModelCacheManagerTest.php` | **Create** unit tests |
 
 ---
 
@@ -601,7 +604,7 @@ Product::invalidateCache($id);
 | **Manual `invalidateCache*` for query builder** | Query updates never fire Eloquent events; explicit is safer than fake magic |
 | `invalidateAll()` via version bump (or tags) | Supports mass `where()->update()` without plucking IDs; works across cache drivers |
 | Bind `refresh()` / `fresh()` to `put` | Natural sync after atomic DB ops; increment keeps concurrency + warm cache |
-| Instance `invalidateCache()` = forget + `refresh()` | One call to realign model instance and cache with DB |
+| Instance `invalidateModelCache()` = forget + `refresh()` | One call to realign model instance and cache with DB |
 | `publish` → `$model->save()` | Simple column change; Eloquent events enough |
 | `increment`/`decrement` keep atomic query + `refresh()` | Avoid race conditions from naive `save()` |
 | Repositories only wrap cached **reads** (+ thin invalidate helpers) | Avoids duplicate write logic and double-put |

@@ -73,6 +73,21 @@ abstract class Model extends BaseModel
     const DELETED_BY = 'deletedBy';
 
     /**
+     * Enable or disable model caching for this model class.
+     * null = fall back to linked repository or global config.
+     *
+     * @var bool|null
+     */
+    const USING_CACHE = null;
+
+    /**
+     * Additional columns that should be indexed as cache lookup keys.
+     *
+     * @var array<int, string>
+     */
+    const CACHE_ALTERNATE_KEYS = [];
+
+    /**
      * Shared info of the model
      * This is used for getting simple info
      *
@@ -284,6 +299,8 @@ abstract class Model extends BaseModel
     public static function boot()
     {
         static::traitBoot();
+
+        static::bootCacheableModel();
 
         if (!static::$autoIncrementIdBy) {
             static::$autoIncrementIdBy = mt_rand(100, 999);

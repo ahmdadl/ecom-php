@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
+use HZ\Illuminate\Mongez\Cache\ModelCacheManager;
 use Laravel\Octane\Events\RequestReceived;
 use Laravel\Octane\Events\RequestTerminated;
 use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
@@ -96,6 +97,8 @@ class MongezOctaneServiceProvider extends ServiceProvider
                 $repositoryClass::resetCurrentResource();
             }
         }
+
+        ModelCacheManager::resetRepositoryMap();
     }
 
     /**
