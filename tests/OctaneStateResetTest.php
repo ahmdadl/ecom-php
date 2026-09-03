@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use HZ\Illuminate\Mongez\Events\Events;
 use HZ\Illuminate\Mongez\Helpers\Mongez;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
+use HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents;
 use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
 use HZ\Illuminate\Mongez\Providers\MongezOctaneServiceProvider;
 
@@ -76,6 +77,31 @@ class OctaneStateResetTest extends TestCase
         $this->assertTrue(ModelStub::$disableUpdateTime);
         ModelStub::resetStaticState();
         $this->assertFalse(ModelStub::$disableUpdateTime);
+    }
+
+    public function testModelEventsResetClearsPerClassStaticState(): void
+    {
+        $this->resetOctaneProviderStaticState();
+
+        /** @var \Illuminate\Contracts\Foundation\Application $app */
+        $app = \Mockery::mock(\Illuminate\Contracts\Foundation\Application::class);
+
+        $provider = new MongezOctaneServiceProvider($app);
+
+        ModelStubWithEvents::$modelClass = 'TestModel';
+        ModelStubWithEvents::$modelOptions = [['option' => 'value']];
+
+        $this->discoverModelClasses($provider);
+        $this->resetModelsState($provider);
+
+        $this->assertSame('', ModelStubWithEvents::$modelClass);
+        $this->assertEmpty(ModelStubWithEvents::$modelOptions);
+    }
+
+    protected function resetModelsState(MongezOctaneServiceProvider $provider): void
+    {
+        $method = new \ReflectionMethod(MongezOctaneServiceProvider::class, 'resetModelsState');
+        $method->invoke($provider);
     }
 
     public function testModelClassesDiscoveryIsCachedUntilNewClassesAreDeclared(): void
@@ -160,4 +186,24 @@ class ModelStub extends \Illuminate\Database\Eloquent\Model
     {
         static::$disableUpdateTime = $value;
     }
+}
+
+class ModelStubWithEvents extends \Illuminate\Database\Eloquent\Model
+{
+    use ModelTrait, ModelEvents;
+
+    public const CREATED_BY = 'created_by';
+    public const UPDATED_BY = 'updated_by';
+    public const DELETED_BY = 'deleted_by';
+
+    public const ON_MODEL_CREATE = [];
+    public const ON_MODEL_CREATE_PUSH = [];
+    public const ON_MODEL_UPDATE = [];
+    public const ON_MODEL_UPDATE_ARRAY = [];
+    public const ON_MODEL_DELETE_UNSET = [];
+    public const ON_MODEL_DELETE_PULL = [];
+    public const ON_MODEL_DELETE = [];
+    public const MODEL_LINKS = [];
+    public const MODEL_LINKS_ARRAY = [];
+    public const MODEL_LINKS_DELETE = [];
 }

@@ -1,5 +1,7 @@
 # Plan: Make Mongez Octane-safe & compatible with mongodb/laravel-mongodb v5+
 
+**Status: ✅ COMPLETED** — See [`PHP85_LARAVEL13_OCTANE_PLAN.md`](./PHP85_LARAVEL13_OCTANE_PLAN.md) for the verification pass and final hardening work.
+
 Branch: `octane-safe-mongodb-v5`
 
 ## Context

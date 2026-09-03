@@ -153,7 +153,10 @@ class Events implements EventsInterface
             $this->eventsList[$event] ??= [];
 
             if (is_array($eventListener)) {
-                $eventListener = implode('@', $eventListener);
+                $eventListener = implode('@', array_map(
+                    static fn ($part) => is_object($part) ? $part::class : (string) $part,
+                    $eventListener
+                ));
             }
 
             if (!in_array($eventListener, $this->eventsList[$event])) {

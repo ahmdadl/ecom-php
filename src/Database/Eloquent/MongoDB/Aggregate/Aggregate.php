@@ -58,6 +58,10 @@ class Aggregate
             $columnsList = null;
         } else {
             foreach ($columns as $column) {
+                if ($column === null) {
+                    continue;
+                }
+
                 [$name] = explode('.', $column);
 
                 $columnsList[$name] = "$$column";

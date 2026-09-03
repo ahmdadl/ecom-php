@@ -43,11 +43,11 @@ class MongezOctaneServiceProvider extends ServiceProvider
 
             JsonResourceManager::snapshotBaseState();
 
-            $this->app['events']->listen(RequestReceived::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible, class.notFound
+            $this->app['events']->listen(RequestReceived::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible
                 $this->resetApplicationState();
             });
 
-            $this->app['events']->listen(RequestTerminated::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible, class.notFound
+            $this->app['events']->listen(RequestTerminated::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible
                 $this->cleanupApplicationState();
             });
         });
@@ -69,8 +69,6 @@ class MongezOctaneServiceProvider extends ServiceProvider
         $this->resetRepositoriesState();
 
         $this->resetModelsState();
-
-        ModelEvents::resetState();
     }
 
     /**
@@ -111,6 +109,10 @@ class MongezOctaneServiceProvider extends ServiceProvider
 
         foreach (static::$modelClasses as $class) {
             $class::resetStaticState();
+
+            if (in_array(\HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents::class, class_uses_recursive($class), true)) {
+                $class::resetState();
+            }
         }
     }
 

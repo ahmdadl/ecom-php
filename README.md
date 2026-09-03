@@ -1,9 +1,15 @@
 ﻿# Public Archive
 
+## Requirements
+
+- PHP: `^8.4 || ^8.5`
+- Laravel: `^11.0 || ^12.0 || ^13.0`
+- MongoDB Driver: `mongodb/laravel-mongodb v5+`
+
 ## Laravel Octane support
 
 The package is safe to run under [Laravel Octane](https://octane.laravel.com)
-with Laravel 11 and `mongodb/laravel-mongodb` v4.
+with Laravel `^11.0 || ^12.0 || ^13.0` and `mongodb/laravel-mongodb` v5+.
 
 Install Octane in your application:
 
