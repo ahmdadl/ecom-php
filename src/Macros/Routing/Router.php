@@ -19,7 +19,9 @@ class Router
     public function restfulApi(string $name = '', string $controller = '', array $options = []): \Closure
     {
         return function ($name, $controller, array $options = []) {
-            $this->patch($name . '/{id}', [$controller , 'patch']);
+            // Named so Mongez admin./site. group prefixes do not collapse
+            // every unnamed PATCH onto the same bare route name (breaks route:cache).
+            $this->patch($name . '/{id}', [$controller , 'patch'])->name($name . '.patch');
 
             $this->apiResource($name, $controller, $options);
         };
