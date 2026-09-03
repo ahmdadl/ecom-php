@@ -6,6 +6,7 @@ use HZ\Illuminate\Mongez\Database\Eloquent\Associatable;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents;
 use DateTimeInterface;
 use HZ\Illuminate\Mongez\Database\Eloquent\GeneralScopes;
+use HZ\Illuminate\Mongez\Jobs\UpdateRelatedModelJob;
 use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Model as BaseModel;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
@@ -222,6 +223,29 @@ abstract class Model extends BaseModel
     const ON_MODEL_DELETE = [];
 
     /**
+     * Run related-model propagation on a queue instead of synchronously.
+     *
+     * Set to `true` or `'queue'` to dispatch a job for create/update/delete
+     * events. Defaults to `false` (sync). Use RELATED_MODELS_MODES to
+     * override this per related model.
+     *
+     * @const bool|string
+     */
+    const RELATED_MODELS_QUEUE_MODE = false;
+
+    /**
+     * Per-related-model queue/sync overrides.
+     *
+     * Maps the related model class to `true`/`'queue'` or `false`/`'sync'`.
+     * Targets not listed here fall back to RELATED_MODELS_QUEUE_MODE.
+     *
+     * @example Category::class => 'queue', Tag::class => 'sync'
+     *
+     * @const array<class-string, bool|string>
+     */
+    const RELATED_MODELS_MODES = [];
+
+    /**
      * Disable guarded fields
      *
      * @var array<string>
@@ -321,7 +345,18 @@ abstract class Model extends BaseModel
         static::created(function ($model) {
             if (!$model->canTrigger('create')) return;
 
-            static::handleCreated($model);
+            static::propagateRelatedModels($model, 'created', [
+                'handleCreateSingleModel' => array_merge(
+                    config('mongez.database.onModel.create.' . static::class, []),
+                    !empty(static::ON_MODEL_CREATE) ? static::ON_MODEL_CREATE : [],
+                    !empty(static::MODEL_LINKS) ? static::MODEL_LINKS : [],
+                ),
+                'handleCreateArrayModel' => array_merge(
+                    config('mongez.database.onModel.createArray.' . static::class, []),
+                    !empty(static::ON_MODEL_CREATE_PUSH) ? static::ON_MODEL_CREATE_PUSH : [],
+                    !empty(static::MODEL_LINKS_ARRAY) ? static::MODEL_LINKS_ARRAY : [],
+                ),
+            ]);
         });
 
         static::updating(function ($model) {
@@ -335,15 +370,63 @@ abstract class Model extends BaseModel
         static::updated(function ($model) {
             if (!$model->canTrigger('update')) return;
 
-            static::handleUpdated($model);
+            static::propagateRelatedModels($model, 'updated', [
+                'handleUpdateSingleModel' => array_merge(
+                    config('mongez.database.onModel.update.' . static::class, []),
+                    !empty(static::ON_MODEL_UPDATE) ? static::ON_MODEL_UPDATE : [],
+                    !empty(static::MODEL_LINKS) ? static::MODEL_LINKS : [],
+                ),
+                'handleUpdateArrayModel' => array_merge(
+                    config('mongez.database.onModel.updateArray.' . static::class, []),
+                    !empty(static::ON_MODEL_UPDATE_ARRAY) ? static::ON_MODEL_UPDATE_ARRAY : [],
+                    !empty(static::MODEL_LINKS_ARRAY) ? static::MODEL_LINKS_ARRAY : [],
+                ),
+            ]);
         });
 
         // triggered when a model record is deleted from database
         static::deleted(function ($model) {
             if (!$model->canTrigger('delete')) return;
 
-            static::handleDeleted($model);
+            static::propagateRelatedModels($model, 'deleted', [
+                'handleUnsetSingleModel' => array_merge(
+                    config('mongez.database.onModel.deleteUnset.' . static::class, []),
+                    !empty(static::ON_MODEL_DELETE_UNSET) ? static::ON_MODEL_DELETE_UNSET : [],
+                    !empty(static::MODEL_LINKS) ? static::MODEL_LINKS : [],
+                ),
+                'handlePullArrayModel' => array_merge(
+                    config('mongez.database.onModel.deletePull.' . static::class, []),
+                    !empty(static::ON_MODEL_DELETE_PULL) ? static::ON_MODEL_DELETE_PULL : [],
+                    !empty(static::MODEL_LINKS_ARRAY) ? static::MODEL_LINKS_ARRAY : [],
+                ),
+                'handleDeleteSingleModel' => array_merge(
+                    config('mongez.database.onModel.delete.' . static::class, []),
+                    !empty(static::ON_MODEL_DELETE) ? static::ON_MODEL_DELETE : [],
+                    !empty(static::MODEL_LINKS_DELETE) ? static::MODEL_LINKS_DELETE : [],
+                ),
+            ]);
         });
+    }
+
+    /**
+     * Propagate the given event to each related model, either inline or via a queue job.
+     *
+     * @param Model $model
+     * @param string $event
+     * @param array<string, array<class-string, mixed>> $handlers
+     * @return void
+     */
+    protected static function propagateRelatedModels(Model $model, string $event, array $handlers): void
+    {
+        foreach ($handlers as $handlerMethod => $targetModels) {
+            foreach ($targetModels as $targetModelClass => $options) {
+                if (static::shouldRunRelatedModelOnQueue($targetModelClass)) {
+                    UpdateRelatedModelJob::dispatch(static::class, $model->nid, $event, $handlerMethod, $targetModelClass);
+                } else {
+                    static::$handlerMethod($model, $targetModelClass);
+                }
+            }
+        }
     }
 
     /**

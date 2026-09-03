@@ -132,4 +132,27 @@ class {{ ModelName }} extends Model
      * @const array
      */
     const ON_MODEL_DELETE = [];
+
+    /**
+     * Run related-model propagation on a queue instead of synchronously.
+     *
+     * Set to `true` or `'queue'` to dispatch a job for create/update/delete
+     * events. Defaults to `false` (sync). Use RELATED_MODELS_MODES to
+     * override this per related model.
+     *
+     * @const bool|string
+     */
+    const RELATED_MODELS_QUEUE_MODE = false;
+
+    /**
+     * Per-related-model queue/sync overrides.
+     *
+     * Maps the related model class to `true`/`'queue'` or `false`/`'sync'`.
+     * Targets not listed here fall back to RELATED_MODELS_QUEUE_MODE.
+     *
+     * @example Category::class => 'queue', Tag::class => 'sync'
+     *
+     * @const array<class-string, bool|string>
+     */
+    const RELATED_MODELS_MODES = [];
 }

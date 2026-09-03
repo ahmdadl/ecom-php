@@ -29,6 +29,39 @@ trait ModelEvents
     }
 
     /**
+     * Determine whether related-model propagation should run on a queue by default.
+     *
+     * @return bool
+     */
+    public static function shouldRunRelatedModelsOnQueue(): bool
+    {
+        if (!defined('static::RELATED_MODELS_QUEUE_MODE')) {
+            return false;
+        }
+
+        $mode = static::RELATED_MODELS_QUEUE_MODE;
+
+        return $mode === true || $mode === 'queue';
+    }
+
+    /**
+     * Determine whether propagation to the given related model should run on a queue.
+     *
+     * @param class-string $targetModelClass
+     * @return bool
+     */
+    public static function shouldRunRelatedModelOnQueue(string $targetModelClass): bool
+    {
+        if (defined('static::RELATED_MODELS_MODES') && isset(static::RELATED_MODELS_MODES[$targetModelClass])) {
+            $mode = static::RELATED_MODELS_MODES[$targetModelClass];
+
+            return $mode === true || $mode === 'queue';
+        }
+
+        return static::shouldRunRelatedModelsOnQueue();
+    }
+
+    /**
      * Handle model create events.
      *
      * @param Model $model
@@ -74,7 +107,7 @@ trait ModelEvents
      *
      * @return void
      */
-    public static function handleCreateSingleModel(Model $model)
+    public static function handleCreateSingleModel(Model $model, ?string $targetModelClass = null)
     {
         $singleModelsList = array_merge(
             config('mongez.database.onModel.create.' . static::class, []),
@@ -82,7 +115,9 @@ trait ModelEvents
             !empty(static::MODEL_LINKS) ? static::MODEL_LINKS : [],
         );
 
-        collect($singleModelsList)->each(function ($modelOptions, $modelClass) use ($model) {
+        collect($singleModelsList)->each(function ($modelOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setCreateModelOptions($model, $modelOptions);
@@ -105,7 +140,7 @@ trait ModelEvents
      * @param Model $model
      * @return void
      */
-    public static function handleCreateArrayModel(Model $model)
+    public static function handleCreateArrayModel(Model $model, ?string $targetModelClass = null)
     {
         $arrayModelsList = array_merge(
             config('mongez.database.onModel.createArray.' . static::class, []),
@@ -113,7 +148,9 @@ trait ModelEvents
             !empty(static::MODEL_LINKS_ARRAY) ? static::MODEL_LINKS_ARRAY : [],
         );
 
-        collect($arrayModelsList)->each(function ($modelOptions, $modelClass) use ($model) {
+        collect($arrayModelsList)->each(function ($modelOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setCreateModelOptions($model, $modelOptions);
@@ -133,7 +170,7 @@ trait ModelEvents
      *
      * @return void
      */
-    public static function handleUpdateSingleModel(Model $model)
+    public static function handleUpdateSingleModel(Model $model, ?string $targetModelClass = null)
     {
         $singleModelsList = array_merge(
             config('mongez.database.onModel.update.' . static::class, []),
@@ -146,7 +183,9 @@ trait ModelEvents
         // if the model options is set to string, then it will be converted to
         // $modelOptions.id, $modelOptions, sharedInfo
 
-        collect($singleModelsList)->each(function ($modelOptions, $modelClass) use ($model) {
+        collect($singleModelsList)->each(function ($modelOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setModelOptions($modelOptions);
@@ -168,7 +207,7 @@ trait ModelEvents
      *
      * @return void
      */
-    public static function handleUpdateArrayModel(Model $model)
+    public static function handleUpdateArrayModel(Model $model, ?string $targetModelClass = null)
     {
         $arrayModelsList = array_merge(
             config('mongez.database.onModel.updateArray.' . static::class, []),
@@ -181,7 +220,9 @@ trait ModelEvents
         // if the model options is set to string, then it will be converted to
         // $modelOptions.id, $modelOptions, sharedInfo
 
-        collect($arrayModelsList)->each(function ($modelOptions, $modelClass) use ($model) {
+        collect($arrayModelsList)->each(function ($modelOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setModelOptions($modelOptions);
@@ -202,7 +243,7 @@ trait ModelEvents
      * @param Model $model
      * @return void
      */
-    public static function handleUnsetSingleModel(Model $model)
+    public static function handleUnsetSingleModel(Model $model, ?string $targetModelClass = null)
     {
         $singleModelsList = array_merge(
             config('mongez.database.onModel.deleteUnset.' . static::class, []),
@@ -210,7 +251,9 @@ trait ModelEvents
             !empty(static::MODEL_LINKS) ? static::MODEL_LINKS : [],
         );
 
-        collect($singleModelsList)->each(function ($searchingOptions, $modelClass) use ($model) {
+        collect($singleModelsList)->each(function ($searchingOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setModelOptions($searchingOptions);
@@ -235,7 +278,7 @@ trait ModelEvents
      * @param Model $model
      * @return void
      */
-    public static function handlePullArrayModel(Model $model)
+    public static function handlePullArrayModel(Model $model, ?string $targetModelClass = null)
     {
         $arrayModelsList = array_merge(
             config('mongez.database.onModel.deletePull.' . static::class, []),
@@ -243,7 +286,9 @@ trait ModelEvents
             !empty(static::MODEL_LINKS_ARRAY) ? static::MODEL_LINKS_ARRAY : [],
         );
 
-        collect($arrayModelsList)->each(function ($searchingOptions, $modelClass) use ($model) {
+        collect($arrayModelsList)->each(function ($searchingOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setModelOptions($searchingOptions);
@@ -264,7 +309,7 @@ trait ModelEvents
      * @param Model $model
      * @return void
      */
-    public static function handleDeleteSingleModel(Model $model)
+    public static function handleDeleteSingleModel(Model $model, ?string $targetModelClass = null)
     {
         $singleModelsList = array_merge(
             config('mongez.database.onModel.delete.' . static::class, []),
@@ -272,7 +317,9 @@ trait ModelEvents
             !empty(static::MODEL_LINKS_DELETE) ? static::MODEL_LINKS_DELETE : [],
         );
 
-        collect($singleModelsList)->each(function ($searchingOptions, $modelClass) use ($model) {
+        collect($singleModelsList)->each(function ($searchingOptions, $modelClass) use ($model, $targetModelClass) {
+            if ($targetModelClass !== null && $modelClass !== $targetModelClass) return;
+
             static::$modelClass = $modelClass;
 
             static::setModelOptions($searchingOptions);
@@ -339,7 +386,7 @@ trait ModelEvents
         $options = static::getOptionsArray($options);
 
         collect($options)->each(function ($option) {
-            $modelOptions['searchingColumn'] = Str::contains('.nid', $option[0]) ? $option[0] : "{$option[0]}.nid";
+            $modelOptions['searchingColumn'] = Str::contains($option[0], '.nid') ? $option[0] : "{$option[0]}.nid";
 
             switch (count($option)) {
                 case 1:
@@ -391,10 +438,23 @@ trait ModelEvents
      */
     public static function getCreateRelatedModels(Model $model, array $options)
     {
-        $searchingId = isset($model->{$options['searchingColumn']}) ? (int) $model->{$options['searchingColumn']}['nid'] ?:
-            array_map(fn($item) => (int) $item['nid'], $model->{$options['searchingColumn']} ?: []) : null;
+        $value = $model->{$options['searchingColumn']};
 
-        return static::$modelClass::query()->whereIn('nid', (array) $searchingId)->get();
+        if (empty($value)) {
+            return static::$modelClass::query()->whereIn('nid', [])->get();
+        }
+
+        $items = is_array($value) ? $value : [$value];
+
+        $nids = [];
+        foreach ($items as $item) {
+            $item = (array) $item;
+            if (isset($item['nid'])) {
+                $nids[] = (int) $item['nid'];
+            }
+        }
+
+        return static::$modelClass::query()->whereIn('nid', $nids)->get();
     }
 
     /**

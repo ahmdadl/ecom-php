@@ -35,31 +35,24 @@ trait Associatable
     {
         $documents = $this->{$column} ?? [];
 
-        if ($modelInfo instanceof Model) {
-            $modelInfo = $modelInfo->sharedInfo();
-        }
+        $modelInfoArray = $modelInfo instanceof Model ? $modelInfo->sharedInfo() : (array) $modelInfo;
+        $searchValue = $modelInfoArray[$searchingColumn] ?? null;
 
         $found = false;
 
         foreach ($documents as $key => $document) {
-            if ($document === $modelInfo) {
-                $documents[$key] = $modelInfo;
+            $documentArray = (array) $document;
+
+            if (isset($documentArray[$searchingColumn]) && $documentArray[$searchingColumn] == $searchValue) {
+                $documents[$key] = $modelInfoArray;
                 $found = true;
 
                 break;
-            } else {
-                $document = (array) $document;
-                if (isset($document[$searchingColumn]) && $document[$searchingColumn] == $modelInfo[$searchingColumn]) {
-                    $documents[$key] = $modelInfo;
-                    $found = true;
-
-                    break;
-                }
             }
         }
 
         if (!$found) {
-            $documents[] = $modelInfo;
+            $documents[] = $modelInfoArray;
         }
 
         $this->setAttribute($column, $documents);
@@ -76,12 +69,15 @@ trait Associatable
     {
         $array = $this->{$column} ?? [];
 
+        $modelInfoArray = $modelInfo instanceof Model ? $modelInfo->sharedInfo() : (array) $modelInfo;
+        $searchValue = $modelInfoArray[$searchBy] ?? null;
+
         $newArray = [];
 
         foreach ($array as $value) {
-            if (
-                is_array($value) && isset($value[$searchBy]) && $value[$searchBy] == $modelInfo[$searchBy]
-            ) {
+            $valueArray = (array) $value;
+
+            if (isset($valueArray[$searchBy]) && $valueArray[$searchBy] == $searchValue) {
                 continue;
             }
 

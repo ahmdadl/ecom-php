@@ -207,3 +207,13 @@ class ModelStubWithEvents extends \Illuminate\Database\Eloquent\Model
     public const MODEL_LINKS_ARRAY = [];
     public const MODEL_LINKS_DELETE = [];
 }
+
+class ModelStubWithEventsQueued extends ModelStubWithEvents
+{
+    public const RELATED_MODELS_QUEUE_MODE = true;
+}
+
+class ModelStubWithEventsQueueString extends ModelStubWithEvents
+{
+    public const RELATED_MODELS_QUEUE_MODE = 'queue';
+}
