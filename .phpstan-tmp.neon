@@ -1,0 +1,20 @@
+includes:
+
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+    excludePaths:
+        - vendor
+        - module
+        - files
+        # Testing scaffolding that is completed by the consuming application
+        # (references consumer-provided classes like RequestApi/apiRequest)
+        - src/Testing/BaseAdminDeleteTest.php
+        - src/Testing/BaseCreateAdminTest.php
+        - src/Testing/BaseUpdateAdminTest.php
+        - src/Testing/Traits/WithCreatingRequests.php
+    treatPhpDocTypesAsCertain: false
+    bootstrapFiles:
+        - phpstan-bootstrap.php
