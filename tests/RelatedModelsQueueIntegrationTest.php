@@ -25,7 +25,7 @@ final class RelatedModelsQueueIntegrationTest extends TestCase
         }
 
         try {
-            $app['db']->connection('mongodb')->getMongoDB()->command(['ping' => 1]);
+            $app['db']->connection('mongodb')->getDatabase()->command(['ping' => 1]);
         } catch (\Throwable $e) {
             $this->markTestSkipped('MongoDB is not available: ' . $e->getMessage());
         }
@@ -41,7 +41,9 @@ final class RelatedModelsQueueIntegrationTest extends TestCase
             return $job->sourceModelClass === QueueModeModel::class
                 && $job->targetModelClass === QueueTargetModel::class
                 && $job->event === 'created'
-                && $job->handlerMethod === 'handleCreateSingleModel';
+                && $job->handlerMethod === 'handleCreateSingleModel'
+                && $job->afterCommit === true
+                && $job->tries === 3;
         });
     }
 

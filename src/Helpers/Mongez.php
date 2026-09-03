@@ -58,6 +58,9 @@ class Mongez
      */
     protected static $mongezContent;
 
+    /** @var array<int, callable> */
+    protected static array $resetCallbacks = [];
+
     /**
      * Prepare the Mongez Console
      * Create Mongez storage directory.
@@ -170,6 +173,21 @@ class Mongez
     {
         static::$requestLocaleCode = '';
         static::$mongezContent = null;
+
+        foreach (static::$resetCallbacks as $callback) {
+            $callback();
+        }
+    }
+
+    /**
+     * Register an application-level callback to run during Octane resets.
+     *
+     * @param callable(): void $callback
+     * @return void
+     */
+    public static function onReset(callable $callback): void
+    {
+        static::$resetCallbacks[] = $callback;
     }
 
     /**

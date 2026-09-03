@@ -113,7 +113,7 @@ class MongezOctaneServiceProvider extends ServiceProvider
         foreach (static::$modelClasses as $class) {
             $class::resetStaticState();
 
-            if (in_array(\HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents::class, class_uses_recursive($class), true)) {
+            if (in_array(ModelEvents::class, class_uses_recursive($class), true)) {
                 $class::resetState();
             }
         }

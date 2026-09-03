@@ -71,6 +71,18 @@ class OctaneStateResetTest extends TestCase
         $this->assertFalse(Mongez::requestHasLocaleCode());
     }
 
+    public function testMongezResetRunsRegisteredCallbacks(): void
+    {
+        $calls = 0;
+        Mongez::onReset(static function () use (&$calls): void {
+            $calls++;
+        });
+
+        Mongez::reset();
+
+        $this->assertSame(1, $calls);
+    }
+
     public function testModelStaticStateReset(): void
     {
         ModelStub::setDisableUpdateTime(true);

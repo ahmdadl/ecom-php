@@ -35,11 +35,17 @@ trait ModelEvents
      */
     public static function shouldRunRelatedModelsOnQueue(): bool
     {
-        if (!defined('static::RELATED_MODELS_QUEUE_MODE')) {
-            return false;
+        $mode = app()->bound('config')
+            ? config('mongez.queue.relatedModels', false)
+            : false;
+
+        if ($mode === 'false' || $mode === '0' || $mode === 'sync') {
+            $mode = false;
         }
 
-        $mode = static::RELATED_MODELS_QUEUE_MODE;
+        if ($mode === false && defined('static::RELATED_MODELS_QUEUE_MODE')) {
+            $mode = static::RELATED_MODELS_QUEUE_MODE;
+        }
 
         return $mode === true || $mode === 'queue';
     }

@@ -11,6 +11,11 @@
 The package is safe to run under [Laravel Octane](https://octane.laravel.com)
 with Laravel `^11.0 || ^12.0 || ^13.0` and `mongodb/laravel-mongodb` v5+.
 
+MongoDB models expose the numeric application identity as `nid`; MongoDB's
+native `_id` remains available as the driver identity. See
+[the Octane and nid guide](docs/octane-nid.md) for migration, queue, and
+deployment instructions.
+
 Install Octane in your application:
 
 ```bash

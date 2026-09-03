@@ -91,6 +91,11 @@ if (!function_exists('pred')) {
     function pred(...$vars)
     {
         pre(...$vars);
+
+        if (app()->bound('octane')) {
+            throw new RuntimeException('pred() cannot terminate an Octane worker.');
+        }
+
         die();
     }
 }

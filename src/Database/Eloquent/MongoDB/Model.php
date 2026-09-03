@@ -421,7 +421,19 @@ abstract class Model extends BaseModel
         foreach ($handlers as $handlerMethod => $targetModels) {
             foreach ($targetModels as $targetModelClass => $options) {
                 if (static::shouldRunRelatedModelOnQueue($targetModelClass)) {
-                    UpdateRelatedModelJob::dispatch(static::class, $model->nid, $event, $handlerMethod, $targetModelClass);
+                    $job = UpdateRelatedModelJob::dispatch(
+                        static::class,
+                        (int) $model->nid,
+                        $event,
+                        $handlerMethod,
+                        $targetModelClass
+                    );
+
+                    if ($connection = config('mongez.queue.connection')) {
+                        $job->onConnection($connection);
+                    }
+
+                    $job->onQueue(config('mongez.queue.name', 'default'));
                 } else {
                     static::$handlerMethod($model, $targetModelClass);
                 }
@@ -580,6 +592,38 @@ abstract class Model extends BaseModel
     public static function find($id): ?static
     {
         return static::query()->where('nid', (int) $id)->first();
+    }
+
+    /**
+     * Find multiple documents by their numeric Mongez IDs.
+     *
+     * @param mixed $ids
+     * @param array<int, string> $columns
+     * @return \Illuminate\Support\Collection<int, mixed>
+     */
+    public static function findMany($ids, $columns = ['*'])
+    {
+        $ids = array_values(array_filter(
+            array_map(static fn ($id): int => (int) $id, (array) $ids),
+            static fn (int $id): bool => $id > 0
+        ));
+
+        return static::query()->whereIn('nid', $ids)->get($columns);
+    }
+
+    /**
+     * Resolve numeric route model bindings through `nid`.
+     *
+     * MongoDB v5 reserves the root `id`/`_id` identity, while Mongez's
+     * application identity is the numeric `nid`.
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field !== null) {
+            return $this->resolveRouteBindingQuery($this, $value, $field)->first();
+        }
+
+        return static::query()->where('nid', (int) $value)->first();
     }
 
     /**

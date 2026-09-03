@@ -62,7 +62,7 @@ abstract class TestCase extends Testbench
         $app = $this->app;
         $this->assertNotNull($app);
 
-        $database = $app['db']->connection('mongodb')->getMongoDB();
+        $database = $app['db']->connection('mongodb')->getDatabase();
 
         foreach ($collections as $collection) {
             $database->dropCollection($collection);
