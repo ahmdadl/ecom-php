@@ -151,6 +151,7 @@ final class ModelCacheManager
     public function invalidate(Model|string $model, int $nid): void;
     public function invalidateMany(Model|string $model, array $nids): void;
     public function invalidateByColumn(Model|string $model, string $column, mixed $value): void;
+    public function invalidateAll(Model|string $model): void; // flush every cached record for this model/table
 }
 ```
 
@@ -163,6 +164,24 @@ Responsibilities:
 Static `invalidate*` methods **forget** keys (safe after mass/query-builder mutations without a model instance).
 
 Instance `invalidateCache()` is bound to Eloquent reload: it **forgets**, then calls `refresh()` so the in-memory model and cache both match the DB (warm write-through).
+
+### `invalidateAll` — flush the whole model cache
+
+For mass query-builder updates where collecting IDs is awkward or incomplete:
+
+```php
+Coupon::where('isAutoApply', true)->update(['isAutoApply' => false]);
+Coupon::invalidateAll(); // forget every cached coupon
+```
+
+**Implementation preference (pick one, document in config):**
+
+1. **Cache version / generation key (recommended, driver-agnostic)**  
+   Store `mongez:{table}:v` = integer. Every record key includes the version (`mongez:{table}:v{N}:id:{nid}`). `invalidateAll()` increments the version → all old keys become unreachable (lazy expire via TTL). No SCAN required.
+2. **Cache tags** (`Cache::tags(['coupons'])->flush()`) — clean if the store supports tags (Redis). Not available on `file` / `database` drivers.
+3. **Prefix SCAN + delete** — Redis-only fallback; avoid as primary strategy.
+
+Use `invalidateAll()` after mass updates. Prefer `invalidateCacheByIds($ids)` when you already know the affected IDs (smaller blast radius).
 
 ---
 
@@ -230,6 +249,7 @@ $model->refresh(); // reload from DB + put into cache
 | `invalidateCache(): static` | **Instance:** forget keys, then `refresh()` (reload from DB + `put`) — returns `$this` |
 | `invalidateCacheByIds(array $nids): void` | Static: forget many records |
 | `invalidateCacheBy(string $column, mixed $value): void` | Static: forget via alternate key index |
+| `invalidateAll(): void` | Static: flush **all** cached entries for this model (mass QB updates) |
 | `refreshCache(): static` | Instance: `put($this)` with current in-memory attributes (no DB round-trip) |
 | `forgetCache(): static` | Instance: forget keys only (no reload) |
 | `isCachable(): bool` | Whether caching is enabled for this model |
@@ -261,10 +281,14 @@ $product->save(); // automatic put
 $product->newQuery()->whereKey($product->getKey())->increment('views', 1);
 $product->refresh(); // or $product->invalidateCache();
 
-// Mass / raw update without instances — forget only
+// Mass / raw update without instances — forget only those IDs, or flush all
 $ids = Product::query()->where('status', 'old')->pluck('nid')->all();
 Product::query()->whereIn('nid', $ids)->update(['status' => 'new']);
 Product::invalidateCacheByIds($ids);
+
+// Or when IDs are unknown / too many:
+Coupon::where('isAutoApply', true)->update(['isAutoApply' => false]);
+Coupon::invalidateAll();
 ```
 
 ---
@@ -305,6 +329,11 @@ public function invalidateCache(int $nid): void
 public function invalidateCacheByIds(array $nids): void
 {
     static::MODEL::invalidateCacheByIds($nids);
+}
+
+public function invalidateAll(): void
+{
+    static::MODEL::invalidateAll();
 }
 ```
 
@@ -395,7 +424,7 @@ Keep `mongez.repository.cache.driver` as a deprecated alias that falls back to `
 | Publish | `repo->publish()` | `$model->save()` → automatic `put` |
 | Increment / decrement | atomic query + `$model->refresh()` | `refresh()` reloads DB + `put` |
 | Instance after query write | `$model->invalidateCache()` | forget + `refresh()` (same as reload + warm cache) |
-| Mass / raw query | `where()->update()`, `DB::` | Static `invalidateCache` / `invalidateCacheByIds` (forget only) |
+| Mass / raw query | `where()->update()`, `DB::` | `invalidateCacheByIds` when IDs known; else `invalidateAll()` |
 
 No double-write on repo Eloquent paths: repository no longer calls `setCache` itself.
 
@@ -406,8 +435,9 @@ No double-write on repo Eloquent paths: repository no longer calls `setCache` it
 ### Phase 1 (single-record lookups)
 
 - Model: `findCached`, `getCached`, `findByCached`
-- Model: static + instance `invalidateCache`, `invalidateCacheByIds`, `invalidateCacheBy`, `refreshCache`, `forgetCache`
+- Model: static + instance `invalidateCache`, `invalidateCacheByIds`, `invalidateCacheBy`, `invalidateAll`, `refreshCache`, `forgetCache`
 - Model: override `refresh()` / `fresh()` to `put` after DB reload
+- Key versioning (or tags) so `invalidateAll()` works without listing every key
 - Repository: `findCached`, `getCached`, `getModelCached`, `getByCached`, `getByModelCached`, published variants
 - Repository: thin `invalidateCache*` wrappers
 
@@ -480,6 +510,10 @@ $product->refresh();
 // Mass update without instances — static forget
 Product::query()->whereIn('nid', $ids)->update(['status' => 'new']);
 Product::invalidateCacheByIds($ids);
+
+// Mass update without collecting IDs
+Coupon::where('isAutoApply', true)->update(['isAutoApply' => false]);
+Coupon::invalidateAll();
 ```
 
 ### Repository (read helpers)
@@ -565,6 +599,7 @@ Product::invalidateCache($id);
 |----------|-----------|
 | **Cache on model side** | Single automatic path for both repo and model Eloquent writes |
 | **Manual `invalidateCache*` for query builder** | Query updates never fire Eloquent events; explicit is safer than fake magic |
+| `invalidateAll()` via version bump (or tags) | Supports mass `where()->update()` without plucking IDs; works across cache drivers |
 | Bind `refresh()` / `fresh()` to `put` | Natural sync after atomic DB ops; increment keeps concurrency + warm cache |
 | Instance `invalidateCache()` = forget + `refresh()` | One call to realign model instance and cache with DB |
 | `publish` → `$model->save()` | Simple column change; Eloquent events enough |
