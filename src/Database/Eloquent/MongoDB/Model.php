@@ -2,6 +2,8 @@
 
 namespace HZ\Illuminate\Mongez\Database\Eloquent\MongoDB;
 
+use MongoDB\Operation\FindOneAndUpdate;
+
 use HZ\Illuminate\Mongez\Database\Eloquent\Associatable;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents;
 use DateTimeInterface;
@@ -468,7 +470,7 @@ abstract class Model extends BaseModel
             ['$inc' => ['id' => static::$autoIncrementIdBy]],
             [
                 'upsert' => true,
-                'returnDocument' => 'after',
+                'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
                 'typeMap' => ['root' => 'array', 'document' => 'array'],
             ]
         );

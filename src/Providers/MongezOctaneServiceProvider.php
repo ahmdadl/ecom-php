@@ -40,6 +40,8 @@ class MongezOctaneServiceProvider extends ServiceProvider
         $this->app->booted(function () {
             // capture the boot-time registered listeners and resource keys
             // so they survive the per-request state reset
+            Mongez::snapshotBaseState();
+
             app(Events::class)->snapshotBaseState();
 
             JsonResourceManager::snapshotBaseState();

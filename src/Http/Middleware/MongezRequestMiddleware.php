@@ -21,6 +21,12 @@ class MongezRequestMiddleware
     public function handle(Request $request, Closure $next)
     {
         if ($request->method() === 'OPTIONS') {
+            // Pre-flight requests return before the normal locale setup. Set
+            // the application back to its configured locale so an Octane
+            // worker cannot reuse the previous request's locale.
+            app()->setLocale(config('app.locale'));
+            Mongez::setRequestLocaleCode('');
+
             return response()->json([
                 'success' => true,
                 'mongez' => true,

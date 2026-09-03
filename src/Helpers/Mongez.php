@@ -61,6 +61,9 @@ class Mongez
     /** @var array<int, callable> */
     protected static array $resetCallbacks = [];
 
+    /** @var array<int, callable> */
+    protected static array $baseResetCallbacks = [];
+
     /**
      * Prepare the Mongez Console
      * Create Mongez storage directory.
@@ -177,6 +180,21 @@ class Mongez
         foreach (static::$resetCallbacks as $callback) {
             $callback();
         }
+
+        // Callbacks registered during a request must not accumulate in a
+        // persistent worker. Boot-time callbacks are restored for the next
+        // request instead.
+        static::$resetCallbacks = static::$baseResetCallbacks;
+    }
+
+    /**
+     * Capture callbacks registered during application boot.
+     *
+     * @return void
+     */
+    public static function snapshotBaseState(): void
+    {
+        static::$baseResetCallbacks = static::$resetCallbacks;
     }
 
     /**

@@ -213,11 +213,16 @@ abstract class JsonResourceManager extends JsonResource
     protected static $baseAllowedKeys = [];
 
     /**
-     * Cached sub classes list, as declared classes never change at runtime.
+     * Cached sub classes list.
      *
      * @var array<int,string>|null
      */
     protected static $subClassesCache;
+
+    /**
+     * Number of declared classes when the subclass cache was last built.
+     */
+    protected static int $declaredClassesCount = -1;
 
     /**
      * Capture the current disabled and allowed keys as the baseline.
@@ -259,10 +264,16 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected static function subClasses(): array
     {
-        if (static::$subClassesCache !== null) {
+        $declaredClassesCount = count(get_declared_classes());
+
+        if (
+            static::$subClassesCache !== null
+            && static::$declaredClassesCount === $declaredClassesCount
+        ) {
             return static::$subClassesCache;
         }
 
+        static::$declaredClassesCount = $declaredClassesCount;
         $classes = array_merge([static::class], get_declared_classes());
 
         $classes = array_filter($classes, fn($class) => $class === static::class || is_subclass_of($class, static::class));
