@@ -41,10 +41,17 @@ and keeps the package state isolated between requests by resetting it on every
 A defensive `RequestTerminated` listener also rolls back any database transaction
 that was left open during a request.
 
+**Do not** re-reset Mongez internals from an application Octane listener when the
+package provider is active — that work is already done. Register app-owned
+statics with `Mongez::onBootReset()` or the `HZ\Illuminate\Mongez\Support\RequestScoped`
+trait instead (details in [docs/octane-nid.md](docs/octane-nid.md)).
+
 Notes for Octane users:
 
 - Declare Mongez events via `config/mongez.php` (`events` key) rather than calling
   `events()->subscribe()` at runtime, so they are re-applied consistently.
 - `JsonResourceManager::disable()` / `JsonResourceManager::only()` called at boot
   are preserved; the same calls made during a request are isolated to that request.
+- Call `Application::registerRequestScopedDefaults()` (or similar) from a service
+  provider `boot()` method so app statics clear on every `Mongez::reset()`.
 

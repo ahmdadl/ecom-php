@@ -14,6 +14,8 @@ class OctaneStateResetTest extends TestCase
 {
     protected function setUp(): void
     {
+        $this->clearMongezResetCallbacks();
+
         $ref = new \ReflectionClass(JsonResourceManager::class);
         $ref->setStaticPropertyValue('baseDisabledKeys', []);
         $ref->setStaticPropertyValue('baseAllowedKeys', []);
@@ -24,6 +26,8 @@ class OctaneStateResetTest extends TestCase
 
     protected function tearDown(): void
     {
+        $this->clearMongezResetCallbacks();
+
         $ref = new \ReflectionClass(JsonResourceManager::class);
         $ref->setStaticPropertyValue('baseDisabledKeys', []);
         $ref->setStaticPropertyValue('baseAllowedKeys', []);
@@ -81,6 +85,48 @@ class OctaneStateResetTest extends TestCase
         Mongez::reset();
 
         $this->assertSame(1, $calls);
+    }
+
+    public function testMongezBootResetCallbackSurvivesMultipleResets(): void
+    {
+        $calls = 0;
+        Mongez::onBootReset(static function () use (&$calls): void {
+            $calls++;
+        });
+
+        Mongez::reset();
+        Mongez::reset();
+
+        $this->assertSame(2, $calls);
+    }
+
+    public function testMongezRequestTimeOnResetCallbackRunsOnceThenDrops(): void
+    {
+        $bootCalls = 0;
+        $requestCalls = 0;
+
+        Mongez::onBootReset(static function () use (&$bootCalls): void {
+            $bootCalls++;
+        });
+        Mongez::snapshotBaseState();
+
+        Mongez::onReset(static function () use (&$requestCalls): void {
+            $requestCalls++;
+        });
+
+        Mongez::reset();
+        Mongez::reset();
+
+        $this->assertSame(2, $bootCalls);
+        $this->assertSame(1, $requestCalls);
+    }
+
+    public function testForgetRequestStateAliasesReset(): void
+    {
+        Mongez::setRequestLocaleCode('ar');
+        Mongez::forgetRequestState();
+
+        $this->assertFalse(Mongez::requestHasLocaleCode());
     }
 
     public function testModelStaticStateReset(): void
@@ -170,6 +216,13 @@ class OctaneStateResetTest extends TestCase
 
         $ref->setStaticPropertyValue('modelClasses', []);
         $ref->setStaticPropertyValue('declaredClassesCount', -1);
+    }
+
+    protected function clearMongezResetCallbacks(): void
+    {
+        $ref = new \ReflectionClass(Mongez::class);
+        $ref->setStaticPropertyValue('resetCallbacks', []);
+        $ref->setStaticPropertyValue('baseResetCallbacks', []);
     }
 
     /**

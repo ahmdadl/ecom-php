@@ -85,6 +85,67 @@ fields only; embedded documents must be migrated according to their schema.
 ## Octane requirements
 
 Keep request-specific services scoped, do not cache request data in static
-properties, and run queue workers separately from Octane workers. Mongez resets
-its own request state at the start of each request. Applications with additional
-static state can register a callback with `Mongez::onReset()`.
+properties, and run queue workers separately from Octane workers.
+
+When Octane is installed, `MongezOctaneServiceProvider` resets Mongez package
+state on every `RequestReceived` event (`Mongez::reset()`,
+`JsonResourceManager::reset()`, events, repositories, and model statics). Do
+**not** re-call those package resets from an app listener — they are redundant
+and easy to drift from the package. Keep public `reset()` APIs callable for
+tests and non-Octane scripts; just stop invoking them from consumer Octane
+flush listeners.
+
+### Register application static state
+
+App-owned statics (for example `Application::$currentApplicationType`) should
+clear via Mongez, not via a second listener that reaches into Mongez internals.
+
+**Option A — `RequestScoped` trait (recommended):**
+
+```php
+use HZ\Illuminate\Mongez\Support\RequestScoped;
+
+class Application
+{
+    use RequestScoped;
+
+    public static string $currentApplicationType = '';
+
+    protected static function requestScopedDefaults(): array
+    {
+        return ['currentApplicationType' => ''];
+    }
+}
+
+// AppServiceProvider::boot()
+Application::registerRequestScopedDefaults();
+```
+
+**Option B — manual callback:**
+
+```php
+use HZ\Illuminate\Mongez\Helpers\Mongez;
+
+// Prefer onBootReset so the callback survives every request reset.
+Mongez::onBootReset(static function (): void {
+    Application::$currentApplicationType = '';
+});
+```
+
+### Boot-time vs request-time callbacks
+
+| API | Survives `Mongez::reset()`? | Use for |
+|-----|-----------------------------|---------|
+| `Mongez::onBootReset($cb)` | Yes (always) | App static cleanup from service providers |
+| `Mongez::onReset($cb)` before `snapshotBaseState()` | Yes (captured in boot snapshot) | Same, if registered during boot |
+| `Mongez::onReset($cb)` after `snapshotBaseState()` | Once only | Ephemeral per-request cleanup |
+
+`MongezOctaneServiceProvider` calls `Mongez::snapshotBaseState()` inside an
+application `booted` callback. Prefer `onBootReset()` / `RequestScoped` so
+registration order does not matter.
+
+`Mongez::forgetRequestState()` is an alias of `Mongez::reset()`.
+
+Slim app Octane listeners to **app-only** work (temp dirs, tagged cache on
+`WorkerStarting`, etc.). See the Phase 2 adoption checklist in
+`API_ZAMIL_OCTANE_FEATURES_PLAN.md`.

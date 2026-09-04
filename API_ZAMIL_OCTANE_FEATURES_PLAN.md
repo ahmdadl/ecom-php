@@ -1,6 +1,6 @@
 # Plan: Mongez features for api-zamil-octane
 
-**Status:** In progress (Phase 1 package work on `feat/nid-compat-audit`)  
+**Status:** In progress (Phase 2 package work on `feat/nid-compat-audit`)  
 **Date:** 2026-09-04  
 **Package:** `hassanzohdy/mongez`  
 **Primary consumer:** `../api-zamil-octane` (Laravel 12, Octane/FrankenPHP, MongoDB v5, `nid`)
@@ -135,20 +135,20 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 #### 2.1 Document and harden `Mongez::onReset()`
 
-- [ ] README / `docs/octane-nid.md`: “register application static state with `Mongez::onReset()`”.
-- [ ] Ensure boot-time vs request-time callback split stays clear (`baseResetCallbacks` vs per-request).
-- [ ] Add a small example test showing a consumer callback firing on `reset()`.
+- [x] README / `docs/octane-nid.md`: “register application static state with `Mongez::onReset()`”.
+- [x] Ensure boot-time vs request-time callback split stays clear (`baseResetCallbacks` vs per-request) — added `onBootReset()`.
+- [x] Add a small example test showing a consumer callback firing on `reset()`.
 
 #### 2.2 `RequestScoped` / `OctaneState` helper trait
 
-- [ ] Trait for classes holding request-scoped static properties (pattern of `Application::$currentApplicationType`).
-- [ ] API: `declare static fields + registerDefaults()`; auto-subscribe to `Mongez::onReset()` once at boot.
-- [ ] Optional: `Mongez::forgetRequestState()` alias already covered by `reset()`.
+- [x] Trait for classes holding request-scoped static properties (pattern of `Application::$currentApplicationType`).
+- [x] API: `declare static fields + registerDefaults()`; auto-subscribe to `Mongez::onReset()` once at boot.
+- [x] Optional: `Mongez::forgetRequestState()` alias already covered by `reset()`.
 
 #### 2.3 Deprecation note for consumer-side Mongez flushes
 
-- [ ] Changelog: calling `JsonResourceManager::reset()` / `ModelTrait::resetStaticState()` from the app is redundant when `MongezOctaneServiceProvider` is active.
-- [ ] Keep public `reset()` APIs — do not break apps that still call them.
+- [x] Changelog: calling `JsonResourceManager::reset()` / `ModelTrait::resetStaticState()` from the app is redundant when `MongezOctaneServiceProvider` is active.
+- [x] Keep public `reset()` APIs — do not break apps that still call them.
 
 ### API adoption checklist
 
@@ -159,9 +159,9 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 ### Done when
 
-- Package docs show the one recommended pattern.
-- API listener no longer re-implements Mongez internal resets.
-- Octane feature tests still pass with one worker / multi-request locale + app-type headers.
+- [x] Package docs show the one recommended pattern.
+- [ ] API listener no longer re-implements Mongez internal resets.
+- [ ] Octane feature tests still pass with one worker / multi-request locale + app-type headers.
 
 ---
 
@@ -402,7 +402,9 @@ API adoption effort is **larger** than package effort for Phases 1, 3, 5, and 6 
 1. ~~Approve Phase 1 strategy: **hybrid shim default for api-zamil-octane**.~~ ✅
 2. ~~Implement Phase 1.1 + 1.2 on `feat/nid-compat-audit`.~~ ✅ (package side)
 3. Wire api-zamil-octane config (`MONGEZ_MONGODB_ID_ALIASES_NID` / published mongez.php) if any leftover `id` surfaces appear after path-repo bump; audit already clean on current checkout.
-4. Start **Phase 2** (Octane app-state ergonomics) on the same branch/PR train if desired.
+4. ~~Start **Phase 2** (Octane app-state ergonomics).~~ ✅ (package side)
+5. Adopt Phase 2 in api-zamil-octane: `RequestScoped` on `Application`, slim `FlushMongezStaticState`.
+6. Start **Phase 3** (reporting primitives) when ready.
 
 ---
 
@@ -411,7 +413,7 @@ API adoption effort is **larger** than package effort for Phases 1, 3, 5, and 6 
 Copy into issues/PRs as needed:
 
 - [x] Phase 1 — Identity safety (package done; API config soak optional)  
-- [ ] Phase 2 — Octane app-state  
+- [x] Phase 2 — Octane app-state (package done; API adoption pending)  
 - [ ] Phase 3 — Reporting primitives  
 - [ ] Phase 4 — Images v3  
 - [ ] Phase 5 — Excel bases  

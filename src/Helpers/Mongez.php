@@ -164,15 +164,17 @@ class Mongez
     }
 
     /**
-     * Reset the request scoped state of the helper
+     * Reset the request scoped state of the helper.
      *
-     * This is used between requests when running on Laravel Octane
-     * to make sure no request state leaks from one request to another.
-     * The storage file path is kept as it is an immutable application state.
+     * Used between requests under Laravel Octane so no request state leaks
+     * from one request to another. The storage file path is kept as immutable
+     * application state.
      *
-     * @return void
+     * Callbacks registered with {@see onBootReset()} (or with {@see onReset()}
+     * before {@see snapshotBaseState()}) run on every reset. Callbacks registered
+     * only via {@see onReset()} after the boot snapshot run once, then are dropped.
      */
-    public static function reset()
+    public static function reset(): void
     {
         static::$requestLocaleCode = '';
         static::$mongezContent = null;
@@ -188,9 +190,20 @@ class Mongez
     }
 
     /**
+     * Alias of {@see reset()} for consumer docs that talk about “forgetting”
+     * request-scoped state without implying a full application reboot.
+     */
+    public static function forgetRequestState(): void
+    {
+        static::reset();
+    }
+
+    /**
      * Capture callbacks registered during application boot.
      *
-     * @return void
+     * Called by {@see \HZ\Illuminate\Mongez\Providers\MongezOctaneServiceProvider}
+     * after providers have booted. Prefer {@see onBootReset()} for app static
+     * cleanup so registration remains safe even if it happens after this snapshot.
      */
     public static function snapshotBaseState(): void
     {
@@ -198,14 +211,36 @@ class Mongez
     }
 
     /**
-     * Register an application-level callback to run during Octane resets.
+     * Register a callback that runs on every Octane {@see reset()}.
+     *
+     * Boot-time usage (service providers, before {@see snapshotBaseState()}):
+     * the callback is included in the boot snapshot and survives each request.
+     *
+     * Request-time usage (after the boot snapshot): the callback runs on the
+     * next reset only, then is discarded so it does not accumulate in the worker.
+     *
+     * For application static cleanup, prefer {@see onBootReset()}.
      *
      * @param callable(): void $callback
-     * @return void
      */
     public static function onReset(callable $callback): void
     {
         static::$resetCallbacks[] = $callback;
+    }
+
+    /**
+     * Register a boot-persistent Octane reset callback.
+     *
+     * Always survives {@see reset()} — suitable for clearing app statics such as
+     * `Application::$currentApplicationType`. Safe to call from a service
+     * provider even after {@see snapshotBaseState()}.
+     *
+     * @param callable(): void $callback
+     */
+    public static function onBootReset(callable $callback): void
+    {
+        static::$resetCallbacks[] = $callback;
+        static::$baseResetCallbacks[] = $callback;
     }
 
     /**
