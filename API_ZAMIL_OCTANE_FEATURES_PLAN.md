@@ -1,6 +1,6 @@
 # Plan: Mongez features for api-zamil-octane
 
-**Status:** In progress (Phase 2 package work on `feat/nid-compat-audit`)  
+**Status:** In progress (Phase 7 package work on `feat/nid-compat-audit`)  
 **Date:** 2026-09-04  
 **Package:** `hassanzohdy/mongez`  
 **Primary consumer:** `../api-zamil-octane` (Laravel 12, Octane/FrankenPHP, MongoDB v5, `nid`)
@@ -319,19 +319,19 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 #### 7.1 Settings concern (optional)
 
-- [ ] Trait or small service: load groups, `get($dottedKey, $default)`, cache with model-cache invalidation on save.
-- [ ] Do **not** ship Zamil’s full Settings module — only the storage/read pattern.
-- [ ] Octane-safe: no static group cache without `onReset` or request/container scoping.
+- [x] Trait or small service: load groups, `get($dottedKey, $default)`, cache with model-cache invalidation on save.
+- [x] Do **not** ship Zamil’s full Settings module — only the storage/read pattern.
+- [x] Octane-safe: no static group cache without `onReset` or request/container scoping.
 
 #### 7.2 Aggregate / list polish (if still needed after Phase 3)
 
-- [ ] Pagination helpers for aggregation results.
-- [ ] “Hydrate pipeline results as models/resources” optional helper.
-- [ ] Cursor/chunk helpers for large admin exports (ties to Phase 5).
+- [x] Pagination helpers for aggregation results.
+- [x] “Hydrate pipeline results as models/resources” optional helper.
+- [x] Cursor/chunk helpers for large admin exports (ties to Phase 5).
 
 #### 7.3 Testing helpers
 
-- [ ] Octane multi-request test helper (locale + headers) reusable by consumers.
+- [x] Octane multi-request test helper (locale + headers) reusable by consumers.
 - [x] Resource assertion helpers around `nid` in `TestResponse`.
 
 ### API adoption checklist
@@ -407,6 +407,8 @@ API adoption effort is **larger** than package effort for Phases 1, 3, 5, and 6 
 5. Adopt Phase 2 in api-zamil-octane: `RequestScoped` on `Application`, slim `FlushMongezStaticState`.
 6. Start **Phase 3** (reporting primitives) when ready.
 7. Adopt Phase 6 in api-zamil-octane: `patchEmbedded` / `embeddedNid` / `localizedLike` on hot Orders/WO paths.
+8. ~~Start **Phase 7** (settings + polish).~~ ✅ (package side)
+9. Adopt Phase 7 in api-zamil-octane: `HasSettings` + `SimulatesOctaneRequests`.
 
 ---
 
@@ -420,4 +422,4 @@ Copy into issues/PRs as needed:
 - [ ] Phase 4 — Images v3  
 - [ ] Phase 5 — Excel bases  
 - [x] Phase 6 — Embedded tooling (package done; API adoption pending)  
-- [ ] Phase 7 — Settings + polish (nid assert helpers shipped; rest pending)  
+- [x] Phase 7 — Settings + polish (package done; API adoption pending)  

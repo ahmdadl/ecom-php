@@ -289,6 +289,22 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Settings concern (opt-in HasSettings trait)
+    |--------------------------------------------------------------------------
+    |
+    | Durable Laravel cache for settings groups. Request-scoped `$loadedSettings`
+    | is always separate and must be flushed under Octane via
+    | `SettingsRepository::registerSettingsRequestFlush()`.
+    |
+    */
+    'settings' => [
+        'cache' => env('MONGEZ_SETTINGS_CACHE', false),
+        'ttl' => env('MONGEZ_SETTINGS_CACHE_TTL', 3600),
+        'prefix' => env('MONGEZ_SETTINGS_CACHE_PREFIX', 'mongez.settings'),
+    ],
+
     'repository' => [
         'cache' => [
             'driver' => '',

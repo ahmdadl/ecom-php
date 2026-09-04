@@ -45,6 +45,12 @@ class Pipeline
         '<>' => '$ne',
     ];
 
+    public function __construct(Aggregate $aggregationFramework, string $name)
+    {
+        $this->aggregationFramework = $aggregationFramework;
+        $this->name = $name;
+    }
+
     /**
      * Sum the given column name 
      * Please note this method MUST BE CALLED directly after the group by method 

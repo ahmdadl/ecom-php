@@ -310,7 +310,6 @@ class Aggregate
      */
     public function pipeline(string $pipelineName): Pipeline
     {
-        /** @phpstan-ignore-next-line new.noConstructor */
         $this->currentPipeline = new Pipeline($this, $pipelineName);
 
         $this->pipelines[] = $this->currentPipeline;
@@ -325,21 +324,144 @@ class Aggregate
      */
     public function get()
     {
-        $pipelines = [];
+        return $this->runAggregate($this->buildPipelineArray());
+    }
 
-        foreach ($this->pipelines as $pipeline) {
-            $pipelines[] = [
-                $pipeline->getName() => $pipeline->getData(),
-            ];
-        }
+    /**
+     * Paginate aggregation results using `$facet` (data + count).
+     *
+     * Returns the same pagination shape as repository list endpoints.
+     *
+     * @return array{data: list<array<string, mixed>>, paginationInfo: array<string, int>}
+     */
+    public function paginate(?int $itemsPerPage = null, ?int $page = null): array
+    {
+        $itemsPerPage = $itemsPerPage
+            ?? (int) config('mongez.repository.pagination.itemsPerPage', 15);
+        $itemsPerPage = max(1, $itemsPerPage);
+        $page = max(1, $page ?? (int) request()->input('page', 1));
 
-        return iterator_to_array($this->query->raw(function ($query) use ($pipelines) {
-            $options = [
-                'typeMap' => ['root' => 'array', 'document' => 'array'],
-            ];
+        $pipelines = $this->toPaginationPipelines($itemsPerPage, $page);
+        $raw = $this->runAggregate($pipelines);
+        $facet = $raw[0] ?? ['data' => [], 'meta' => []];
 
-            return $query->aggregate($pipelines, $options);
-        }));
+        /** @var list<array<string, mixed>> $data */
+        $data = $facet['data'] ?? [];
+        $total = (int) ($facet['meta'][0]['total'] ?? 0);
+
+        return [
+            'data' => $data,
+            'paginationInfo' => [
+                'currentResults' => count($data),
+                'totalRecords' => $total,
+                'numberOfPages' => $total > 0 ? (int) ceil($total / $itemsPerPage) : 0,
+                'itemsPerPage' => $itemsPerPage,
+                'currentPage' => $page,
+            ],
+        ];
+    }
+
+    /**
+     * Build the pipeline list used by {@see paginate()} (includes `$facet`).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function toPaginationPipelines(int $itemsPerPage = 15, int $page = 1): array
+    {
+        $itemsPerPage = max(1, $itemsPerPage);
+        $page = max(1, $page);
+        $skip = ($page - 1) * $itemsPerPage;
+
+        $pipelines = $this->buildPipelineArray();
+        $pipelines[] = [
+            '$facet' => [
+                'data' => [
+                    ['$skip' => $skip],
+                    ['$limit' => $itemsPerPage],
+                ],
+                'meta' => [
+                    ['$count' => 'total'],
+                ],
+            ],
+        ];
+
+        return $pipelines;
+    }
+
+    /**
+     * Hydrate aggregation rows as Eloquent models.
+     *
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     * @param  class-string<TModel>|null  $modelClass
+     * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     */
+    public function hydrate(?string $modelClass = null)
+    {
+        $modelClass ??= $this->resolveModelClass();
+
+        return $modelClass::hydrate($this->get());
+    }
+
+    /**
+     * Hydrate rows then wrap with a JsonResource / JsonResourceManager class.
+     *
+     * @param  class-string<\Illuminate\Http\Resources\Json\JsonResource>  $resourceClass
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>|null  $modelClass
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function wrapAs(string $resourceClass, ?string $modelClass = null)
+    {
+        return $resourceClass::collection($this->hydrate($modelClass));
+    }
+
+    /**
+     * Process aggregation results in pages without loading everything at once.
+     *
+     * @param  callable(list<array<string, mixed>>, int): mixed  $callback  Receives rows and 1-based page.
+     */
+    public function chunk(int $size, callable $callback): void
+    {
+        $size = max(1, $size);
+        $page = 1;
+
+        do {
+            $result = $this->paginate($size, $page);
+            $rows = $result['data'];
+
+            if ($rows === []) {
+                break;
+            }
+
+            $callback($rows, $page);
+
+            $page++;
+            $hasMore = $page <= ($result['paginationInfo']['numberOfPages'] ?? 0);
+        } while ($hasMore);
+    }
+
+    /**
+     * Yield aggregation rows in chunks (lazy generator over paginated facets).
+     *
+     * @return \Generator<int, list<array<string, mixed>>>
+     */
+    public function cursor(int $size = 100): \Generator
+    {
+        $size = max(1, $size);
+        $page = 1;
+
+        do {
+            $result = $this->paginate($size, $page);
+            $rows = $result['data'];
+
+            if ($rows === []) {
+                break;
+            }
+
+            yield $rows;
+
+            $page++;
+            $hasMore = $page <= ($result['paginationInfo']['numberOfPages'] ?? 0);
+        } while ($hasMore);
     }
 
     /**
@@ -348,6 +470,14 @@ class Aggregate
      * @return array<int, array<string, mixed>>
      */
     public function getQueryLog()
+    {
+        return $this->buildPipelineArray();
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    protected function buildPipelineArray(): array
     {
         $pipelines = [];
 
@@ -358,6 +488,35 @@ class Aggregate
         }
 
         return $pipelines;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $pipelines
+     * @return list<array<string, mixed>>
+     */
+    protected function runAggregate(array $pipelines): array
+    {
+        return iterator_to_array($this->query->raw(function ($query) use ($pipelines) {
+            $options = [
+                'typeMap' => ['root' => 'array', 'document' => 'array'],
+            ];
+
+            return $query->aggregate($pipelines, $options);
+        }));
+    }
+
+    /**
+     * @return class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected function resolveModelClass(): string
+    {
+        if (is_object($this->query) && method_exists($this->query, 'getModel')) {
+            return $this->query->getModel()::class;
+        }
+
+        throw new \RuntimeException(
+            'Cannot hydrate aggregate results without a model class; pass hydrate($modelClass) explicitly.'
+        );
     }
 
     /**

@@ -16,6 +16,13 @@
 - Mongo filter sugar: `embeddedNid`, `inEmbeddedNid`, `localizedLike`, `localized`
   (plus fixed `inBool` / `notInBool` / float in-map bindings).
 - Test helpers: `TestResponse::assertRecordNid()` and `assertRecordsHaveNid()`.
+- Opt-in `Repository\Concerns\HasSettings` for dotted `getSetting('group.key')`
+  with request-scoped load tree, optional durable cache
+  (`mongez.settings.*`), and `registerSettingsRequestFlush()` for Octane.
+- Aggregate polish: `paginate()`, `hydrate()`, `wrapAs()`, `chunk()`, `cursor()`,
+  and `toPaginationPipelines()`.
+- `Testing\Traits\SimulatesOctaneRequests` for multi-request / locale isolation
+  in feature tests.
 
 ### Fixed
 
@@ -23,6 +30,8 @@
   `remove()`).
 - `MongoDBRepositoryManager::reassociate()` / `disassociate()` no longer overwrite
   the related model argument with the parent before calling Associatable.
+- Aggregate `Pipeline` now assigns stage name / parent in its constructor (stages
+  were previously emitted as `$` instead of `$match` / `$group` / etc.).
 
 ### Notes
 

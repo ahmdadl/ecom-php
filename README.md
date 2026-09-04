@@ -20,6 +20,10 @@ Embedded document helpers and list filter sugar (`patchEmbedded`,
 `embeddedNid`, `localizedLike`) are covered in
 [embeds and filters](docs/embeds-and-filters.md).
 
+Optional settings reads, aggregate pagination/hydration, and Octane multi-request
+test helpers are covered in
+[settings and aggregate polish](docs/settings-and-aggregate-polish.md).
+
 For apps still reading integer identity as `$model->id`, enable the temporary
 compat shim `mongez.mongodb.id_aliases_nid` and gate renames with
 `php artisan mongez:audit-nid` (details in the same guide).
