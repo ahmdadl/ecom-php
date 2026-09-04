@@ -23,6 +23,13 @@
   and `toPaginationPipelines()`.
 - `Testing\Traits\SimulatesOctaneRequests` for multi-request / locale isolation
   in feature tests.
+- Reporting primitives: `Support\PeriodDateCalculator`, `Support\MongoDate`,
+  helpers `to_mongo_date` / `from_mongo_date` / `mongo_date_to_carbon`, and
+  aggregate `wherePeriod()`, `whereDateRange()`, `facetCompareCurrentVsPrevious()`.
+- Intervention Image v3 stack: `ImageManagerFactory`, `ImageCompressor`,
+  updated `BaseImage` / `ImageResize` / `ImageWatermark` (soft dependency).
+- Excel bases: `Excel\ExportSheet`, `FromRepositoryExport`, `ImportSheet`,
+  `ExcelColumns` (peer dependency on `maatwebsite/excel`).
 
 ### Fixed
 

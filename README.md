@@ -24,6 +24,15 @@ Optional settings reads, aggregate pagination/hydration, and Octane multi-reques
 test helpers are covered in
 [settings and aggregate polish](docs/settings-and-aggregate-polish.md).
 
+Reporting periods, Mongo dates, and aggregate date filters:
+[reporting primitives](docs/reporting-primitives.md).
+
+Intervention Image v3 resize / watermark / compression:
+[images v3](docs/images-v3.md).
+
+Excel export/import bases (Maatwebsite peer dependency):
+[excel bases](docs/excel-bases.md).
+
 For apps still reading integer identity as `$model->id`, enable the temporary
 compat shim `mongez.mongodb.id_aliases_nid` and gate renames with
 `php artisan mongez:audit-nid` (details in the same guide).

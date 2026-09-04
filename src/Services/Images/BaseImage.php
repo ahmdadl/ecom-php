@@ -1,68 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Services\Images;
 
-use Image;
-
+/**
+ * Base image helper on Intervention Image v3.
+ */
 class BaseImage
 {
-    /**
-     * Image path
-     *
-     * @var string
-     */
-    protected $imagePath;
+    protected string $imagePath;
 
-    /**
-     * Image name
-     *
-     * @var string
-     */
-    protected $imageName;
+    protected string $imageName;
 
-    /**
-     * Path to image folder
-     *
-     * @var string
-     */
-    protected $pathToImageFolder;
+    protected string $pathToImageFolder;
 
-    /**
-     * Image extension
-     *
-     * @var string
-     */
-    protected $imageExtension;
+    protected string $imageExtension;
 
-    /**
-     * Image Object
-     *
-     * @var mixed
-     */
-    protected $imageObject;
+    /** @var \Intervention\Image\Interfaces\ImageInterface */
+    protected object $imageObject;
 
-    /**
-     * Constructor
-     *
-     * @param string $imagePath
-     */
-    public function __construct($imagePath)
+    public function __construct(string $imagePath)
     {
-        $this->imagePath = public_path() . '/' . $imagePath;
-        $this->imageExtension = pathinfo($this->imagePath, PATHINFO_EXTENSION);
+        $publicRoot = function_exists('public_path') ? public_path() : getcwd();
+        $this->imagePath = rtrim((string) $publicRoot, '/') . '/' . ltrim($imagePath, '/');
+        $this->imageExtension = (string) pathinfo($this->imagePath, PATHINFO_EXTENSION);
         $this->imageName = str_replace('.' . $this->imageExtension, '', basename($imagePath));
         $this->pathToImageFolder = str_replace(basename($imagePath), '', $imagePath);
         $this->imageObject = $this->getImageObject($this->imagePath);
     }
 
     /**
-     * Get image object
-     *
-     * @param string $imagePath
-     * @return mixed
+     * @return \Intervention\Image\Interfaces\ImageInterface
      */
-    public function getImageObject($imagePath)
+    public function getImageObject(string $imagePath): object
     {
-        return Image::make($imagePath); // @phpstan-ignore class.notFound
+        return ImageManagerFactory::make()->read($imagePath);
     }
 }

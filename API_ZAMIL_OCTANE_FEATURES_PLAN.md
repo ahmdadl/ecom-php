@@ -1,6 +1,6 @@
 # Plan: Mongez features for api-zamil-octane
 
-**Status:** In progress (Phase 7 package work on `feat/nid-compat-audit`)  
+**Status:** Package phases 1–7 done on `feat/nid-compat-audit` (API adoption pending)  
 **Date:** 2026-09-04  
 **Package:** `hassanzohdy/mongez`  
 **Primary consumer:** `../api-zamil-octane` (Laravel 12, Octane/FrankenPHP, MongoDB v5, `nid`)
@@ -174,26 +174,26 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 #### 3.1 Period calculator
 
-- [ ] Port/generalize `App\Shared\PeriodDateCalculator` into e.g. `HZ\Illuminate\Mongez\Support\PeriodDateCalculator`.
-- [ ] Support: daily, weekly, monthly, quarter, ytd (+ previous period + label helper).
-- [ ] Configurable week start (API uses Sunday).
-- [ ] Unit tests for boundaries and “last year” mode.
+- [x] Port/generalize `App\Shared\PeriodDateCalculator` into e.g. `HZ\Illuminate\Mongez\Support\PeriodDateCalculator`.
+- [x] Support: daily, weekly, monthly, quarter, ytd (+ previous period + label helper).
+- [x] Configurable week start (API uses Sunday).
+- [x] Unit tests for boundaries and “last year” mode.
 
 #### 3.2 Mongo date helpers
 
-- [ ] Move/generalize `toMongoDate` / `fromMongoDate` / `mongoDateToCarbon` into mongez helpers (or `Helpers/functions.php` with clear namespacing).
-- [ ] Keep UTC / app-timezone behavior documented.
-- [ ] Deprecate nothing in the API until wrappers can re-export or call package helpers.
+- [x] Move/generalize `toMongoDate` / `fromMongoDate` / `mongoDateToCarbon` into mongez helpers (or `Helpers/functions.php` with clear namespacing).
+- [x] Keep UTC / app-timezone behavior documented.
+- [x] Deprecate nothing in the API until wrappers can re-export or call package helpers.
 
 #### 3.3 Aggregate sugar
 
-- [ ] On `Aggregate` / `Pipeline`:
+- [x] On `Aggregate` / `Pipeline`:
   - `wherePeriod($column, PeriodDateCalculator|array $fromTo)`
   - `whereDateRange($column, $from = null, $to = null)` (same semantics as TrafficReportsService)
   - helpers for count/sum grouped by day/week/month (extend existing `groupByDay` etc. with period filter)
-- [ ] Optional: `facetCompareCurrentVsPrevious(PeriodDateCalculator $period, callable $build)` for report “Vs last period” patterns.
-- [ ] Discourage new `Model::raw(fn ($col) => $col->aggregate(...))` in docs when the fluent API covers the case.
-- [ ] Unit tests with mocked pipelines / fixture documents where feasible.
+- [x] Optional: `facetCompareCurrentVsPrevious(PeriodDateCalculator $period, callable $build)` for report “Vs last period” patterns.
+- [x] Discourage new `Model::raw(fn ($col) => $col->aggregate(...))` in docs when the fluent API covers the case.
+- [x] Unit tests with mocked pipelines / fixture documents where feasible.
 
 ### API adoption checklist
 
@@ -218,17 +218,17 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 #### 4.1 Migrate `Services/Images/*` to Intervention v3
 
-- [ ] Replace `Image::make()` with `ImageManager` + driver (Imagick preferred, GD fallback).
-- [ ] Update `BaseImage`, `ImageResize`, `ImageWatermark`.
-- [ ] Suggest `intervention/image` v3 in `composer.json` `suggest` or soft dependency docs (avoid hard require if optional).
-- [ ] Feature/unit tests with a tiny fixture image.
+- [x] Replace `Image::make()` with `ImageManager` + driver (Imagick preferred, GD fallback).
+- [x] Update `BaseImage`, `ImageResize`, `ImageWatermark`.
+- [x] Suggest `intervention/image` v3 in `composer.json` `suggest` or soft dependency docs (avoid hard require if optional).
+- [x] Feature/unit tests with a tiny fixture image.
 
 #### 4.2 Compression helper
 
-- [ ] Add package helper inspired by API `IMAGE_COMPRESSION_PLAN.md`:
+- [x] Add package helper inspired by API `IMAGE_COMPRESSION_PLAN.md`:
   - `isCompressibleImage($extension)`
   - `compressImage(Image $image, string $extension): EncodedImage` (JPEG/WebP/AVIF quality, progressive JPEG; PNG policy documented)
-- [ ] Config: default qualities under `mongez.images.*`.
+- [x] Config: default qualities under `mongez.images.*`.
 
 ### API adoption checklist
 
@@ -252,14 +252,14 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 #### 5.1 Base export
 
-- [ ] Abstract `ExportSheet` / `FromRepositoryExport` (Maatwebsite Excel optional — document peer dependency).
-- [ ] Helpers: map models → rows, localized column (`localizedColumn($value, 'en'|'ar'|locale)`), date columns via mongez date helpers.
-- [ ] Consistent heading + chunking hooks for large collections.
+- [x] Abstract `ExportSheet` / `FromRepositoryExport` (Maatwebsite Excel optional — document peer dependency).
+- [x] Helpers: map models → rows, localized column (`localizedColumn($value, 'en'|'ar'|locale)`), date columns via mongez date helpers.
+- [x] Consistent heading + chunking hooks for large collections.
 
 #### 5.2 Base import
 
-- [ ] Abstract `ImportSheet` with row validation hooks, nid lookups, and error collection shape compatible with API admin UX.
-- [ ] Example stub in docs / Engez generator optional later.
+- [x] Abstract `ImportSheet` with row validation hooks, nid lookups, and error collection shape compatible with API admin UX.
+- [x] Example stub in docs / Engez generator optional later.
 
 ### API adoption checklist
 
@@ -405,10 +405,13 @@ API adoption effort is **larger** than package effort for Phases 1, 3, 5, and 6 
 3. Wire api-zamil-octane config (`MONGEZ_MONGODB_ID_ALIASES_NID` / published mongez.php) if any leftover `id` surfaces appear after path-repo bump; audit already clean on current checkout.
 4. ~~Start **Phase 2** (Octane app-state ergonomics).~~ ✅ (package side)
 5. Adopt Phase 2 in api-zamil-octane: `RequestScoped` on `Application`, slim `FlushMongezStaticState`.
-6. Start **Phase 3** (reporting primitives) when ready.
+6. ~~Start **Phase 3** (reporting primitives) when ready.~~ ✅ (package side)
 7. Adopt Phase 6 in api-zamil-octane: `patchEmbedded` / `embeddedNid` / `localizedLike` on hot Orders/WO paths.
 8. ~~Start **Phase 7** (settings + polish).~~ ✅ (package side)
 9. Adopt Phase 7 in api-zamil-octane: `HasSettings` + `SimulatesOctaneRequests`.
+10. ~~Start **Phases 4–5** (images v3 + Excel bases).~~ ✅ (package side)
+11. Adopt Phase 3 in api-zamil-octane: swap `PeriodDateCalculator` / Mongo date helpers / traffic date filters.
+12. Adopt Phase 4–5 in api-zamil-octane: point uploads compression + pilot Cities/Leads Excel classes.
 
 ---
 
@@ -418,8 +421,8 @@ Copy into issues/PRs as needed:
 
 - [x] Phase 1 — Identity safety (package done; API config soak optional)  
 - [x] Phase 2 — Octane app-state (package done; API adoption pending)  
-- [ ] Phase 3 — Reporting primitives  
-- [ ] Phase 4 — Images v3  
-- [ ] Phase 5 — Excel bases  
+- [x] Phase 3 — Reporting primitives (package done; API adoption pending)  
+- [x] Phase 4 — Images v3 (package done; API adoption pending)  
+- [x] Phase 5 — Excel bases (package done; API adoption pending)  
 - [x] Phase 6 — Embedded tooling (package done; API adoption pending)  
 - [x] Phase 7 — Settings + polish (package done; API adoption pending)  

@@ -3,7 +3,11 @@
 namespace HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Aggregate;
 
 use \MongoDB\BSON\Regex;
+use DateTimeInterface;
+use HZ\Illuminate\Mongez\Support\MongoDate;
+use HZ\Illuminate\Mongez\Support\PeriodDateCalculator;
 use Illuminate\Support\Str;
+use MongoDB\BSON\UTCDateTime;
 
 class Aggregate
 {
@@ -164,6 +168,120 @@ class Aggregate
     public function where(...$args)
     {
         return $this->pipeline('match')->where(...$args);
+    }
+
+    /**
+     * Match documents whose column falls in the current period (or explicit from/to array).
+     *
+     * @param  PeriodDateCalculator|array{from?: mixed, to?: mixed}|array{0?: mixed, 1?: mixed}  $period
+     */
+    public function wherePeriod(string $column, PeriodDateCalculator|array $period): Pipeline
+    {
+        if ($period instanceof PeriodDateCalculator) {
+            $from = $period->from;
+            $to = $period->to;
+        } else {
+            $from = $period['from'] ?? $period[0] ?? null;
+            $to = $period['to'] ?? $period[1] ?? null;
+        }
+
+        return $this->whereBetween($column, $from, $to);
+    }
+
+    /**
+     * Optional from/to filter (same semantics as TrafficReportsService date options).
+     *
+     * - both set → `$gte` / `$lte` via whereBetween
+     * - only from → `$gte`
+     * - only to → `$lte`
+     * - neither → no match stage added; returns this Aggregate for chaining
+     */
+    public function whereDateRange(string $column, mixed $from = null, mixed $to = null): Aggregate|Pipeline
+    {
+        if ($from !== null && $to !== null) {
+            return $this->whereBetween($column, $from, $to);
+        }
+
+        if ($from !== null) {
+            return $this->where($column, '>=', $from);
+        }
+
+        if ($to !== null) {
+            return $this->where($column, '<=', $to);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Run one `$facet` comparing current vs previous period sub-pipelines.
+     *
+     * `$build` receives a fresh Aggregate (same query) and should add stages after
+     * the period match (e.g. `groupBy()->count(...)`).
+     *
+     * @param  callable(Aggregate): mixed  $build
+     * @return array{current: list<array<string, mixed>>, previous: list<array<string, mixed>>}
+     */
+    public function facetCompareCurrentVsPrevious(
+        PeriodDateCalculator $period,
+        callable $build,
+        string $dateColumn = 'createdAt',
+    ): array {
+        $inner = new self($this->query);
+        $build($inner);
+        $innerPipelines = $inner->buildPipelineArray();
+
+        $pipelines = $this->buildPipelineArray();
+        $pipelines[] = [
+            '$facet' => [
+                'current' => array_merge(
+                    [$this->dateRangeMatchStage($dateColumn, $period->from, $period->to)],
+                    $innerPipelines,
+                ),
+                'previous' => array_merge(
+                    [$this->dateRangeMatchStage($dateColumn, $period->prevFrom, $period->prevTo)],
+                    $innerPipelines,
+                ),
+            ],
+        ];
+
+        $raw = $this->runAggregate($pipelines);
+        $facet = $raw[0] ?? ['current' => [], 'previous' => []];
+
+        return [
+            'current' => $facet['current'] ?? [],
+            'previous' => $facet['previous'] ?? [],
+        ];
+    }
+
+    /**
+     * Build a `$match` stage for an inclusive date range (UTCDateTime).
+     *
+     * @return array{'$match': array<string, mixed>}
+     */
+    public function dateRangeMatchStage(string $column, mixed $from, mixed $to): array
+    {
+        return [
+            '$match' => [
+                $column => [
+                    '$gte' => $this->toUtcDateTime($from),
+                    '$lte' => $this->toUtcDateTime($to),
+                ],
+            ],
+        ];
+    }
+
+    protected function toUtcDateTime(mixed $date): UTCDateTime
+    {
+        if ($date instanceof UTCDateTime) {
+            return $date;
+        }
+
+        if ($date instanceof DateTimeInterface) {
+            return MongoDate::toMongo($date);
+        }
+
+        return MongoDate::toMongo($date);
     }
 
     /**

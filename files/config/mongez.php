@@ -305,6 +305,45 @@ return [
         'prefix' => env('MONGEZ_SETTINGS_CACHE_PREFIX', 'mongez.settings'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Reporting helpers (PeriodDateCalculator)
+    |--------------------------------------------------------------------------
+    |
+    | week_starts_at: Carbon day constant (0 = Sunday … 6 = Saturday).
+    | api-zamil-octane uses Sunday.
+    |
+    */
+    'reports' => [
+        'week_starts_at' => env('MONGEZ_REPORTS_WEEK_STARTS_AT', CarbonInterface::SUNDAY),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Images (Intervention Image v3)
+    |--------------------------------------------------------------------------
+    |
+    | Soft dependency: composer require intervention/image:^3.0
+    | Prefer Imagick when the extension is loaded; GD is the fallback.
+    |
+    */
+    'images' => [
+        'driver' => env('MONGEZ_IMAGE_DRIVER', env('IMAGE_DRIVER', 'gd')),
+        'jpeg_quality' => env('MONGEZ_IMAGE_JPEG_QUALITY', 85),
+        'webp_quality' => env('MONGEZ_IMAGE_WEBP_QUALITY', 80),
+        'avif_quality' => env('MONGEZ_IMAGE_AVIF_QUALITY', 75),
+        'jpeg_progressive' => env('MONGEZ_IMAGE_JPEG_PROGRESSIVE', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excel bases (optional Maatwebsite peer dependency)
+    |--------------------------------------------------------------------------
+    */
+    'excel' => [
+        'chunk' => env('MONGEZ_EXCEL_CHUNK', 500),
+    ],
+
     'repository' => [
         'cache' => [
             'driver' => '',
