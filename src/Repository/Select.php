@@ -11,15 +11,17 @@ class Select
      *
      * @var \Illuminate\Support\Collection<int|string, mixed>
      */
-    protected $list = new Collection();
+    protected $list;
 
     /**
      * Constructor
      *
      * @param array<int|string, mixed> $selectList
      */
-    public function __construct(array $selectList)
+    public function __construct(array $selectList = [])
     {
+        // Avoid `new` in property defaults — unsupported on some PHP 8.4/8.5 builds
+        // used by FrankenPHP workers ("New expressions are not supported in this context").
         $this->list = new Collection($selectList);
     }
 
