@@ -192,15 +192,6 @@ abstract class JsonResourceManager extends JsonResource
      * When running under Laravel Octane, `reset` restores this baseline so
      * boot-time keys survive while per-request keys are discarded.
      *
-     * @var array
-     */
-    /**
-     * Baseline disabled keys captured right after boot.
-     *
-     * It holds the keys that were disabled during the application boot.
-     * When running under Laravel Octane, `reset` restores this baseline so
-     * boot-time keys survive while per-request keys are discarded.
-     *
      * @var array<int|string, mixed>
      */
     protected static $baseDisabledKeys = [];

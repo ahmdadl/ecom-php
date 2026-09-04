@@ -591,12 +591,6 @@ abstract class Model extends BaseModel
     /**
      * Check if the given info data has date, then adjust it recursively
      *
-     * @param  array $info
-     * @return void
-     */
-    /**
-     * Check if the given info data has date, then adjust it recursively
-     *
      * @param array<string, mixed> $info
      * @return void
      */

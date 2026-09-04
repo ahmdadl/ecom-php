@@ -18,6 +18,7 @@ installation capacity, Payfort/Tamara/Tabby, ZITG) into mongez.
 | `OCTANE_MONGODB_V5_PLAN.md` | Package Octane + `nid` foundation (done) |
 | `docs/caching-plan.md` | Model/repository cache (done) |
 | `docs/octane-nid.md` | Consumer Octane / `nid` ops guide |
+| `docs/embeds-and-filters.md` | Embed patch / filter sugar (Phase 6) |
 | `../api-zamil-octane/OCTANE_FIX_PLAN.md` | App readiness phases; Phase 3 identity strategy |
 | `../api-zamil-octane/MONGEZ_V5_COMPAT_VALIDATION_REPORT.md` | GAP catalog (`id` / resources / `sharedInfo`) |
 | `../api-zamil-octane/IMAGE_COMPRESSION_PLAN.md` | Uploads compression (app-side today) |
@@ -280,21 +281,21 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 
 #### 6.1 Partial embedded patch
 
-- [ ] `Model::patchEmbedded(string $path, mixed $matchNidOrCriteria, array $data)` (or repository concern).
-- [ ] Update matching element(s) in an embedded array without rewriting unrelated siblings when safe.
-- [ ] Clear docs on Mongo positional / `arrayFilters` usage and limitations.
+- [x] `Model::patchEmbedded(string $path, mixed $matchNidOrCriteria, array $data)` (or repository concern).
+- [x] Update matching element(s) in an embedded array without rewriting unrelated siblings when safe.
+- [x] Clear docs on Mongo positional / `arrayFilters` usage and limitations.
 
 #### 6.2 Shared-info / related sync polish
 
-- [ ] Helpers to refresh one embedded `sharedInfo()` snapshot by related `nid`.
-- [ ] Tie into existing related-model queue mode (`mongez.queue.relatedModels`) with examples for order-scale graphs.
-- [ ] Ensure cache invalidation hooks (`invalidateCacheByIds`) are documented for query-builder embed writes.
+- [x] Helpers to refresh one embedded `sharedInfo()` snapshot by related `nid`.
+- [x] Tie into existing related-model queue mode (`mongez.queue.relatedModels`) with examples for order-scale graphs.
+- [x] Ensure cache invalidation hooks (`invalidateCacheByIds`) are documented for query-builder embed writes.
 
 #### 6.3 Filter sugar for embeds / localized fields
 
-- [ ] Filter map entries for embedded nid: e.g. `embeddedNid` → `customer.nid`.
-- [ ] Localized text search: filter on `name` array by `text` + locale (or `name.text` with locale scope).
-- [ ] Tests in `MongoDBFilter` / FilterManager.
+- [x] Filter map entries for embedded nid: e.g. `embeddedNid` → `customer.nid`.
+- [x] Localized text search: filter on `name` array by `text` + locale (or `name.text` with locale scope).
+- [x] Tests in `MongoDBFilter` / FilterManager.
 
 ### API adoption checklist
 
@@ -331,7 +332,7 @@ Suggested sequence is dependency-ordered: **1 → 2 → 3**, then **4 / 5 / 6** 
 #### 7.3 Testing helpers
 
 - [ ] Octane multi-request test helper (locale + headers) reusable by consumers.
-- [ ] Resource assertion helpers around `nid` in `TestResponse`.
+- [x] Resource assertion helpers around `nid` in `TestResponse`.
 
 ### API adoption checklist
 
@@ -405,6 +406,7 @@ API adoption effort is **larger** than package effort for Phases 1, 3, 5, and 6 
 4. ~~Start **Phase 2** (Octane app-state ergonomics).~~ ✅ (package side)
 5. Adopt Phase 2 in api-zamil-octane: `RequestScoped` on `Application`, slim `FlushMongezStaticState`.
 6. Start **Phase 3** (reporting primitives) when ready.
+7. Adopt Phase 6 in api-zamil-octane: `patchEmbedded` / `embeddedNid` / `localizedLike` on hot Orders/WO paths.
 
 ---
 
@@ -417,5 +419,5 @@ Copy into issues/PRs as needed:
 - [ ] Phase 3 — Reporting primitives  
 - [ ] Phase 4 — Images v3  
 - [ ] Phase 5 — Excel bases  
-- [ ] Phase 6 — Embedded tooling  
-- [ ] Phase 7 — Settings + polish  
+- [x] Phase 6 — Embedded tooling (package done; API adoption pending)  
+- [ ] Phase 7 — Settings + polish (nid assert helpers shipped; rest pending)  

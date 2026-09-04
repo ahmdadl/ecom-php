@@ -44,7 +44,7 @@ class Select
      */
     public function remove($column): self
     {
-        $this->list->remove($column); // @phpstan-ignore method.notFound
+        $this->list = $this->list->reject(fn ($item) => $item === $column)->values();
 
         return $this;
     }
