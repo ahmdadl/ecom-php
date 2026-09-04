@@ -79,6 +79,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | MongoDB identity compatibility
+    |--------------------------------------------------------------------------
+    |
+    | Temporary migration aid for apps still reading integer identity as `id`
+    | after the MongoDB v5 / `nid` cutover.
+    |
+    | When `id_aliases_nid` is true on Mongo models:
+    | - `$model->id` returns integer `nid` (not the ObjectId string)
+    | - Resource `INTEGER_DATA` / value helpers resolve `'id'` from `nid`
+    | - `sharedInfo()` keeps emitting `'id'` as the integer when SHARED_INFO
+    |   still lists `'id'`
+    |
+    | Default is false. Enable only during app migration, then disable and
+    | remove remaining `id` call sites (see `php artisan mongez:audit-nid`).
+    |
+    */
+    'mongodb' => [
+        'id_aliases_nid' => env('MONGEZ_MONGODB_ID_ALIASES_NID', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue options
     |--------------------------------------------------------------------------
     */

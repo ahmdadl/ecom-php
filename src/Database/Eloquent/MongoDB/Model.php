@@ -15,6 +15,7 @@ use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
 
 /**
  * @property int|null $nid
+ * @property mixed $id Compat alias for `nid` when `mongez.mongodb.id_aliases_nid` is true; otherwise ObjectId string
  * @property mixed $createdAt
  * @property mixed $updatedAt
  * @property mixed $deletedAt
@@ -527,8 +528,38 @@ abstract class Model extends BaseModel
     }
 
     /**
-     * This method should return the info of the document that will be stored in another document, default to full info
+     * Whether `$model->id` should return integer `nid` instead of the ObjectId string.
+     *
+     * Opt-in migration shim — prefer `$model->nid` in new code.
      */
+    public static function idAliasesNid(): bool
+    {
+        return (bool) config('mongez.mongodb.id_aliases_nid', false);
+    }
+
+    /**
+     * Compat accessor: when `mongez.mongodb.id_aliases_nid` is enabled, `$model->id`
+     * returns integer `nid`. Otherwise delegates to mongodb/laravel-mongodb (ObjectId string).
+     *
+     * This is a temporary alias, not the driver document key. Use `$model->nid` or
+     * `$model->_id` explicitly once migration is complete.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function getIdAttribute($value = null)
+    {
+        if (! static::idAliasesNid()) {
+            return parent::getIdAttribute($value);
+        }
+
+        if (! array_key_exists('nid', $this->attributes) || $this->attributes['nid'] === null) {
+            return null;
+        }
+
+        return (int) $this->attributes['nid'];
+    }
+
     /**
      * This method should return the info of the document that will be stored in another document, default to full info
      *
@@ -539,7 +570,18 @@ abstract class Model extends BaseModel
         $info = !empty(static::SHARED_INFO) ? $this->pluck(static::SHARED_INFO)
             : $this->getAttributes();
 
-        unset($info['_id'], $info['id']);
+        unset($info['_id']);
+
+        // Default: never embed the driver ObjectId as `id`.
+        // With the migration shim, keep emitting integer `id` (= nid) when SHARED_INFO
+        // still lists `'id'` so denormalized embeds stay usable during cutover.
+        if (static::idAliasesNid() && in_array('id', static::SHARED_INFO, true)) {
+            $info['id'] = isset($this->attributes['nid'])
+                ? (int) $this->attributes['nid']
+                : (int) $this->nid;
+        } else {
+            unset($info['id']);
+        }
 
         $this->adjustDateInSharedInfo($info);
 

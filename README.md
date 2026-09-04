@@ -16,6 +16,10 @@ native `_id` remains available as the driver identity. See
 [the Octane and nid guide](docs/octane-nid.md) for migration, queue, and
 deployment instructions.
 
+For apps still reading integer identity as `$model->id`, enable the temporary
+compat shim `mongez.mongodb.id_aliases_nid` and gate renames with
+`php artisan mongez:audit-nid` (details in the same guide).
+
 Install Octane in your application:
 
 ```bash

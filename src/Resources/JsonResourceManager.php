@@ -932,12 +932,27 @@ abstract class JsonResourceManager extends JsonResource
     /**
      * Get value from resource
      *
+     * When `mongez.mongodb.id_aliases_nid` is enabled, reading `'id'` resolves
+     * `nid` so `INTEGER_DATA` / `DATA` entries that still list `'id'` emit the
+     * integer application identity instead of a corrupted ObjectId cast.
+     *
      * @param  string $column
      * @param  mixed $default
      * @return mixed
      */
     protected function value(int|string $column, $default = null)
     {
+        if (
+            $column === 'id'
+            && (bool) config('mongez.mongodb.id_aliases_nid', false)
+        ) {
+            $nid = Arr::get($this->resource, 'nid');
+
+            if ($nid !== null && $nid !== '') {
+                return $nid;
+            }
+        }
+
         return Arr::get($this->resource, $column, $default);
     }
 

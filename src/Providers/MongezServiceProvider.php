@@ -31,6 +31,7 @@ use HZ\Illuminate\Mongez\Console\Commands\EngezMigration;
 use HZ\Illuminate\Mongez\Console\Commands\EngezController;
 use HZ\Illuminate\Mongez\Console\Commands\MigrateNid;
 use HZ\Illuminate\Mongez\Console\Commands\NidHealth;
+use HZ\Illuminate\Mongez\Console\Commands\AuditNid;
 use HZ\Illuminate\Mongez\Console\Commands\EngezRepository;
 use HZ\Illuminate\Mongez\Console\Commands\EnsureNidIndexes;
 use HZ\Illuminate\Mongez\Console\Commands\EngezTranslation;
@@ -64,6 +65,7 @@ class MongezServiceProvider extends ServiceProvider
         MigrateNid::class,
         EnsureNidIndexes::class,
         NidHealth::class,
+        AuditNid::class,
         EngezRepository::class,
         EngezTranslation::class,
         PostmanCollection::class,
