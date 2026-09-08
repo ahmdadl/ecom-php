@@ -189,6 +189,34 @@ class Aggregate
     }
 
     /**
+     * Where between clause (delegates to match pipeline).
+     */
+    public function whereBetween(string $column, mixed $minValue, mixed $maxValue): Pipeline
+    {
+        return $this->pipeline('match')->whereBetween($column, $minValue, $maxValue);
+    }
+
+    /**
+     * Where in clause (delegates to match pipeline).
+     *
+     * @param array<int|string, mixed> $values
+     */
+    public function whereIn(string $column, array $values): Pipeline
+    {
+        return $this->pipeline('match')->whereIn($column, $values);
+    }
+
+    /**
+     * Where in clause for int values.
+     *
+     * @param array<int> $values
+     */
+    public function whereInInt(string $column, array $values): Pipeline
+    {
+        return $this->pipeline('match')->whereInInt($column, $values);
+    }
+
+    /**
      * Optional from/to filter (same semantics as TrafficReportsService date options).
      *
      * - both set → `$gte` / `$lte` via whereBetween
@@ -517,6 +545,7 @@ class Aggregate
     {
         $modelClass ??= $this->resolveModelClass();
 
+        /** @phpstan-ignore staticMethod.notFound */
         return $modelClass::hydrate($this->get());
     }
 
@@ -614,13 +643,16 @@ class Aggregate
      */
     protected function runAggregate(array $pipelines): array
     {
-        return iterator_to_array($this->query->raw(function ($query) use ($pipelines) {
+        /** @var list<array<string, mixed>> $result */
+        $result = iterator_to_array($this->query->raw(function ($query) use ($pipelines) {
             $options = [
                 'typeMap' => ['root' => 'array', 'document' => 'array'],
             ];
 
             return $query->aggregate($pipelines, $options);
         }));
+
+        return $result;
     }
 
     /**

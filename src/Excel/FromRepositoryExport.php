@@ -21,6 +21,7 @@ abstract class FromRepositoryExport extends ExportSheet
      */
     public static function fromList(iterable $items): static
     {
+        /** @phpstan-ignore new.static */
         return new static(Collection::make($items));
     }
 

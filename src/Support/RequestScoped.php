@@ -32,7 +32,7 @@ use HZ\Illuminate\Mongez\Helpers\Mongez;
  */
 trait RequestScoped
 {
-    private static bool $mongezRequestScopedRegistered = false;
+    protected static bool $mongezRequestScopedRegistered = false;
 
     /**
      * Map of static property name => default value restored on each Octane reset.

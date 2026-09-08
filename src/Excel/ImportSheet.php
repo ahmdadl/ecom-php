@@ -21,6 +21,9 @@ abstract class ImportSheet
      */
     protected array $errors = [];
 
+    /**
+     * @param Collection<int, mixed> $rows
+     */
     public function collection(Collection $rows): void
     {
         foreach ($rows as $index => $row) {
@@ -92,7 +95,7 @@ abstract class ImportSheet
     /**
      * Look up a model by integer `nid`.
      *
-     * @template T of object
+     * @template T of \Illuminate\Database\Eloquent\Model
      * @param  class-string<T>  $modelClass
      * @return T|null
      */

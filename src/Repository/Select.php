@@ -9,9 +9,9 @@ class Select
     /**
      * list
      *
-     * @var \Illuminate\Support\Collection<int|string, mixed>
+     * @var \Illuminate\Support\Collection<int, mixed>
      */
-    protected $list;
+    protected Collection $list;
 
     /**
      * Constructor
@@ -22,6 +22,7 @@ class Select
     {
         // Avoid `new` in property defaults — unsupported on some PHP 8.4/8.5 builds
         // used by FrankenPHP workers ("New expressions are not supported in this context").
+        /** @phpstan-ignore assign.propertyType */
         $this->list = new Collection($selectList);
     }
 

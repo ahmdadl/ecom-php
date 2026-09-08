@@ -16,3 +16,36 @@ parameters:
     treatPhpDocTypesAsCertain: false
     bootstrapFiles:
         - phpstan-bootstrap.php
+    ignoreErrors:
+        # Intervention Image v3 is an optional suggest (src/Services/Images/*)
+        - '#Class Intervention\\Image.* not found#'
+        - '#has unknown class Intervention\\Image#'
+        - '#has invalid (return )?type Intervention\\Image#'
+        - '#Call to method .* on an unknown class Intervention\\Image#'
+        # Eloquent magic attributes on fixtures (tests) - dynamic embed arrays
+        - '#Access to an undefined property#'
+        # Test scaffolding - known false positives
+        - message: '#Parameter \#1 \$query of method .*Filter::setQuery\(\) expects Illuminate\\Database\\Query\\Builder, Mockery\\MockInterface given#'
+          path: tests/*
+        - message: '#Call to method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true#'
+          path: tests/*
+        - message: '#Call to function method_exists\(\) with .* will always evaluate to true#'
+          path: tests/*
+        - message: '#Method .*::save\(\) has parameter \$options with no value type specified#'
+          path: tests/*
+        - message: '#never returns null so it can be removed from the return type#'
+          path: tests/*
+        - message: '#PHPDoc tag @param references unknown parameter#'
+          path: tests/*
+        - message: '#return type has no value type specified in iterable type#'
+          path: tests/*
+        - message: '#Trait .*HasSettings requires using class to extend#'
+          path: tests/*
+        - message: '#expects Closure, callable#'
+          path: src/Repository/Concerns/HasSettings.php
+        - message: '#expects Illuminate\\Contracts\\Support\\Arrayable#'
+          path: src/Repository/Select.php
+        - message: '#Call to an undefined method .*::get\(\)#'
+          path: src/Testing/Traits/SimulatesOctaneRequests.php
+        - message: '#Call to an undefined method .*::post\(\)#'
+          path: src/Testing/Traits/SimulatesOctaneRequests.php

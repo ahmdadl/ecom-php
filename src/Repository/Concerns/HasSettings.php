@@ -29,7 +29,7 @@ trait HasSettings
      */
     protected array $loadedSettings = [];
 
-    private static bool $settingsFlushRegistered = false;
+    protected static bool $settingsFlushRegistered = false;
 
     /**
      * Clear the request-scoped settings tree (required under Octane).
@@ -309,7 +309,7 @@ trait HasSettings
     }
 
     /**
-     * @template T
+     * @param  string  $group
      * @param  callable(): list<array<string, mixed>>  $loader
      * @return list<array<string, mixed>>
      */

@@ -15,7 +15,8 @@ class AuditNid extends Command
 
     public function handle(): int
     {
-        $pathOption = (string) $this->option('path');
+        $rawPath = $this->option('path');
+        $pathOption = is_string($rawPath) ? $rawPath : 'app';
         $path = $this->resolvePath($pathOption);
 
         if (! is_dir($path) && ! is_file($path)) {
@@ -28,12 +29,13 @@ class AuditNid extends Command
         $findings = $scanner->scan($path);
 
         if ($this->option('json')) {
-            $this->line(json_encode([
+            $json = json_encode([
                 'path' => $path,
                 'count' => count($findings),
                 'findings' => $findings,
                 'summary' => $this->summarize($findings),
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $this->line($json !== false ? $json : '{}');
 
             return $findings === [] ? self::SUCCESS : self::FAILURE;
         }

@@ -37,9 +37,7 @@ trait SimulatesOctaneRequests
     {
         Mongez::reset();
 
-        if (method_exists(JsonResourceManager::class, 'reset')) {
-            JsonResourceManager::reset();
-        }
+        JsonResourceManager::reset();
     }
 
     /**
