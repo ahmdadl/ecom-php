@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [5.3.0] - 2026-09-08
+
 ### Added
 
 - `Mongez::onBootReset()` for boot-persistent Octane cleanup callbacks (safe after
