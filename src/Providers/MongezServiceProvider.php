@@ -179,7 +179,13 @@ class MongezServiceProvider extends ServiceProvider
      */
     private function addingCommentToAppConfig()
     {
-        $config = File::get(base_path($configPath = 'config/app.php'));
+        $configPath = base_path('config/app.php');
+
+        if (!File::isFile($configPath)) {
+            return;
+        }
+
+        $config = File::get($configPath);
 
         $searchString = '// Auto generated providers here: DO NOT remove this line.';
 

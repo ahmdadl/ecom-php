@@ -4,26 +4,16 @@ namespace HZ\Illuminate\Mongez\Tests\Cache;
 
 use HZ\Illuminate\Mongez\Cache\ModelCacheManager;
 use HZ\Illuminate\Mongez\Database\Eloquent\CacheableModel;
-use HZ\Illuminate\Mongez\Providers\MongezServiceProvider;
+use HZ\Illuminate\Mongez\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Orchestra\Testbench\TestCase;
 
 class ModelCacheManagerTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [
-            MongezServiceProvider::class,
-        ];
-    }
-
     protected function defineEnvironment($app): void
     {
-        $app['config']->set('cache.default', 'array');
-        $app['config']->set('cache.stores.array', [
-            'driver' => 'array',
-        ]);
+        parent::defineEnvironment($app);
+
         $app['config']->set('mongez.cache.enabled', true);
         $app['config']->set('mongez.cache.driver', 'array');
         $app['config']->set('mongez.cache.prefix', 'mongez');
