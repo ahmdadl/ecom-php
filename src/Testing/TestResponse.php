@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace HZ\Illuminate\Mongez\Testing;
 
 use HZ\Illuminate\Mongez\Testing\Traits\Messageable;
-use Illuminate\Foundation\Testing\TestCase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\TestResponse as BaseTestResponse;
-use PHPUnit\TextUI\XmlConfiguration\PHPUnit;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 /**
@@ -53,7 +51,7 @@ class TestResponse extends BaseTestResponse
     /**
      * Test case
      * 
-     * @var TestCase
+     * @var \PHPUnit\Framework\TestCase
      */
     protected $testCase;
 
@@ -143,7 +141,7 @@ class TestResponse extends BaseTestResponse
      *
      * @return void
      */
-    public function setTestSuit(TestCase $testCase)
+    public function setTestSuit(\PHPUnit\Framework\TestCase $testCase)
     {
         $this->testCase = $testCase;
     }
@@ -200,6 +198,47 @@ class TestResponse extends BaseTestResponse
     public function getLastInsertId(): int
     {
         return (int) Arr::get($this->toArray(), 'data.record.nid');
+    }
+
+    /**
+     * Assert the record payload exposes the given numeric nid.
+     *
+     * @param  int $nid
+     * @param  string $path Dot path under the decoded JSON body
+     * @return $this
+     */
+    public function assertRecordNid(int $nid, string $path = 'data.record.nid')
+    {
+        $actual = Arr::get($this->toArray(), $path);
+
+        $this->testCase->assertSame(
+            $nid,
+            $actual === null ? null : (int) $actual,
+            "Failed asserting response path [{$path}] equals nid {$nid}."
+        );
+
+        return $this;
+    }
+
+    /**
+     * Assert every item in a records list has a positive integer nid.
+     *
+     * @param  string $path Dot path to the list (default `data.records`)
+     * @return $this
+     */
+    public function assertRecordsHaveNid(string $path = 'data.records')
+    {
+        $records = Arr::get($this->toArray(), $path, []);
+
+        $this->testCase->assertIsArray($records, "Response path [{$path}] is not an array.");
+
+        foreach ($records as $index => $record) {
+            $nid = is_array($record) ? ($record['nid'] ?? null) : null;
+            $this->testCase->assertIsInt($nid, "Record at [{$path}.{$index}] is missing integer nid.");
+            $this->testCase->assertGreaterThan(0, $nid);
+        }
+
+        return $this;
     }
 
     /**

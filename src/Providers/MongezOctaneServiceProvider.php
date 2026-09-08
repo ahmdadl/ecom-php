@@ -11,6 +11,10 @@ use HZ\Illuminate\Mongez\Database\Eloquent\ModelTrait;
 use HZ\Illuminate\Mongez\Cache\ModelCacheManager;
 use Laravel\Octane\Events\RequestReceived;
 use Laravel\Octane\Events\RequestTerminated;
+use Laravel\Octane\Events\TaskReceived;
+use Laravel\Octane\Events\TaskTerminated;
+use Laravel\Octane\Events\TickReceived;
+use Laravel\Octane\Events\TickTerminated;
 use HZ\Illuminate\Mongez\Resources\JsonResourceManager;
 
 class MongezOctaneServiceProvider extends ServiceProvider
@@ -46,13 +50,21 @@ class MongezOctaneServiceProvider extends ServiceProvider
 
             JsonResourceManager::snapshotBaseState();
 
-            $this->app['events']->listen(RequestReceived::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible
+            $reset = function () {
                 $this->resetApplicationState();
-            });
+            };
 
-            $this->app['events']->listen(RequestTerminated::class, function () { // @phpstan-ignore offsetAccess.nonOffsetAccessible
+            $cleanup = function () {
                 $this->cleanupApplicationState();
-            });
+            };
+
+            $this->app['events']->listen(RequestReceived::class, $reset); // @phpstan-ignore offsetAccess.nonOffsetAccessible
+            $this->app['events']->listen(TaskReceived::class, $reset); // @phpstan-ignore offsetAccess.nonOffsetAccessible
+            $this->app['events']->listen(TickReceived::class, $reset); // @phpstan-ignore offsetAccess.nonOffsetAccessible
+
+            $this->app['events']->listen(RequestTerminated::class, $cleanup); // @phpstan-ignore offsetAccess.nonOffsetAccessible
+            $this->app['events']->listen(TaskTerminated::class, $cleanup); // @phpstan-ignore offsetAccess.nonOffsetAccessible
+            $this->app['events']->listen(TickTerminated::class, $cleanup); // @phpstan-ignore offsetAccess.nonOffsetAccessible
         });
     }
 

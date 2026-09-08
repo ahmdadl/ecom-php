@@ -10,7 +10,9 @@
         "mongodb/laravel-mongodb": "^5.8"
     },
     "suggest": {
-        "laravel/octane": "Required to run the package under Laravel Octane (Octane-safe state reset is registered automatically)."
+        "laravel/octane": "Required to run the package under Laravel Octane (Octane-safe state reset is registered automatically).",
+        "intervention/image": "Required for Services/Images/* (v3 ImageManager, resize, watermark, compression).",
+        "maatwebsite/excel": "Required when extending Excel\\ExportSheet / ImportSheet bases."
     },
     "authors": [
         {

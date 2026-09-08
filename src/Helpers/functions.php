@@ -330,3 +330,33 @@ if (!function_exists('carbon')) {
         return $date->setTimezone($timezone);
     }
 }
+
+if (!function_exists('to_mongo_date')) {
+    /**
+     * Convert a date string, timestamp, or DateTimeInterface to UTCDateTime.
+     */
+    function to_mongo_date(mixed $date): UTCDateTime
+    {
+        return \HZ\Illuminate\Mongez\Support\MongoDate::toMongo($date);
+    }
+}
+
+if (!function_exists('from_mongo_date')) {
+    /**
+     * Convert UTCDateTime / ms timestamp / Carbon to app-timezone Carbon (or null).
+     */
+    function from_mongo_date(mixed $date): ?\Carbon\CarbonInterface
+    {
+        return \HZ\Illuminate\Mongez\Support\MongoDate::fromMongo($date);
+    }
+}
+
+if (!function_exists('mongo_date_to_carbon')) {
+    /**
+     * Convert a millisecond (or second) timestamp / UTCDateTime to Carbon.
+     */
+    function mongo_date_to_carbon(mixed $date): \Carbon\CarbonInterface
+    {
+        return \HZ\Illuminate\Mongez\Support\MongoDate::toCarbon($date);
+    }
+}

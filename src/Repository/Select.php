@@ -9,17 +9,20 @@ class Select
     /**
      * list
      *
-     * @var \Illuminate\Support\Collection<int|string, mixed>
+     * @var \Illuminate\Support\Collection<int, mixed>
      */
-    protected $list = new Collection();
+    protected Collection $list;
 
     /**
      * Constructor
      *
      * @param array<int|string, mixed> $selectList
      */
-    public function __construct(array $selectList)
+    public function __construct(array $selectList = [])
     {
+        // Avoid `new` in property defaults — unsupported on some PHP 8.4/8.5 builds
+        // used by FrankenPHP workers ("New expressions are not supported in this context").
+        /** @phpstan-ignore assign.propertyType */
         $this->list = new Collection($selectList);
     }
 
@@ -42,7 +45,7 @@ class Select
      */
     public function remove($column): self
     {
-        $this->list->remove($column); // @phpstan-ignore method.notFound
+        $this->list = $this->list->reject(fn ($item) => $item === $column)->values();
 
         return $this;
     }

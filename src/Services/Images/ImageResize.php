@@ -1,60 +1,56 @@
 <?php
+
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Services\Images;
 
 use Illuminate\Support\Facades\File;
-use Image;
 
-class ImageResize extends BaseImage {
+class ImageResize extends BaseImage
+{
+    protected int $width = 0;
 
-    /**
-     * Width
-     *
-     * @var int
-     */
-    protected $width;
+    protected int $height = 0;
+
+    protected string $resizedImageName = '';
 
     /**
-     * Height
-     *
-     * @var int
+     * Resize keeping aspect ratio (Intervention v3 `scale`).
      */
-    protected $height;
-
-    /**
-     * Resized Image name
-     *
-     * @var string
-     */
-    protected $resizedImageName;
-
-    /**
-     * Resize given image to specific dimensions
-     *
-     * @param int $width
-     * @param int $height
-     * @return string
-     */
-    public function resize($width, $height, int $quality = 100)
+    public function resize(int $width, int $height, int $quality = 100): string
     {
         $this->width = $width;
         $this->height = $height;
+
         if (! $this->imageHasResized()) {
-            $resizedImage = $this->imageObject->resize($width, $height, function ($constraint) {
-                $constraint->aspectRatio();
-            })->encode($this->imageExtension, $quality);
-            File::put(public_path('/' .$this->pathToImageFolder .$this->resizedImageName), $resizedImage->__toString());
+            $image = $this->imageObject->scale(width: $width, height: $height);
+
+            if ($quality < 100 && ImageCompressor::isCompressibleImage($this->imageExtension)) {
+                $encoded = ImageCompressor::compressImage($image, $this->imageExtension);
+            } else {
+                $encoded = $image->encodeByExtension($this->imageExtension, quality: $quality);
+            }
+
+            $target = $this->publicPath($this->pathToImageFolder . $this->resizedImageName);
+            File::put($target, (string) $encoded);
         }
-        return $this->pathToImageFolder .'/' .$this->resizedImageName;
+
+        return $this->pathToImageFolder . '/' . $this->resizedImageName;
     }
 
-    /**
-     * Check if this image has been resized before.
-     *
-     * @return bool
-     */
-    protected function imageHasResized()
+    protected function imageHasResized(): bool
     {
-        $this->resizedImageName = $this->imageName .'-' .$this->width * $this->height .'.' .$this->imageExtension;
-        return file_exists(public_path('/' .$this->pathToImageFolder .$this->resizedImageName));
+        $this->resizedImageName = $this->imageName . '-' . ($this->width * $this->height) . '.' . $this->imageExtension;
+
+        return file_exists($this->publicPath($this->pathToImageFolder . $this->resizedImageName));
+    }
+
+    protected function publicPath(string $relative): string
+    {
+        $relative = ltrim($relative, '/');
+
+        return function_exists('public_path')
+            ? public_path('/' . $relative)
+            : (getcwd() . '/' . $relative);
     }
 }

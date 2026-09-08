@@ -1,55 +1,49 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HZ\Illuminate\Mongez\Services\Images;
 
 class ImageWatermark extends BaseImage
 {
-    /**
-     * Watermark image path
-     *
-     * @var string
-     */
-    protected $watermarkImagePath;
+    protected string $watermarkImagePath;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function __construct($imagePath)
+    public function __construct(string $imagePath)
     {
         parent::__construct($imagePath);
-        $this->watermarkImagePath = public_path($this->pathToImageFolder . $this->imageName . '-watermark.' . $this->imageExtension);
+
+        $relative = $this->pathToImageFolder . $this->imageName . '-watermark.' . $this->imageExtension;
+        $this->watermarkImagePath = function_exists('public_path')
+            ? public_path($relative)
+            : (getcwd() . '/' . ltrim($relative, '/'));
     }
 
     /**
-     * Set Watermark
+     * Place a watermark (Intervention v3 `place`, replaces v2 `insert`).
      *
-     * @param string $watermarkImagePath
-     * @param string $position
-     * @param int    $xAxis
-     * @param int    $yAxis
-     * @return string
+     * @param  string  $position  e.g. top-left, center, bottom-right
      */
-    public function setWatermark($watermarkImagePath, $position, $xAxis = 0, $yAxis = 0)
-    {
-        if (!$this->imageHasWatermark()) {
-            $watermarkImage = $this->getImageObject(public_path($watermarkImagePath));
-            $imageWithWatermark = $this->imageObject->insert(
-                $watermarkImage,
-                $position,
-                $xAxis,
-                $yAxis
-            );
-            $imageWithWatermark->save($this->watermarkImagePath);
+    public function setWatermark(
+        string $watermarkImagePath,
+        string $position,
+        int $xAxis = 0,
+        int $yAxis = 0,
+        int $opacity = 100,
+    ): string {
+        if (! $this->imageHasWatermark()) {
+            $absoluteWatermark = function_exists('public_path')
+                ? public_path($watermarkImagePath)
+                : $watermarkImagePath;
+
+            $watermark = $this->getImageObject($absoluteWatermark);
+            $this->imageObject->place($watermark, $position, $xAxis, $yAxis, opacity: $opacity);
+            $this->imageObject->save($this->watermarkImagePath);
         }
+
         return $this->watermarkImagePath;
     }
 
-    /**
-     * Check if watermark image has been existed
-     *
-     * @return bool
-     */
-    protected function imageHasWatermark()
+    protected function imageHasWatermark(): bool
     {
         return file_exists($this->watermarkImagePath);
     }

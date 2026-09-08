@@ -79,6 +79,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | MongoDB identity compatibility
+    |--------------------------------------------------------------------------
+    |
+    | Temporary migration aid for apps still reading integer identity as `id`
+    | after the MongoDB v5 / `nid` cutover.
+    |
+    | When `id_aliases_nid` is true on Mongo models:
+    | - `$model->id` returns integer `nid` (not the ObjectId string)
+    | - Resource `INTEGER_DATA` / value helpers resolve `'id'` from `nid`
+    | - `sharedInfo()` keeps emitting `'id'` as the integer when SHARED_INFO
+    |   still lists `'id'`
+    |
+    | Default is false. Enable only during app migration, then disable and
+    | remove remaining `id` call sites (see `php artisan mongez:audit-nid`).
+    |
+    */
+    'mongodb' => [
+        'id_aliases_nid' => env('MONGEZ_MONGODB_ID_ALIASES_NID', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue options
     |--------------------------------------------------------------------------
     */
@@ -265,6 +287,61 @@ return [
         'alternateKeys' => [
             // Example: Product::class => ['slug', 'sku'],
         ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings concern (opt-in HasSettings trait)
+    |--------------------------------------------------------------------------
+    |
+    | Durable Laravel cache for settings groups. Request-scoped `$loadedSettings`
+    | is always separate and must be flushed under Octane via
+    | `SettingsRepository::registerSettingsRequestFlush()`.
+    |
+    */
+    'settings' => [
+        'cache' => env('MONGEZ_SETTINGS_CACHE', false),
+        'ttl' => env('MONGEZ_SETTINGS_CACHE_TTL', 3600),
+        'prefix' => env('MONGEZ_SETTINGS_CACHE_PREFIX', 'mongez.settings'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reporting helpers (PeriodDateCalculator)
+    |--------------------------------------------------------------------------
+    |
+    | week_starts_at: Carbon day constant (0 = Sunday … 6 = Saturday).
+    | api-zamil-octane uses Sunday.
+    |
+    */
+    'reports' => [
+        'week_starts_at' => env('MONGEZ_REPORTS_WEEK_STARTS_AT', CarbonInterface::SUNDAY),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Images (Intervention Image v3)
+    |--------------------------------------------------------------------------
+    |
+    | Soft dependency: composer require intervention/image:^3.0
+    | Prefer Imagick when the extension is loaded; GD is the fallback.
+    |
+    */
+    'images' => [
+        'driver' => env('MONGEZ_IMAGE_DRIVER', env('IMAGE_DRIVER', 'gd')),
+        'jpeg_quality' => env('MONGEZ_IMAGE_JPEG_QUALITY', 85),
+        'webp_quality' => env('MONGEZ_IMAGE_WEBP_QUALITY', 80),
+        'avif_quality' => env('MONGEZ_IMAGE_AVIF_QUALITY', 75),
+        'jpeg_progressive' => env('MONGEZ_IMAGE_JPEG_PROGRESSIVE', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Excel bases (optional Maatwebsite peer dependency)
+    |--------------------------------------------------------------------------
+    */
+    'excel' => [
+        'chunk' => env('MONGEZ_EXCEL_CHUNK', 500),
     ],
 
     'repository' => [

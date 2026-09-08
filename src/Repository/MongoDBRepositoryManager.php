@@ -250,27 +250,95 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     }
 
     /**
-     * {@inheritDoc}
+     * Remove an embedded related document from the parent record.
+     *
+     * @param  int $id Parent model nid
+     * @param  Model $related Related model (or sharedInfo-shaped source) to match by nid
+     * @param  string $key Embedded attribute name on the parent
      */
-    public function disassociate(int $id, Model $model, string $key): void
+    public function disassociate(int $id, Model $related, string $key): void
     {
-        $model = $this->getModel($id);
+        $parent = $this->getModel($id);
 
-        if (!$model) return;
+        if (!$parent) {
+            return;
+        }
 
-        $model->disassociate($model, $key)->save();
+        $parent->disassociate($related, $key)->save();
     }
 
     /**
-     * {@inheritDoc}
+     * Replace or append an embedded related document on the parent record.
+     *
+     * @param  int $id Parent model nid
+     * @param  Model $related Related model whose sharedInfo will be stored
+     * @param  string $key Embedded attribute name on the parent
      */
-    public function reassociate(int $id, Model $model, string $key): void
+    public function reassociate(int $id, Model $related, string $key): void
     {
-        $model = $this->getModel($id);
+        $parent = $this->getModel($id);
 
-        if (!$model) return;
+        if (!$parent) {
+            return;
+        }
 
-        $model->reassociate($model, $key)->save();
+        $parent->reassociate($related, $key)->save();
+    }
+
+    /**
+     * Partially update one embedded array element without rewriting siblings.
+     *
+     * @param  int $id Parent model nid
+     * @param  string $path Embedded array attribute (e.g. `items`)
+     * @param  int|array<string, mixed> $matchNidOrCriteria Match by nid or attribute criteria
+     * @param  array<string, mixed> $data Fields merged into the matched element
+     * @param  bool $createIfMissing Append when no element matches
+     * @return TModel|null
+     */
+    public function patchEmbedded(
+        int $id,
+        string $path,
+        int|array $matchNidOrCriteria,
+        array $data,
+        bool $createIfMissing = false
+    ): ?Model {
+        $parent = $this->getModel($id);
+
+        if (!$parent) {
+            return null;
+        }
+
+        $parent->patchEmbedded($path, $matchNidOrCriteria, $data, $createIfMissing)->save();
+
+        return $parent;
+    }
+
+    /**
+     * Refresh one embedded sharedInfo snapshot from a related model.
+     *
+     * @param  int $id Parent model nid
+     * @param  string $path Singular or list embed attribute
+     * @param  Model $related Related model
+     * @param  string $searchingColumn Match key inside list embeds (default `nid`)
+     * @param  string $sharedInfoMethod Method used to build the snapshot
+     * @return TModel|null
+     */
+    public function refreshEmbeddedSharedInfo(
+        int $id,
+        string $path,
+        Model $related,
+        string $searchingColumn = 'nid',
+        string $sharedInfoMethod = 'sharedInfo'
+    ): ?Model {
+        $parent = $this->getModel($id);
+
+        if (!$parent) {
+            return null;
+        }
+
+        $parent->refreshEmbeddedSharedInfo($path, $related, $searchingColumn, $sharedInfoMethod)->save();
+
+        return $parent;
     }
 
     /**
