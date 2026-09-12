@@ -64,25 +64,72 @@ class MigrateNid extends Command
     {
         $ids = $database->selectCollection('ids');
 
+        // ensure corrupted empty-key counters do not shadow real collections
+        $deletedEmpty = $ids->deleteMany(['collection' => '']);
+        if ($deletedEmpty->getDeletedCount() > 0) {
+            $this->warn(sprintf('Removed %d corrupted ids counter(s) with empty collection key', $deletedEmpty->getDeletedCount()));
+        }
+
+        // dedupe any duplicate collection keys (keep highest id)
+        $duplicates = $ids->aggregate([
+            ['$group' => ['_id' => '$collection', 'count' => ['$sum' => 1], 'maxId' => ['$max' => '$id']]],
+            ['$match' => ['count' => ['$gt' => 1]]],
+        ])->toArray();
+        foreach ($duplicates as $dup) {
+            $ids->deleteMany(['collection' => $dup->_id]);
+            $ids->insertOne(['collection' => $dup->_id, 'id' => (int) $dup->maxId]);
+            $this->warn(sprintf('Deduped ids counter for %s -> kept max id %d', $dup->_id, $dup->maxId));
+        }
+
+        $ids->createIndex(['collection' => 1], ['unique' => true]);
+
         foreach ($collections as $name) {
             if ($name === 'ids') {
                 continue;
             }
 
+            // max of nid if exists, else fallback to legacy id (pre-migration runs)
             $result = $database->selectCollection($name)->aggregate([
                 ['$match' => ['nid' => ['$exists' => true]]],
                 ['$group' => ['_id' => null, 'max' => ['$max' => '$nid']]],
             ])->toArray();
 
             if ($result === []) {
+                $result = $database->selectCollection($name)->aggregate([
+                    ['$match' => ['id' => ['$exists' => true]]],
+                    ['$group' => ['_id' => null, 'max' => ['$max' => '$id']]],
+                ])->toArray();
+            } else {
+                // also consider legacy docs not yet migrated – take overall max across both fields
+                $legacyMax = $database->selectCollection($name)->aggregate([
+                    ['$match' => ['id' => ['$exists' => true]]],
+                    ['$group' => ['_id' => null, 'max' => ['$max' => '$id']]],
+                ])->toArray();
+                if ($legacyMax !== [] && (int) $legacyMax[0]->max > (int) $result[0]->max) {
+                    $result[0]->max = $legacyMax[0]->max;
+                }
+            }
+
+            if ($result === []) {
+                $this->line(sprintf('%s: no nid/id found, skipping counter', $name));
+                continue;
+            }
+
+            $max = (int) $result[0]->max;
+            $existing = $ids->findOne(['collection' => $name]);
+
+            // only bump forward – never regress counter if max < stored
+            if ($existing && isset($existing['id']) && (int) $existing['id'] >= $max) {
+                $this->line(sprintf('%s: existing ids=%d >= max=%d, keeping existing', $name, $existing['id'], $max));
                 continue;
             }
 
             $ids->updateOne(
                 ['collection' => $name],
-                ['$set' => ['id' => (int) $result[0]->max]],
+                ['$set' => ['id' => $max]],
                 ['upsert' => true]
             );
+            $this->info(sprintf('%s: ids counter set to %d%s', $name, $max, $existing ? ' (updated)' : ' (created)'));
         }
     }
 }
