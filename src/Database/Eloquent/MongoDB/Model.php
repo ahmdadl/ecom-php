@@ -287,6 +287,17 @@ abstract class Model extends BaseModel
     protected static array $tableNames = [];
 
     /**
+     * Whether the unique `ids.collection` index has been ensured in this process.
+     *
+     * The index is created at most once per worker instead of on every
+     * document insert, so a failed build on corrupted legacy data neither
+     * blocks writes nor pays the index-build cost on the hot path.
+     *
+     * @var bool
+     */
+    protected static bool $idsIndexEnsured = false;
+
+    /**
      * Get table name and cache it
      * 
      * @return string
@@ -458,13 +469,19 @@ abstract class Model extends BaseModel
     {
         $collection = static::tableName();
 
+        if ($collection === '') {
+            throw new \RuntimeException(
+                'Unable to allocate nid: resolved table name is empty for [' . static::class . ']'
+            );
+        }
+
         // The ids collection documents hold their counter value in an `id` field.
         // Use one atomic update so concurrent Octane requests and queue workers
         // cannot read and write the same counter value.
         /** @phpstan-ignore-next-line method.notFound, new.static */
         $idsCollection = (new static)->getConnection()->getDatabase()->selectCollection('ids');
 
-        $idsCollection->createIndex(['collection' => 1], ['unique' => true]);
+        static::ensureIdsIndex($idsCollection);
 
         $counter = $idsCollection->findOneAndUpdate(
             ['collection' => $collection],
@@ -481,6 +498,37 @@ abstract class Model extends BaseModel
         }
 
         return (int) $counter['id'];
+    }
+
+    /**
+     * Ensure the unique index on `ids.collection`, at most once per process.
+     *
+     * The build is best-effort: legacy databases may hold duplicate counter
+     * documents (e.g. `{collection: ""}` twice), in which case MongoDB
+     * refuses the build with an index-build/duplicate-key error. That must
+     * not take down writes — the atomic counter works without the index —
+     * so the failure is logged and the data cleanup is left to
+     * `mongez:migrate-nid --rebuild-counters`. The flag stays set so the
+     * hot path never pays for a retry; a worker restart picks the index up
+     * once the duplicates are removed.
+     *
+     * @param mixed $idsCollection
+     */
+    protected static function ensureIdsIndex($idsCollection): void
+    {
+        if (static::$idsIndexEnsured) {
+            return;
+        }
+
+        static::$idsIndexEnsured = true;
+
+        try {
+            $idsCollection->createIndex(['collection' => 1], ['unique' => true]);
+        } catch (\Throwable $exception) {
+            logger()->warning('Skipping unique index on ids.collection: ' . $exception->getMessage(), [
+                'exception' => get_class($exception),
+            ]);
+        }
     }
 
     /**

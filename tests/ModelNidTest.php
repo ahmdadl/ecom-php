@@ -84,6 +84,20 @@ final class ModelNidTest extends TestCase
         $this->assertSame('products', Product::tableName());
         $this->assertSame('categories', Category::tableName());
     }
+
+    public function test_create_survives_corrupted_duplicate_ids_counters(): void
+    {
+        // Legacy databases may hold duplicate counter documents (e.g. two
+        // `{collection: ""}` rows), which makes the unique index build fail.
+        // Writes must still succeed; the index failure is logged, not fatal.
+        DB::table('ids')->insert(['collection' => '', 'id' => 1]);
+        DB::table('ids')->insert(['collection' => '', 'id' => 2]);
+
+        $product = Product::query()->create(['name' => 'Corrupted']);
+
+        $this->assertIsInt($product->nid);
+        $this->assertGreaterThan(0, $product->nid);
+    }
 }
 
 final class Category extends \HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model
