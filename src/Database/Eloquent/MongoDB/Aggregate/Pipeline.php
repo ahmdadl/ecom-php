@@ -394,13 +394,14 @@ class Pipeline
     /**
      * @param string $name
      * @param array<int, mixed> $arguments
+     * @return mixed
      */
-    public function __call($name, $arguments): Aggregate
+    public function __call($name, $arguments): mixed
     {
         /** @var callable $callback */
         $callback = [$this->aggregationFramework, $name];
 
-        /** @var Aggregate $result */
+        /** @var mixed $result */
         $result = call_user_func_array($callback, $arguments);
 
         return $result;
