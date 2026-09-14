@@ -577,7 +577,7 @@ abstract class JsonResourceManager extends JsonResource
                     }
                 } else {
                     if ($localizedValue['localeCode'] === $localeCode) {
-            return (string) ($value[$localeCode]['text'] ?? '');
+                        return (string) ($localizedValue['text'] ?? '');
                     }
                 }
             }
