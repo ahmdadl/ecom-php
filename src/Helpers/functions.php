@@ -295,15 +295,19 @@ if (!function_exists('get_localized_value')) {
     /**
      * Get localized string from localized array based on locale code.
      *
-     * @param array<string, mixed>|string $localized
+     * @param array<string, mixed>|string|null $localized
      * @param string $localeCode
      * @return mixed
      */
-    function get_localized_value(array|string $localized, string $localeCode, string $textColumn = 'text')
+    function get_localized_value(array|string|null $localized, string $localeCode, string $textColumn = 'text'): mixed
     {
-        if (!$localized || is_string($localized)) return $localized;
+        if (empty($localized) || is_string($localized)) return $localized;
 
-        return collect($localized)->where('localeCode', $localeCode)->first()[$textColumn];
+        $item = collect($localized)->where('localeCode', $localeCode)->first();
+
+        if (!$item) return null;
+
+        return data_get($item, $textColumn);
     }
 }
 
