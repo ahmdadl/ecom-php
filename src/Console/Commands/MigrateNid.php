@@ -116,10 +116,10 @@ class MigrateNid extends Command
             }
 
             $max = (int) $result[0]->max;
-            $existing = $ids->findOne(['collection' => $name]);
+            $existing = $ids->findOne(['collection' => $name], ['typeMap' => ['root' => 'array', 'document' => 'array']]);
 
             // only bump forward – never regress counter if max < stored
-            if ($existing && isset($existing['id']) && (int) $existing['id'] >= $max) {
+            if (is_array($existing) && isset($existing['id']) && (int) $existing['id'] >= $max) {
                 $this->line(sprintf('%s: existing ids=%d >= max=%d, keeping existing', $name, $existing['id'], $max));
                 continue;
             }
