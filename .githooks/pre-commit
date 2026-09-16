@@ -1,0 +1,13 @@
+#!/bin/sh
+# Pre-commit: block commits with PHPStan errors
+# Bypass with: git commit --no-verify
+
+echo "Running PHPStan (pre-commit)..."
+vendor/bin/phpstan analyse --memory-limit=1G
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+  echo ""
+  echo "PHPStan failed (exit $STATUS) — commit aborted."
+  echo "Fix errors or bypass with: git commit --no-verify"
+  exit $STATUS
+fi
