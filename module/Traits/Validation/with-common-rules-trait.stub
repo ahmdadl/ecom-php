@@ -6,13 +6,6 @@ namespace App\Modules\{{ ModuleName }}\Traits\Validation;
 trait {{ TraitName }}
 {
     /**
-     * Define request inputs to cast to integer before validation.
-     *
-     * @var array|string[]
-     */
-    public array $intInputs = [];
-
-    /**
      * Define common Rules
      *
      * @return array
