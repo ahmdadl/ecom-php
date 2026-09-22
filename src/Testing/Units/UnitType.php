@@ -20,7 +20,7 @@ use HZ\Illuminate\Mongez\Testing\UnitRuleInterface;
  * @method UnitType equal(mixed $value)
  * @method UnitType setUnits(array<string, mixed> $unitsList)
  */
-class UnitType
+class UnitType implements ResponseSchemaInterface
 {
     use StrictUnit;
     use WithKeyAndValue;
