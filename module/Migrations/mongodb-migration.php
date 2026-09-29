@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class className extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -18,18 +18,18 @@ class className extends Migration
             $table->unique('nid');
             // Index of createdBy nid
             $table->index('createdBy.nid');
-            // the auto increment is just dummy pass, it is auto generated for every single model 
+            // the auto increment is just dummy pass, it is auto generated for every single model
             $table->int('nid');
             $table->increments('nid');
 
-            // all of it are just dummy pass, it can be changed from the model class            
+            // all of it are just dummy pass, it can be changed from the model class
             $table->string('createdAt');
             $table->string('createdBy');
             $table->string('updatedAt ');
             $table->string('updatedBy');
             $table->string('deletedAt');
             $table->string('deletedBy');
-            // Table-Schema            
+            // Table-Schema
         });
     }
 
@@ -42,4 +42,4 @@ class className extends Migration
     {
         Schema::dropIfExists('TableName');
     }
-}
+};

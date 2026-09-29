@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class {{ ClassName }} extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class {{ ClassName }} extends Migration
      */
     public function up()
     {
-        Schema::{{type}}('{{ tableName }}', function (Blueprint $table) {
+        Schema::{{ type }}('{{ tableName }}', function (Blueprint $table) {
             $table->increments('id');
             $table->loggers();
-            
+
             // Table-Schema
 
             // columns
@@ -36,4 +36,4 @@ class {{ ClassName }} extends Migration
     {
         Schema::dropIfExists('{{ tableName }}');
     }
-}
+};
