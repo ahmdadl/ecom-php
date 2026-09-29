@@ -55,6 +55,15 @@
   A `*Trash` collection has no top-level identity by design and stays a
   warning; a collection still sitting on `id` is waiting for the rename and is
   now a blocker that says to include the rename phase.
+- Fixed the `verify` phase reporting the dry run's own unwritten work as
+  failures. It reads stored state, so in a dry run that state is untouched: a
+  key that was not renamed yet read as a leftover `id`, an index that was not
+  created yet read as missing, and a counter that would not advance read as
+  stale. On a database that had not been migrated that was 192 findings saying
+  nothing, burying the two that were real. A dry run that also asked to rename,
+  rebuild counters or create indexes now says it cannot judge yet. A
+  verify-only dry run is unchanged — nothing else in it was going to change the
+  state, so it still reports on the database as it stands, and still gates.
 
 ### Added
 

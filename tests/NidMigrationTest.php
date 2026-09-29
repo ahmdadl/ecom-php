@@ -246,6 +246,36 @@ class NidMigrationTest extends TestCase
         $this->assertSame(1, $this->migrate(['--phase' => ['verify']]), 'a verify-only run gates even without --execute');
     }
 
+    public function test_a_dry_run_does_not_verify_against_its_own_unwritten_work(): void
+    {
+        $this->seedLegacy();
+
+        // Nothing was renamed, no index was created, no counter moved, so every
+        // verify check is reporting the absence of the work this run just
+        // declined to do. Echoing that back buries the findings that are real,
+        // so verify says it cannot judge rather than listing every collection.
+        $this->migrate();
+        $output = Artisan::output(); // fetched once: the buffer is drained on read
+
+        $this->assertStringContainsString('nothing was written, so the state cannot be verified', $output);
+        $this->assertStringNotContainsString('still carry an `id` key', $output);
+        $this->assertStringNotContainsString('required index nid_1 is missing', $output);
+        $this->assertStringNotContainsString('ids[widgets]', $output);
+    }
+
+    public function test_a_verify_only_dry_run_still_reports_the_real_state(): void
+    {
+        $this->seedLegacy();
+
+        // The opposite case: nothing else in this invocation was going to
+        // change the state, so verify has something true to say.
+        $this->migrate(['--phase' => ['verify']]);
+        $output = Artisan::output(); // fetched once: the buffer is drained on read
+
+        $this->assertStringNotContainsString('cannot be verified', $output);
+        $this->assertStringContainsString('still carry an `id` key', $output);
+    }
+
     public function test_a_collection_with_no_top_level_nid_is_reported_not_blocked(): void
     {
         $this->seedLegacy();

@@ -911,6 +911,14 @@ class MigrateNid extends Command
     protected function verify(MongoDatabase $database, array $targets, NidKeyRenamer $renamer, bool $gate): int
     {
         $this->line("\n--- Phase: verify ---");
+
+        if ($this->verifyIsTautological()) {
+            $this->comment('  dry run: nothing was written, so the state cannot be verified yet — re-run with --execute');
+            $this->comment('  skipped: leftover `id` keys, missing indexes and stale counters are all expected before the write');
+
+            return 0;
+        }
+
         $failures = 0;
         $ids = $database->selectCollection('ids');
 
@@ -982,6 +990,37 @@ class MigrateNid extends Command
         $this->comment('  dry run: the findings above are informational, the exit code is not gated');
 
         return 0;
+    }
+
+    /**
+     * Whether this invocation's own dry run is what makes the verify findings
+     * inevitable.
+     *
+     * Verify reads stored state. In a dry run that state is untouched, so when
+     * this same invocation was also asked to rename, rebuild counters and
+     * create indexes, every check is reporting the absence of work the run
+     * deliberately did not do: a renamed key still reads as leftover, a planned
+     * index reads as missing, a counter that would have advanced reads as stale.
+     * On a database that has not been migrated yet that is every collection,
+     * which buries the findings that are real.
+     *
+     * A verify-only dry run is not tautological — nothing else in the
+     * invocation was going to change the state — so it still reports, and still
+     * gates, on the database as it actually stands.
+     */
+    protected function verifyIsTautological(): bool
+    {
+        if ($this->execute) {
+            return false;
+        }
+
+        foreach (['rename', 'counters', 'indexes'] as $phase) {
+            if (in_array($phase, $this->phases, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function documentsWithIdKeys(Collection $collection, NidKeyRenamer $renamer): int
