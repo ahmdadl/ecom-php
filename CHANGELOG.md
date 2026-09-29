@@ -2,6 +2,32 @@
 
 ## Unreleased
 
+### Changed
+
+- `mongez:migrate-nid` is now the single command for the whole `id` -> `nid`
+  cutover, replacing the overlapping `mongez:nid-health`,
+  `mongez:ensure-nid-indexes` and `mongez:check-duplicates`. It mirrors
+  `scripts/mongo-nid-migration.js` and runs five phases in order — `inventory`,
+  `rename`, `counters`, `indexes`, `verify` — each selectable with `--phase`.
+  Still a dry run unless `--execute` is passed.
+  - **Breaking:** `--rebuild-counters` is gone; the `counters` phase runs by
+    default. `mongez:nid-health`, `mongez:ensure-nid-indexes` and
+    `mongez:check-duplicates` are removed.
+  - `--top-level-only` restricts the rename to the top-level `id` and uses
+    server-side updates instead of rewriting documents.
+  - `--skip-path` and the new `mongez.nid.skip_paths` config leave opaque
+    nested `id` keys (e.g. a payment provider payload) untouched.
+  - `mongez.nid.indexes` config drives which `nid` indexes each collection gets;
+    `mongez.nid.default_nid_index` turns the implicit unique `nid_1` off.
+- Fixed `mongez:migrate-nid --execute` writing the literal string `"$id"` into
+  `nid` instead of the document's own `id` value.
+
+### Added
+
+- `HZ\Illuminate\Mongez\Support\NidKeyRenamer`, `NidIndexSpec` and
+  `NidIndexPlan`.
+- `scripts/mongo-nid-migration.js`, the standalone `mongosh` equivalent.
+
 ## [5.3.0] - 2026-09-08
 
 ### Added

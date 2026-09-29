@@ -101,6 +101,59 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | `id` -> `nid` migration (php artisan mongez:migrate-nid)
+    |--------------------------------------------------------------------------
+    |
+    | Settings for the one-time cutover that renames the MongoDB business key
+    | from `id` to `nid`, rebuilds the `ids` counters and fixes the indexes.
+    | The command is a dry run until `--execute` is passed; see
+    | scripts/mongo-nid-migration.js for the standalone mongosh equivalent.
+    |
+    | `skip_paths` lists dotted path segments whose nested `id` key is an opaque
+    | third-party payload rather than a business key, e.g. a raw payment
+    | provider response stored on an order. Matching keys are left alone at any
+    | depth, and are not reported as leftovers by the verify phase.
+    |
+    | `default_nid_index` gives every collection a unique `{nid: 1}` index.
+    | Set it to false to require an explicit declaration per collection.
+    |
+    | `indexes` declares the indexes each collection must end up with. A
+    | collection that is not listed falls back to the default. Listing one with
+    | an empty `nid` array opts it out of the `nid` index entirely. Every entry
+    | accepts `keys` (required), plus `name`, `unique` and any other
+    | createIndex option; the legacy `{id: 1}` index is always dropped.
+    |
+    | Example:
+    |   'installationteamcapacities' => [
+    |       'nid' => [
+    |           ['keys' => ['nid' => 1]],
+    |           ['keys' => ['installationTeam.nid' => 1, 'city.nid' => 1], 'unique' => true],
+    |       ],
+    |       'additional' => [
+    |           ['keys' => ['published' => 1], 'unique' => false],
+    |       ],
+    |   ],
+    |
+    */
+    'nid' => [
+        'skip_paths' => [
+            // 'providerResponse',
+        ],
+        'default_nid_index' => env('MONGEZ_NID_DEFAULT_INDEX', true),
+        'indexes' => [
+            // 'customers' => [
+            //     'nid' => [
+            //         ['keys' => ['nid' => 1]],
+            //     ],
+            //     'additional' => [
+            //         ['keys' => ['phoneNumber' => 1], 'unique' => true],
+            //     ],
+            // ],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue options
     |--------------------------------------------------------------------------
     */
