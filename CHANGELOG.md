@@ -21,6 +21,17 @@
     `mongez.nid.default_nid_index` turns the implicit unique `nid_1` off.
 - Fixed `mongez:migrate-nid --execute` writing the literal string `"$id"` into
   `nid` instead of the document's own `id` value.
+- Fixed a dry run printing "the exit code is not gated" and then exiting
+  non-zero anyway. Only `--execute`, and a `--phase=verify`-only run, gate on
+  findings now.
+- Fixed a `*Trash` collection permanently failing the run. Those collections are
+  keyed by `primaryId` and keep the deleted document's identity under
+  `record.nid`, so they have no top-level `nid` and a unique `nid_1` cannot
+  apply to them. They are now reported as a warning you can silence by opting
+  the collection out of `mongez.nid.indexes`, instead of counted as a blocker.
+- Fixed an existing index being accepted on name alone. A non-unique `nid_1`
+  left over from an earlier migration no longer stands in for the unique index
+  the plan requires: the `indexes` phase replaces it, and `verify` fails on it.
 
 ### Added
 

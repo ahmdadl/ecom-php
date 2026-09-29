@@ -231,6 +231,75 @@ class NidMigrationTest extends TestCase
         $this->assertSame(1, $this->countIn('gadgetsTrash', ['nid' => ['$exists' => true]]));
     }
 
+    public function test_dry_run_with_findings_does_not_fail_the_process(): void
+    {
+        $this->seedLegacy();
+        $this->database()->selectCollection('widgets')->insertOne(['_id' => 2, 'nid' => 42, 'name' => 'clash']);
+
+        $this->assertSame(0, $this->migrate(), 'a dry run reports findings but exits 0');
+    }
+
+    public function test_verify_only_dry_run_does_gate(): void
+    {
+        $this->seedLegacy();
+
+        $this->assertSame(1, $this->migrate(['--phase' => ['verify']]), 'a verify-only run gates even without --execute');
+    }
+
+    public function test_a_collection_with_no_top_level_nid_is_reported_not_blocked(): void
+    {
+        $this->seedLegacy();
+        $this->database()->selectCollection('gadgetsTrash')->deleteMany([]);
+
+        // A trash-shaped collection: keyed by primaryId, identity under record.
+        $this->database()->selectCollection('gadgetsTrash')->insertMany([
+            ['_id' => 1, 'primaryId' => 7, 'record' => ['nid' => 7, 'name' => 'gone']],
+            ['_id' => 2, 'primaryId' => 8, 'record' => ['nid' => 8, 'name' => 'also gone']],
+        ]);
+
+        $this->assertSame(0, $this->migrate(['--execute' => true, '--include-trash' => true]));
+        $this->assertNotContains('nid_1', $this->indexNames('gadgetsTrash'), 'a unique nid index cannot apply here');
+    }
+
+    public function test_a_partially_identified_collection_still_blocks(): void
+    {
+        $this->seedLegacy();
+        $widgets = $this->database()->selectCollection('widgets');
+        $widgets->insertOne(['_id' => 2, 'nid' => 43, 'name' => 'has one']);
+        $widgets->insertOne(['_id' => 3, 'name' => 'has none']);
+
+        $this->assertSame(1, $this->migrate(['--execute' => true]), 'a real gap still fails the run');
+    }
+
+    public function test_a_non_unique_nid_index_is_replaced_by_the_unique_one(): void
+    {
+        $this->seedLegacy();
+        $this->database()->selectCollection('widgets')->createIndex(['nid' => 1]);
+
+        $this->assertSame(0, $this->migrate(['--execute' => true]));
+
+        $nid = null;
+
+        foreach ($this->database()->selectCollection('widgets')->listIndexes() as $index) {
+            if ($index->getName() === 'nid_1') {
+                $nid = $index;
+            }
+        }
+
+        $this->assertNotNull($nid, 'the index name is reused');
+        $this->assertTrue($nid->isUnique(), 'a leftover non-unique index is not accepted as the unique one');
+    }
+
+    public function test_verify_catches_a_non_unique_nid_index(): void
+    {
+        $this->seedLegacy();
+        $this->database()->selectCollection('widgets')->insertOne(['_id' => 2, 'nid' => 43, 'name' => 'beta']);
+        $this->database()->selectCollection('widgets')->createIndex(['nid' => 1]);
+
+        $this->assertSame(1, $this->migrate(['--phase' => ['verify']]));
+        $this->assertStringContainsString('widgets: nid_1 is not unique', Artisan::output());
+    }
+
     /**
      * Two collections in the legacy `id` scheme, with nested and array keys,
      * a *Trash sibling, and stale duplicate/junk rows in `ids`.

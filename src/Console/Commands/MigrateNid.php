@@ -9,6 +9,7 @@ use HZ\Illuminate\Mongez\Support\NidKeyRenamer;
 use Illuminate\Console\Command;
 use MongoDB\Collection;
 use MongoDB\Database as MongoDatabase;
+use MongoDB\Model\IndexInfo;
 
 /**
  * The whole `id` -> `nid` cutover in one command, mirroring
@@ -98,6 +99,20 @@ class MigrateNid extends Command
      */
     protected array $phases = self::PHASES;
 
+    /**
+     * Per-collection "holds documents but no document carries nid" answer.
+     *
+     * @var array<string, bool>
+     */
+    protected array $carriesNoNidCache = [];
+
+    /**
+     * Per-collection count of documents with no `nid` key.
+     *
+     * @var array<string, int>
+     */
+    protected array $countMissingCache = [];
+
     public function handle(): int
     {
         $phases = $this->resolvePhases();
@@ -143,15 +158,24 @@ class MigrateNid extends Command
             $blockers += $this->indexes($database, $targets);
         }
 
+        // A verify-only run is an explicit request to gate on the current
+        // state, so it fails even without --execute. Every other phase only
+        // fails the process once --execute asked for writes, so a dry run on a
+        // database that still needs work reports instead of erroring out.
+        $gate = $this->execute || $this->phases === ['verify'];
+
         if (in_array('verify', $this->phases, true)) {
-            // A verify-only run is an explicit request to gate on the current
-            // state, so it fails even without --execute.
-            $gate = $this->execute || $this->phases === ['verify'];
             $blockers += $this->verify($database, $targets, $renamer, $gate);
         }
 
         if ($blockers > 0) {
             $this->error("RESULT: {$blockers} problem(s) found — see above.");
+
+            if (! $gate) {
+                $this->comment('Dry run: nothing was written and the exit code is not gated on these findings.');
+
+                return self::SUCCESS;
+            }
 
             return self::FAILURE;
         }
@@ -292,8 +316,18 @@ class MigrateNid extends Command
             }
 
             if ($legacy === 0 && $without > 1) {
-                $blockers++;
-                $this->error("  $name: {$without} document(s) carry neither id nor nid and will stay unidentified after the migration");
+                if ($nid === 0) {
+                    // The collection has no top-level identity at all, so the
+                    // unique nid index cannot apply to it in the first place
+                    // (see blocksIndex()). A `*Trash` collection is the normal
+                    // case: it is keyed by `primaryId` and keeps the deleted
+                    // document's nid under `record.nid`. Structural, not
+                    // damaged, so it is reported without failing the run.
+                    $this->warn("  $name: {$without} document(s) carry neither id nor nid — this collection has no top-level identity, so the unique nid index will be skipped for it");
+                } else {
+                    $blockers++;
+                    $this->error("  $name: {$without} document(s) carry neither id nor nid and will stay unidentified after the migration");
+                }
             }
         }
 
@@ -482,7 +516,7 @@ class MigrateNid extends Command
                 $blockers++;
                 $this->error('  ids: unique index on {collection: 1} failed — ' . $exception->getMessage());
             }
-        } elseif (! in_array('collection_1', $this->indexNames($ids), true)) {
+        } elseif (! array_key_exists('collection_1', $this->indexesByName($ids))) {
             $this->warn('  ids: unique index on {collection: 1} is missing and will be created by --execute');
         }
 
@@ -601,10 +635,10 @@ class MigrateNid extends Command
         foreach ($targets as $name) {
             $collection = $database->selectCollection($name);
             $plan = $this->indexPlan($name);
-            $existing = $this->indexNames($collection);
+            $present = $this->indexesByName($collection);
 
             foreach ($plan->dropIndexes as $index) {
-                if (! in_array($index, $existing, true)) {
+                if (! array_key_exists($index, $present)) {
                     continue;
                 }
 
@@ -618,19 +652,50 @@ class MigrateNid extends Command
                     }
                 }
 
-                $existing = array_values(array_diff($existing, [$index]));
+                unset($present[$index]);
             }
 
             foreach ($plan->required() as $spec) {
-                if (in_array($spec->name, $existing, true)) {
-                    continue;
+                if (array_key_exists($spec->name, $present)) {
+                    $mismatch = $this->indexMismatch($present[$spec->name], $spec);
+
+                    if ($mismatch === null) {
+                        continue;
+                    }
+
+                    if ($mismatch['keys'] !== $spec->keys) {
+                        $blockers++;
+                        $this->error("  $name: {$spec->name} already exists but {$mismatch['reason']} — drop or rename it, or declare the index you want in mongez.nid.indexes");
+
+                        continue;
+                    }
+
+                    // Same key, different options: the old index cannot be
+                    // altered in place, so it is replaced with the spec.
+                    $this->line("  $name: drop index {$spec->name} — it {$mismatch['reason']}" . ($this->execute ? '' : ' (would drop)'));
+
+                    if ($this->execute) {
+                        try {
+                            $collection->dropIndex($spec->name);
+                        } catch (\Throwable $exception) {
+                            $this->warn("  $name: could not drop {$spec->name} — " . $exception->getMessage());
+
+                            continue;
+                        }
+                    }
+
+                    unset($present[$spec->name]);
                 }
 
                 $blocked = $this->blocksIndex($collection, $spec);
 
                 if ($blocked !== null) {
-                    $blockers++;
-                    $this->error("  $name: cannot create {$spec->name} — {$blocked}");
+                    if ($blocked['blocking']) {
+                        $blockers++;
+                        $this->error("  $name: cannot create {$spec->name} — {$blocked['reason']}");
+                    } else {
+                        $this->warn("  $name: skipping {$spec->name} — {$blocked['reason']}");
+                    }
 
                     continue;
                 }
@@ -665,17 +730,36 @@ class MigrateNid extends Command
 
     /**
      * Why a unique `nid` index cannot be built yet, or null when it can.
+     *
+     * A non-blocking reason means the collection simply does not carry a
+     * top-level `nid` at all — a `*Trash` collection keeps the deleted
+     * document's identity under `record.nid` and is keyed by `primaryId`, so
+     * every document would collide on the missing key. That is a structural
+     * fact, not damaged data: it is reported so the collection can be opted
+     * out of the index through `mongez.nid.indexes`.
+     *
+     * @return array{reason: string, blocking: bool}|null
      */
-    protected function blocksIndex(Collection $collection, NidIndexSpec $spec): ?string
+    protected function blocksIndex(Collection $collection, NidIndexSpec $spec): ?array
     {
         if (! $spec->isUniqueNidIndex()) {
             return null;
         }
 
-        $orphans = $collection->countDocuments(['nid' => ['$exists' => false]]);
+        $orphans = $this->countMissing($collection);
 
         if ($orphans > 1) {
-            return "{$orphans} document(s) have no nid and would all collide on the missing key";
+            if ($this->carriesNoNid($collection)) {
+                return [
+                    'reason' => "no document carries a top-level nid ({$orphans} document(s)) so a unique nid index cannot apply — opt this collection out of mongez.nid.indexes",
+                    'blocking' => false,
+                ];
+            }
+
+            return [
+                'reason' => "{$orphans} document(s) have no nid and would all collide on the missing key",
+                'blocking' => true,
+            ];
         }
 
         $duplicates = $this->duplicateGroups($collection, 'nid');
@@ -683,10 +767,44 @@ class MigrateNid extends Command
         if ($duplicates > 0) {
             $this->reportDuplicateGroups($collection, 'nid');
 
-            return "{$duplicates} duplicate nid group(s) remain";
+            return [
+                'reason' => "{$duplicates} duplicate nid group(s) remain",
+                'blocking' => true,
+            ];
         }
 
         return null;
+    }
+
+    /**
+     * Whether a collection holds documents but none of them carry `nid`.
+     *
+     * Memoized because both the indexes and the verify phase ask, and a
+     * collection without a `nid` index makes that a full scan.
+     */
+    protected function carriesNoNid(Collection $collection): bool
+    {
+        $name = $collection->getCollectionName();
+
+        if (! array_key_exists($name, $this->carriesNoNidCache)) {
+            $total = $collection->countDocuments([]);
+
+            $this->carriesNoNidCache[$name] = $total > 0
+                && $collection->countDocuments(['nid' => ['$exists' => true]]) === 0;
+        }
+
+        return $this->carriesNoNidCache[$name];
+    }
+
+    protected function countMissing(Collection $collection): int
+    {
+        $name = $collection->getCollectionName();
+
+        if (! array_key_exists($name, $this->countMissingCache)) {
+            $this->countMissingCache[$name] = $collection->countDocuments(['nid' => ['$exists' => false]]);
+        }
+
+        return $this->countMissingCache[$name];
     }
 
     /**
@@ -709,15 +827,32 @@ class MigrateNid extends Command
                 $this->info("  $name: no `id` keys remain");
             }
 
-            $existing = $this->indexNames($collection);
+            $present = $this->indexesByName($collection);
 
-            if (in_array(NidIndexPlan::LEGACY_INDEX, $existing, true)) {
+            if (array_key_exists(NidIndexPlan::LEGACY_INDEX, $present)) {
                 $failures++;
                 $this->error("  $name: legacy " . NidIndexPlan::LEGACY_INDEX . ' index still present');
             }
 
             foreach ($this->indexPlan($name)->required() as $spec) {
-                if (in_array($spec->name, $existing, true)) {
+                if (array_key_exists($spec->name, $present)) {
+                    $mismatch = $this->indexMismatch($present[$spec->name], $spec);
+
+                    if ($mismatch === null) {
+                        continue;
+                    }
+
+                    $failures++;
+                    $this->error("  $name: {$spec->name} {$mismatch['reason']}");
+
+                    continue;
+                }
+
+                $blocked = $this->blocksIndex($collection, $spec);
+
+                if ($blocked !== null && ! $blocked['blocking']) {
+                    $this->warn("  $name: {$spec->name} not created — {$blocked['reason']}");
+
                     continue;
                 }
 
@@ -797,16 +932,55 @@ class MigrateNid extends Command
     }
 
     /**
-     * @return list<string>
+     * Every index on the collection, keyed by name.
+     *
+     * @return array<string, IndexInfo>
      */
-    protected function indexNames(Collection $collection): array
+    protected function indexesByName(Collection $collection): array
     {
-        $names = [];
+        $indexes = [];
 
         foreach ($collection->listIndexes() as $index) {
-            $names[] = $index->getName();
+            $indexes[$index->getName()] = $index;
         }
 
-        return $names;
+        return $indexes;
+    }
+
+    /**
+     * Why an existing index of the required name does not satisfy the spec, or
+     * null when it does.
+     *
+     * A name match alone is not enough: a non-unique `nid_1` left over from
+     * before the migration would silently stand in for the unique index the
+     * plan requires, and the run would report success while `nid` stays
+     * unenforced.
+     *
+     * @return array{reason: string, keys: array<string, int>}|null
+     */
+    protected function indexMismatch(IndexInfo $existing, NidIndexSpec $spec): ?array
+    {
+        $keys = [];
+
+        foreach ($existing->getKey() as $field => $direction) {
+            $keys[(string) $field] = (int) $direction;
+        }
+
+        if ($keys !== $spec->keys) {
+            return [
+                'reason' => 'is keyed on ' . json_encode($keys) . ' instead of ' . json_encode($spec->keys),
+                'keys' => $keys,
+            ];
+        }
+
+        if ($existing->isUnique() !== $spec->unique) {
+            return [
+                'reason' => 'is ' . ($existing->isUnique() ? 'unique' : 'not unique')
+                    . ' where the plan requires ' . ($spec->unique ? 'a unique' : 'a non-unique') . ' index',
+                'keys' => $keys,
+            ];
+        }
+
+        return null;
     }
 }
