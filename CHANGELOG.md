@@ -32,6 +32,18 @@
 - Fixed an existing index being accepted on name alone. A non-unique `nid_1`
   left over from an earlier migration no longer stands in for the unique index
   the plan requires: the `indexes` phase replaces it, and `verify` fails on it.
+- Fixed the `inventory` and `indexes` phases judging a collection on the `nid`
+  values stored at that moment. A dry run reaches them with the rename still
+  pending, so a database that had not been migrated yet read as unable to take
+  a unique `nid` index and each of its collections was reported as a gap. Both
+  phases now judge the state the run ends in: a document on `id` counts as
+  one that will carry `nid`. Two consequences:
+  - A collection whose documents are simply still on `id` is no longer blocked
+    — it used to fail a migration that then went on to complete cleanly.
+  - Duplicate detection now groups on the value `id` is about to become, so a
+    half-migrated collection is no longer reported clean. Colliding `id` and
+    `nid` values were invisible before, and reached the unique index, which
+    then refused to build.
 
 ### Added
 

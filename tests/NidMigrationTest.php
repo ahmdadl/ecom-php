@@ -267,8 +267,47 @@ class NidMigrationTest extends TestCase
         $widgets = $this->database()->selectCollection('widgets');
         $widgets->insertOne(['_id' => 2, 'nid' => 43, 'name' => 'has one']);
         $widgets->insertOne(['_id' => 3, 'name' => 'has none']);
+        $widgets->insertOne(['_id' => 4, 'name' => 'nor this one']);
 
+        // Neither orphan carries an `id`, so the rename has nothing to move
+        // across for them and they will still collide on the unique index.
         $this->assertSame(1, $this->migrate(['--execute' => true]), 'a real gap still fails the run');
+    }
+
+    public function test_a_collection_still_on_id_is_not_reported_as_a_gap(): void
+    {
+        $this->seedLegacy();
+        $widgets = $this->database()->selectCollection('widgets');
+        $widgets->insertOne(['_id' => 2, 'nid' => 43, 'name' => 'has one']);
+        $widgets->insertOne(['_id' => 3, 'id' => 44, 'name' => 'still on id']);
+
+        // The seeded widget and this one are both on `id`, so before the
+        // rename the collection looks half identified. Judged on the stored
+        // state that reads as a gap; judged on the state the run ends in it
+        // is clean, and blocking here would fail a migration that succeeds.
+        $this->assertSame(0, $this->migrate(['--execute' => true]));
+        $this->assertSame(44, $this->first('widgets', ['nid' => 44])['nid']);
+    }
+
+    public function test_a_dry_run_reports_duplicates_among_the_ids_about_to_become_nids(): void
+    {
+        $this->seedLegacy();
+        $widgets = $this->database()->selectCollection('widgets');
+        $widgets->insertOne(['_id' => 2, 'id' => 42, 'name' => 'collides with alpha']);
+        $widgets->insertMany([
+            ['_id' => 3, 'id' => 88, 'name' => 'one'],
+            ['_id' => 4, 'id' => 88, 'name' => 'two'],
+        ]);
+
+        // Nothing carries `nid` yet, so a dry run that only looked at the
+        // stored field would report a clean database and let the collision
+        // reach the unique index, which then refuses to build.
+        $exit = $this->migrate(['--execute' => true]);
+        $output = Artisan::output(); // fetched once: the buffer is drained on read
+
+        $this->assertSame(1, $exit, 'the collision is caught before the index is attempted');
+        $this->assertStringContainsString('nid=42 x2', $output);
+        $this->assertStringContainsString('nid=88 x2', $output);
     }
 
     public function test_a_non_unique_nid_index_is_replaced_by_the_unique_one(): void

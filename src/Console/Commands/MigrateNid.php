@@ -288,6 +288,7 @@ class MigrateNid extends Command
             $legacy = $collection->countDocuments(['id' => ['$exists' => true]]);
             $nid = $collection->countDocuments(['nid' => ['$exists' => true]]);
             $without = $collection->countDocuments(['nid' => ['$exists' => false]]);
+            $left = $this->countWithoutNid($collection);
             $duplicates = $this->duplicateGroups($collection, 'nid');
 
             $this->line(sprintf(
@@ -310,24 +311,19 @@ class MigrateNid extends Command
                 $this->warn("  $name: half migrated — {$legacy} document(s) still on id, {$nid} already on nid");
             }
 
-            if ($without > 1 && $nid > 0) {
+            if ($left > 1 && $nid > 0) {
                 $blockers++;
-                $this->error("  $name: {$without} document(s) carry no nid at all — they will collide on the unique nid index");
+                $this->error("  $name: {$left} document(s) will still carry no nid after the rename — they will collide on the unique nid index");
             }
 
-            if ($legacy === 0 && $without > 1) {
-                if ($nid === 0) {
-                    // The collection has no top-level identity at all, so the
-                    // unique nid index cannot apply to it in the first place
-                    // (see blocksIndex()). A `*Trash` collection is the normal
-                    // case: it is keyed by `primaryId` and keeps the deleted
-                    // document's nid under `record.nid`. Structural, not
-                    // damaged, so it is reported without failing the run.
-                    $this->warn("  $name: {$without} document(s) carry neither id nor nid — this collection has no top-level identity, so the unique nid index will be skipped for it");
-                } else {
-                    $blockers++;
-                    $this->error("  $name: {$without} document(s) carry neither id nor nid and will stay unidentified after the migration");
-                }
+            if ($left > 1 && $nid === 0 && $legacy === 0) {
+                // The collection has no top-level identity at all, so the
+                // unique nid index cannot apply to it in the first place
+                // (see blocksIndex()). A `*Trash` collection is the normal
+                // case: it is keyed by `primaryId` and keeps the deleted
+                // document's nid under `record.nid`. Structural, not
+                // damaged, so it is reported without failing the run.
+                $this->warn("  $name: {$left} document(s) carry neither id nor nid — this collection has no top-level identity, so the unique nid index will be skipped for it");
             }
         }
 
@@ -731,6 +727,11 @@ class MigrateNid extends Command
     /**
      * Why a unique `nid` index cannot be built yet, or null when it can.
      *
+     * Judged on the state this run ends in, not on what is stored: a dry run
+     * reaches this phase with the rename still pending, and a database that
+     * has not been migrated yet would otherwise look unable to take the
+     * index.
+     *
      * A non-blocking reason means the collection simply does not carry a
      * top-level `nid` at all — a `*Trash` collection keeps the deleted
      * document's identity under `record.nid` and is keyed by `primaryId`, so
@@ -757,7 +758,7 @@ class MigrateNid extends Command
             }
 
             return [
-                'reason' => "{$orphans} document(s) have no nid and would all collide on the missing key",
+                'reason' => "{$orphans} document(s) will still have no nid after the rename and would all collide on the missing key",
                 'blocking' => true,
             ];
         }
@@ -777,10 +778,62 @@ class MigrateNid extends Command
     }
 
     /**
-     * Whether a collection holds documents but none of them carry `nid`.
+     * Whether the rename phase runs in this invocation, which makes a document
+     * that still carries `id` one that will carry `nid` by the time the indexes
+     * and verify phases look at the collection.
+     *
+     * A dry run writes nothing, so the stored `nid` count says nothing about a
+     * database that has not been migrated yet: every collection would look
+     * unable to take a unique nid index. Judging on the projected state instead
+     * means the dry run reports what the executed run will actually hit.
+     */
+    protected function projectsRename(): bool
+    {
+        return in_array('rename', $this->phases, true);
+    }
+
+    /**
+     * Matches the documents that carry — or will carry — a `nid`.
+     *
+     * @return array<string, mixed>
+     */
+    protected function nidExistsFilter(): array
+    {
+        return $this->projectsRename()
+            ? ['$or' => [['nid' => ['$exists' => true]], ['id' => ['$exists' => true]]]]
+            : ['nid' => ['$exists' => true]];
+    }
+
+    /**
+     * The value a document will hold under `nid` once the rename phase has
+     * run: its own `nid` when it has one, otherwise the `id` that gets moved
+     * across. Only meaningful for the `nid` field.
+     *
+     * @return array<string, mixed>|string
+     */
+    protected function nidGroupKey()
+    {
+        return $this->projectsRename() ? ['$ifNull' => ['$nid', '$id']] : '$nid';
+    }
+
+    /**
+     * Documents that will still carry no `nid` once this run finishes.
+     */
+    protected function countWithoutNid(Collection $collection): int
+    {
+        return $collection->countDocuments($this->projectsRename()
+            ? ['$nor' => [['nid' => ['$exists' => true]], ['id' => ['$exists' => true]]]]
+            : ['nid' => ['$exists' => false]]);
+    }
+
+    /**
+     * Whether a collection holds documents but none of them will carry `nid`.
      *
      * Memoized because both the indexes and the verify phase ask, and a
-     * collection without a `nid` index makes that a full scan.
+     * collection without a `nid` index makes that a full scan. Only safe
+     * after the rename phase has run — the inventory phase deliberately
+     * calls the uncached countWithoutNid() so it cannot poison the cache
+     * with the pre-rename state.
      */
     protected function carriesNoNid(Collection $collection): bool
     {
@@ -790,7 +843,7 @@ class MigrateNid extends Command
             $total = $collection->countDocuments([]);
 
             $this->carriesNoNidCache[$name] = $total > 0
-                && $collection->countDocuments(['nid' => ['$exists' => true]]) === 0;
+                && $this->countMissing($collection) === $total;
         }
 
         return $this->carriesNoNidCache[$name];
@@ -801,7 +854,7 @@ class MigrateNid extends Command
         $name = $collection->getCollectionName();
 
         if (! array_key_exists($name, $this->countMissingCache)) {
-            $this->countMissingCache[$name] = $collection->countDocuments(['nid' => ['$exists' => false]]);
+            $this->countMissingCache[$name] = $this->countWithoutNid($collection);
         }
 
         return $this->countMissingCache[$name];
@@ -907,28 +960,44 @@ class MigrateNid extends Command
 
     protected function duplicateGroups(Collection $collection, string $field): int
     {
-        $groups = $collection->aggregate([
-            ['$match' => [$field => ['$exists' => true]]],
-            ['$group' => ['_id' => '$' . $field, 'c' => ['$sum' => 1]]],
-            ['$match' => ['c' => ['$gt' => 1]]],
-        ])->toArray();
-
-        return count($groups);
+        return count($collection->aggregate($this->duplicateGroupsPipeline($field, false))->toArray());
     }
 
     protected function reportDuplicateGroups(Collection $collection, string $field, int $top = 5): void
     {
-        $groups = $collection->aggregate([
-            ['$match' => [$field => ['$exists' => true]]],
-            ['$group' => ['_id' => '$' . $field, 'c' => ['$sum' => 1]]],
-            ['$match' => ['c' => ['$gt' => 1]]],
-            ['$sort' => ['c' => -1]],
-            ['$limit' => $top],
-        ])->toArray();
+        $pipeline = $this->duplicateGroupsPipeline($field, true);
+        $pipeline[] = ['$limit' => $top];
 
-        foreach ($groups as $group) {
+        foreach ($collection->aggregate($pipeline)->toArray() as $group) {
             $this->line("      {$field}=" . json_encode($group->_id) . " x{$group->c}");
         }
+    }
+
+    /**
+     * Groups documents by the value that will live under `nid` after the
+     * rename, so a database that has not been migrated yet still reports the
+     * collisions its `id` values are about to become.
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected function duplicateGroupsPipeline(string $field, bool $sort): array
+    {
+        $projected = $field === 'nid' && $this->projectsRename();
+
+        $pipeline = [
+            ['$match' => $projected ? $this->nidExistsFilter() : [$field => ['$exists' => true]]],
+            ['$group' => [
+                '_id' => $projected ? $this->nidGroupKey() : '$' . $field,
+                'c' => ['$sum' => 1],
+            ]],
+            ['$match' => ['c' => ['$gt' => 1]]],
+        ];
+
+        if ($sort) {
+            $pipeline[] = ['$sort' => ['c' => -1]];
+        }
+
+        return $pipeline;
     }
 
     /**
