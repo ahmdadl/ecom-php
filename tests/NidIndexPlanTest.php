@@ -113,4 +113,14 @@ class NidIndexPlanTest extends TestCase
 
         $this->assertFalse($plan->nidIndexes[0]->isUniqueNidIndex());
     }
+
+    public function test_a_composite_unique_nid_index_is_not_treated_as_the_unique_nid_index(): void
+    {
+        $spec = NidIndexSpec::fromArray([
+            'keys' => ['nid' => 1, 'tenantId' => 1],
+            'unique' => true,
+        ]);
+
+        $this->assertFalse($spec->isUniqueNidIndex(), 'a composite unique index allows nid duplicates and must not block the migration');
+    }
 }

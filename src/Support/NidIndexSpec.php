@@ -68,10 +68,16 @@ final class NidIndexSpec
     /**
      * Whether this index is the unique `nid` index, i.e. the one that duplicate
      * `nid` values would block.
+     *
+     * Only the exact `{nid: 1}` unique index qualifies — a composite index like
+     * `{nid: 1, other: 1}` allows duplicate `nid` values as long as the
+     * combination is unique, so it must not gate the migration on `nid`
+     * duplicates.
      */
     public function isUniqueNidIndex(): bool
     {
-        return $this->unique && array_key_exists('nid', $this->keys);
+        return $this->unique
+            && $this->keys === ['nid' => 1];
     }
 
     /**
