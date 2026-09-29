@@ -261,6 +261,26 @@ class NidMigrationTest extends TestCase
         $this->assertNotContains('nid_1', $this->indexNames('gadgetsTrash'), 'a unique nid index cannot apply here');
     }
 
+    public function test_a_collection_still_on_id_is_told_to_rename_not_to_opt_out(): void
+    {
+        $this->seedLegacy();
+        $this->database()->selectCollection('gadgets')->insertOne(['_id' => 2, 'id' => 6, 'name' => 'second']);
+
+        // `gadgets` is entirely on `id`, so asked to index it on its own there
+        // is no top-level nid to index. That is the same shape as a `*Trash`
+        // collection, but the opposite problem: this one is waiting for the
+        // rename. Telling the user to opt it out of mongez.nid.indexes would
+        // silence a collection that should have been migrated.
+        // A dry run, so the exit code is not gated on findings (only --execute
+        // and a verify-only run gate). The advice in the report is the point.
+        $this->migrate(['--phase' => ['indexes']]);
+        $output = Artisan::output(); // fetched once: the buffer is drained on read
+
+        $this->assertStringContainsString('gadgets: cannot create nid_1', $output);
+        $this->assertStringContainsString('still on `id`', $output);
+        $this->assertStringNotContainsString('opt this collection out', $output);
+    }
+
     public function test_a_partially_identified_collection_still_blocks(): void
     {
         $this->seedLegacy();
@@ -287,6 +307,22 @@ class NidMigrationTest extends TestCase
         // is clean, and blocking here would fail a migration that succeeds.
         $this->assertSame(0, $this->migrate(['--execute' => true]));
         $this->assertSame(44, $this->first('widgets', ['nid' => 44])['nid']);
+    }
+
+    public function test_the_inventory_phase_alone_reports_the_whole_migration(): void
+    {
+        $this->seedLegacy();
+        $widgets = $this->database()->selectCollection('widgets');
+        $widgets->insertOne(['_id' => 2, 'nid' => 43, 'name' => 'has one']);
+        $widgets->insertOne(['_id' => 3, 'id' => 44, 'name' => 'still on id']);
+
+        // `--phase=inventory` is a pre-flight report, so it must describe the
+        // migration the user is about to run rather than the state stored right
+        // now. Judged on the stored state it calls the two `id` documents a gap
+        // and fails, which is a different verdict from the full run — that one
+        // renames them and succeeds.
+        $this->assertSame(0, $this->migrate(['--phase' => ['inventory']]));
+        $this->assertStringNotContainsString('will still carry no nid', Artisan::output());
     }
 
     public function test_a_dry_run_reports_duplicates_among_the_ids_about_to_become_nids(): void

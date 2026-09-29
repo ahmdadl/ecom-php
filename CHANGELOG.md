@@ -44,6 +44,17 @@
     half-migrated collection is no longer reported clean. Colliding `id` and
     `nid` values were invisible before, and reached the unique index, which
     then refused to build.
+- That projection is now scoped per phase rather than applied to the whole run.
+  `inventory` always projects, because it is a pre-flight report and
+  `--phase=inventory` used to reach a different verdict from the default
+  five-phase run. The `indexes` and `verify` phases project only when this same
+  invocation also renames — asked to index a database still on `id`, they now
+  say so instead of assuming a rename that was not requested.
+- Fixed `--phase=indexes` advising a collection to be opted out of
+  `mongez.nid.indexes` when the real problem was that it had not been migrated.
+  A `*Trash` collection has no top-level identity by design and stays a
+  warning; a collection still sitting on `id` is waiting for the rename and is
+  now a blocker that says to include the rename phase.
 
 ### Added
 
