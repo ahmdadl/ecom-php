@@ -67,7 +67,6 @@ class ObjectUnit extends UnitType
 
         if ($this->isNulable && $this->value === null) return $this;
 
-        // TODO: Strict with additional keys that should not be in the response
         if ($this->isStrict) {
             $additionalKeys = array_diff(
                 array_keys((array) $this->value),
@@ -75,7 +74,7 @@ class ObjectUnit extends UnitType
             );
 
             if ($additionalKeys) {
-                return $this->addError('strict', sprintf(':key has addiotional keys that is is not supposed to be in the response, %s', $this->color(implode(', ', $additionalKeys), 'yellow')));
+                return $this->addError('strict', sprintf(':key has additional keys that are not supposed to be in the response, %s', $this->color(implode(', ', $additionalKeys), 'yellow')));
             }
         }
 
