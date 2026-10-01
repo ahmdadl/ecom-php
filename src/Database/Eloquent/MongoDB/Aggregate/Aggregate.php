@@ -11,13 +11,6 @@ use MongoDB\BSON\UTCDateTime;
 
 class Aggregate
 {
-    // TODO: Sort
-    // TODO: Limit
-    // TODO: Skip
-    // TODO: Join
-    // TODO: Unwind
-    // TODO: GeoNear
-
     /**
      * Query Builder
      *
@@ -420,6 +413,65 @@ class Aggregate
     public function skip($number)
     {
         return $this->pipeline('skip')->skip($number);
+    }
+
+    /**
+     * Add a $geoNear stage to the pipeline.
+     *
+     * ⚠ MongoDB requires $geoNear to be the FIRST stage in the pipeline.
+     * This method will throw an exception if any stages have already been added.
+     *
+     * @param array<int|float, mixed>|array{type: 'Point', coordinates: array<int|float, mixed>} $near  Point as [longitude, latitude] or GeoJSON Point
+     * @param string $distanceField  Output field name for the calculated distance
+     * @param int|float|null $maxDistance  Maximum distance (in meters if spherical)
+     * @param int|float|null $minDistance  Minimum distance (in meters if spherical)
+     * @param array<string, mixed>|null $query  Additional query filter
+     * @param int|float|null $distanceMultiplier  Factor to multiply distances (e.g., 0.001 for km)
+     * @param bool $spherical  Use spherical geometry (default true)
+     * @param string|null $includeLocs  Output field for the location used in calculation
+     * @return Pipeline
+     * @throws \InvalidArgumentException if $geoNear is not the first stage
+     */
+    public function geoNear(
+        $near,
+        string $distanceField,
+        $maxDistance = null,
+        $minDistance = null,
+        ?array $query = null,
+        $distanceMultiplier = null,
+        bool $spherical = true,
+        ?string $includeLocs = null
+    ): Pipeline {
+        if ($this->pipelines !== []) {
+            throw new \InvalidArgumentException(
+                '$geoNear must be the first stage in the aggregation pipeline. ' .
+                'Call geoNear() before any other pipeline methods (where, groupBy, orderBy, etc.).'
+            );
+        }
+
+        $geoNearData = [
+            'near' => $near,
+            'distanceField' => $distanceField,
+            'spherical' => $spherical,
+        ];
+
+        if ($maxDistance !== null) {
+            $geoNearData['maxDistance'] = $maxDistance;
+        }
+        if ($minDistance !== null) {
+            $geoNearData['minDistance'] = $minDistance;
+        }
+        if ($query !== null) {
+            $geoNearData['query'] = $query;
+        }
+        if ($distanceMultiplier !== null) {
+            $geoNearData['distanceMultiplier'] = $distanceMultiplier;
+        }
+        if ($includeLocs !== null) {
+            $geoNearData['includeLocs'] = $includeLocs;
+        }
+
+        return $this->pipeline('geoNear')->data($geoNearData);
     }
 
     /**
