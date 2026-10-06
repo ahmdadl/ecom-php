@@ -31,6 +31,8 @@ use HZ\Illuminate\Mongez\Console\Commands\EngezMigration;
 use HZ\Illuminate\Mongez\Console\Commands\EngezController;
 use HZ\Illuminate\Mongez\Console\Commands\MigrateNid;
 use HZ\Illuminate\Mongez\Console\Commands\AuditNid;
+use HZ\Illuminate\Mongez\Console\Commands\NidSnapshot;
+use HZ\Illuminate\Mongez\Console\Commands\NidSync;
 use HZ\Illuminate\Mongez\Console\Commands\EngezRepository;
 use HZ\Illuminate\Mongez\Console\Commands\EngezTranslation;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -62,6 +64,8 @@ class MongezServiceProvider extends ServiceProvider
         EngezController::class,
         MigrateNid::class,
         AuditNid::class,
+        NidSnapshot::class,
+        NidSync::class,
         EngezRepository::class,
         EngezTranslation::class,
         PostmanCollection::class,

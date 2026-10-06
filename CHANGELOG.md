@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [5.4.0] - 2026-10-06
+
 ### Changed
 
 - `mongez:migrate-nid` is now the single command for the whole `id` -> `nid`
@@ -70,6 +72,28 @@
 - `HZ\Illuminate\Mongez\Support\NidKeyRenamer`, `NidIndexSpec` and
   `NidIndexPlan`.
 - `scripts/mongo-nid-migration.js`, the standalone `mongosh` equivalent.
+- `mongez:nid-snapshot --uri=...` takes the cutover watermark: a per-collection
+  manifest (`count`, `maxId`, `maxObjectId` as hex, `maxUpdatedAt`) plus an
+  `ids` dump, written to `storage/app/nid-sync/manifest-{Ymd-His}.json` by
+  default (`--out` to choose). The recorded URI has its password stripped.
+- `mongez:nid-sync` keeps a migrated clone in step with the database it was
+  cloned from, in either direction: `--direction=forward` (old code still
+  writing `id` catches the clone up) or `--direction=reverse` (rollback to the
+  old code days later). Documents are keyed by `_id` — stable across the
+  clone — and selected by
+  `updatedAt >= watermark OR _id > manifest.maxObjectId`; `--since` accepts
+  an ISO8601 timestamp or a manifest path from `mongez:nid-snapshot`
+  (auto-detected). It walks every collection
+  except `*Trash` and the skip lists (or an explicit `--collection` allowlist),
+  batch-writes with `replaceOne` upserts, and transforms `id` <-> `nid` deeply
+  in flight with `--skip-path` honoured. `ids` counters are max-merged
+  (`--ids-strategy=max`, the forward default) or overwritten from source
+  (`--ids-strategy=overwrite`, the reverse default). Dry run unless
+  `--execute`, and it refuses to sync a database to itself.
+- `NidKeyRenamer` grew the reverse path the sync tooling needs: `revert()`,
+  `containsNidKey()`, `renameTopLevelDoc()` and `revertTopLevelDoc()` walk a
+  document back from `nid` to `id` with the same skip-path rules as the
+  forward rename.
 
 ## [5.3.0] - 2026-09-08
 

@@ -192,6 +192,175 @@ final class NidKeyRenamer
         return $out;
     }
 
+    // ── Reverse: nid -> id (for rollback / new->old sync) ─────────────────
+
+    /**
+     * Mirror of {@see rename()} but `nid` -> `id`.
+     *
+     * Used by the `mongez:nid-sync --direction=reverse` rollback path.
+     * Same deep walk, same `skipPaths` handling, same idempotency rule:
+     * if a document already carries `id` alongside `nid`, `id` wins and the
+     * stale `nid` is dropped.
+     *
+     * @param  array<string, mixed>  $document  Decoded with {@see TYPE_MAP}.
+     * @return array{document: array<string, mixed>, renamedKeys: int, droppedKeys: int, paths: list<string>}
+     */
+    public function revert(array $document): array
+    {
+        $renamed = 0;
+        $dropped = 0;
+        /** @var array<string, true> $paths */
+        $paths = [];
+
+        $result = $this->walkFieldsReverse($document, '', $renamed, $dropped, $paths);
+
+        $names = array_keys($paths);
+        sort($names);
+
+        return [
+            'document' => $result,
+            'renamedKeys' => $renamed,
+            'droppedKeys' => $dropped,
+            'paths' => $names,
+        ];
+    }
+
+    /**
+     * Mirror of {@see containsIdKey()} for `nid` keys.
+     */
+    public function containsNidKey(mixed $value, string $path = ''): bool
+    {
+        if ($value instanceof stdClass) {
+            return $this->fieldsContainNidKey((array) $value, $path);
+        }
+
+        if (! is_array($value)) {
+            return false;
+        }
+
+        if (! array_is_list($value)) {
+            return $this->fieldsContainNidKey($value, $path);
+        }
+
+        $childPath = $path === '' ? '[]' : $path . '[]';
+
+        foreach ($value as $child) {
+            if ($this->containsNidKey($child, $childPath)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Shallow `id` -> `nid` for `--top-level-only` syncs.
+     *
+     * @param  array<string, mixed>  $document
+     * @return array{document: array<string, mixed>, renamedKeys: int, droppedKeys: int}
+     */
+    public function renameTopLevelDoc(array $document): array
+    {
+        if (! array_key_exists('id', $document)) {
+            return ['document' => $document, 'renamedKeys' => 0, 'droppedKeys' => 0];
+        }
+
+        if (array_key_exists('nid', $document)) {
+            unset($document['id']);
+
+            return ['document' => $document, 'renamedKeys' => 0, 'droppedKeys' => 1];
+        }
+
+        $document['nid'] = $document['id'];
+        unset($document['id']);
+
+        return ['document' => $document, 'renamedKeys' => 1, 'droppedKeys' => 0];
+    }
+
+    /**
+     * Shallow `nid` -> `id` for `--top-level-only` reverse syncs.
+     *
+     * @param  array<string, mixed>  $document
+     * @return array{document: array<string, mixed>, renamedKeys: int, droppedKeys: int}
+     */
+    public function revertTopLevelDoc(array $document): array
+    {
+        if (! array_key_exists('nid', $document)) {
+            return ['document' => $document, 'renamedKeys' => 0, 'droppedKeys' => 0];
+        }
+
+        if (array_key_exists('id', $document)) {
+            unset($document['nid']);
+
+            return ['document' => $document, 'renamedKeys' => 0, 'droppedKeys' => 1];
+        }
+
+        $document['id'] = $document['nid'];
+        unset($document['nid']);
+
+        return ['document' => $document, 'renamedKeys' => 1, 'droppedKeys' => 0];
+    }
+
+    /**
+     * @param  array<string, true>  $paths
+     */
+    private function walkReverse(mixed $value, string $path, int &$renamed, int &$dropped, array &$paths): mixed
+    {
+        if ($value instanceof stdClass) {
+            return $this->asDocument($this->walkFieldsReverse((array) $value, $path, $renamed, $dropped, $paths));
+        }
+
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        if (! array_is_list($value)) {
+            return $this->asDocument($this->walkFieldsReverse($value, $path, $renamed, $dropped, $paths));
+        }
+
+        $out = [];
+        $childPath = $path === '' ? '[]' : $path . '[]';
+
+        foreach ($value as $child) {
+            $out[] = $this->walkReverse($child, $childPath, $renamed, $dropped, $paths);
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $fields
+     * @param  array<string, true>  $paths
+     * @return array<array-key, mixed>
+     */
+    private function walkFieldsReverse(array $fields, string $path, int &$renamed, int &$dropped, array &$paths): array
+    {
+        $out = [];
+
+        foreach ($fields as $key => $child) {
+            $childPath = $path === '' ? (string) $key : $path . '.' . $key;
+
+            if ($key === 'nid' && ! $this->isSkipped($childPath)) {
+                $paths[$childPath] = true;
+
+                if (array_key_exists('id', $fields)) {
+                    $dropped++;
+
+                    continue;
+                }
+
+                $renamed++;
+                $out['id'] = $this->walkReverse($child, $this->idPath($childPath), $renamed, $dropped, $paths);
+
+                continue;
+            }
+
+            $out[$key] = $this->walkReverse($child, $childPath, $renamed, $dropped, $paths);
+        }
+
+        return $out;
+    }
+
     /**
      * @param  array<array-key, mixed>  $fields
      */
@@ -205,6 +374,26 @@ final class NidKeyRenamer
             }
 
             if ($this->containsIdKey($child, $childPath)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $fields
+     */
+    private function fieldsContainNidKey(array $fields, string $path): bool
+    {
+        foreach ($fields as $key => $child) {
+            $childPath = $path === '' ? (string) $key : $path . '.' . $key;
+
+            if ($key === 'nid' && ! $this->isSkipped($childPath)) {
+                return true;
+            }
+
+            if ($this->containsNidKey($child, $childPath)) {
                 return true;
             }
         }
@@ -234,5 +423,12 @@ final class NidKeyRenamer
         return str_ends_with($dottedPath, '.id')
             ? substr($dottedPath, 0, -3) . '.nid'
             : 'nid';
+    }
+
+    private function idPath(string $dottedPath): string
+    {
+        return str_ends_with($dottedPath, '.nid')
+            ? substr($dottedPath, 0, -4) . '.id'
+            : 'id';
     }
 }
