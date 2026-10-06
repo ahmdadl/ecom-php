@@ -137,18 +137,30 @@ return [
     */
     'nid' => [
         'skip_paths' => [
-            // 'providerResponse',
+            'providerResponse',
         ],
         'default_nid_index' => env('MONGEZ_NID_DEFAULT_INDEX', true),
         'indexes' => [
-            // 'customers' => [
-            //     'nid' => [
-            //         ['keys' => ['nid' => 1]],
-            //     ],
-            //     'additional' => [
-            //         ['keys' => ['phoneNumber' => 1], 'unique' => true],
-            //     ],
-            // ],
+            // Production rehearsal on zamilDev revealed duplicate business ids
+            // plus 2 id-less users rows — legacy id_1 was non-unique there.
+            'users' => [
+                'nid' => [['keys' => ['nid' => 1], 'unique' => false]],
+            ],
+            'guests' => [
+                'nid' => [['keys' => ['nid' => 1], 'unique' => false]],
+            ],
+            'update_logs' => [
+                'nid' => [['keys' => ['nid' => 1], 'unique' => false]],
+            ],
+            'order_item_statuses' => [
+                'nid' => [['keys' => ['nid' => 1], 'unique' => false]],
+            ],
+            'order_items' => [
+                'nid' => [['keys' => ['nid' => 1], 'unique' => false]],
+            ],
+            'carts' => [
+                'nid' => [['keys' => ['nid' => 1], 'unique' => false]],
+            ],
         ],
     ],
 

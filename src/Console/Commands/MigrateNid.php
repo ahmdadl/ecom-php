@@ -305,9 +305,22 @@ class MigrateNid extends Command
                 $duplicates,
             ));
 
+            $plan = NidIndexPlan::resolve($name, (array) config('mongez.nid.indexes', []), (bool) config('mongez.nid.default_nid_index', true));
+            $hasUniqueNid = false;
+            foreach ($plan->nidIndexes as $spec) {
+                if ($spec->isUniqueNidIndex()) {
+                    $hasUniqueNid = true;
+                    break;
+                }
+            }
+
             if ($duplicates > 0) {
-                $blockers++;
-                $this->error("  $name: {$duplicates} duplicate nid group(s) — the unique nid index will be refused until these are resolved by hand");
+                if ($hasUniqueNid) {
+                    $blockers++;
+                    $this->error("  $name: {$duplicates} duplicate nid group(s) — the unique nid index will be refused until these are resolved by hand");
+                } else {
+                    $this->warn("  $name: {$duplicates} duplicate nid group(s) — non-unique nid index allows this");
+                }
                 $this->reportDuplicateGroups($collection, 'nid', $project);
             }
 
@@ -316,8 +329,12 @@ class MigrateNid extends Command
             }
 
             if ($left > 1 && $nid > 0) {
-                $blockers++;
-                $this->error("  $name: {$left} document(s) will still carry no nid after the rename — they will collide on the unique nid index");
+                if ($hasUniqueNid) {
+                    $blockers++;
+                    $this->error("  $name: {$left} document(s) will still carry no nid after the rename — they will collide on the unique nid index");
+                } else {
+                    $this->warn("  $name: {$left} document(s) will still carry no nid after the rename — non-unique nid index allows this");
+                }
             }
 
             if ($left > 1 && $nid === 0 && $legacy === 0) {
