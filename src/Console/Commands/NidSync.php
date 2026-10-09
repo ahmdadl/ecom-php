@@ -57,6 +57,7 @@ class NidSync extends Command
         {--top-level-only : Rename only the top-level key, leaving nested and array keys alone}
         {--batch=500 : Documents per bulk write}
         {--ids-strategy= : How to sync the ids collection: max (merge) or overwrite (copy source). Defaults to max for forward, overwrite for reverse}
+        {--delete-missing : Also delete documents in target that no longer exist in source (for the synced collections)}
         {--execute : Apply the sync instead of dry-run}';
 
     protected $description = 'Sync delta between old (id) and new (nid) databases by _id + updatedAt watermark, with id<->nid deep rename and ids counter merge';
@@ -85,6 +86,7 @@ class NidSync extends Command
         $execute = (bool) $this->option('execute');
         $topLevelOnly = (bool) $this->option('top-level-only');
         $includeTrash = (bool) $this->option('include-trash');
+        $deleteMissing = (bool) $this->option('delete-missing');
         $batch = max(1, (int) $this->option('batch'));
 
         $skipPaths = $this->skipPaths();
@@ -144,6 +146,10 @@ class NidSync extends Command
         }
 
         $targets = $this->targetCollections($sourceDb, $includeTrash);
+        $hasCollectionFilter = count(array_values(array_filter(array_map(
+            static fn ($name): string => trim((string) $name),
+            (array) $this->option('collection'),
+        )))) > 0;
 
         $idsRaw = $this->option('ids-strategy');
         $idsStrategy = is_string($idsRaw) ? trim($idsRaw) : '';
@@ -185,6 +191,12 @@ class NidSync extends Command
 
         $this->line(sprintf('  ids strategy: %s', $idsStrategy));
         $this->line('  collections: ' . (empty($targets) ? '<none>' : implode(', ', $targets)));
+        if ($deleteMissing) {
+            $this->line('  delete-missing: enabled (target docs absent in source will be deleted)');
+        }
+        if ($hasCollectionFilter) {
+            $this->line('  ids scope: synced collections only (due to --collection)');
+        }
 
         if (! $execute) {
             $this->comment('Dry run — nothing is written. Pass --execute to apply.');
@@ -249,7 +261,13 @@ class NidSync extends Command
                 $transformed = null;
                 $stats = null;
 
-                if ($topLevelOnly) {
+                $isTrash = str_ends_with($name, 'Trash');
+
+                if ($isTrash) {
+                    // Trash is {primaryId, record:{...}, deletedAt} — record still uses `id` even in nid_final,
+                    // so deep rename would diverge. Copy verbatim.
+                    $transformed = $document;
+                } elseif ($topLevelOnly) {
                     if ($direction === 'forward') {
                         $stats = $renamer->renameTopLevelDoc($document);
                     } else {
@@ -320,9 +338,91 @@ class NidSync extends Command
             ));
         }
 
+        if ($deleteMissing) {
+            $this->line("\n--- deletes (missing in source) ---");
+            $totalDeletes = 0;
+            foreach ($targets as $name) {
+                if (str_ends_with($name, 'Trash')) {
+                    $this->line("  {$name}: skipped (trash is append-only)");
+                    continue;
+                }
+                $sourceColl = $sourceDb->selectCollection($name);
+                $targetColl = $targetDb->selectCollection($name);
+                // Quick check: if target count <= source count, still need diff but report.
+                try {
+                    $targetCount = $targetColl->countDocuments([]);
+                    $sourceCount = $sourceColl->countDocuments([]);
+                } catch (\Throwable $e) {
+                    $this->warn("  {$name}: count failed — " . $e->getMessage());
+                    continue;
+                }
+                if ($targetCount === 0) {
+                    $this->line("  {$name}: target empty — nothing to delete");
+                    continue;
+                }
+                // Collect source _ids into hash for fast lookup. For large collections, stream in batches.
+                $sourceIds = [];
+                try {
+                    $cur = $sourceColl->find([], ['projection' => ['_id' => 1], 'typeMap' => ['root' => 'array', 'document' => 'array']]);
+                    foreach ($cur as $doc) {
+                        if (! isset($doc['_id'])) continue;
+                        $id = $doc['_id'];
+                        $key = $id instanceof ObjectId ? (string) $id : (is_string($id) ? $id : json_encode($id));
+                        $sourceIds[$key] = true;
+                    }
+                } catch (\Throwable $e) {
+                    $this->error("  {$name}: source _id scan failed — " . $e->getMessage());
+                    continue;
+                }
+                // Scan target, collect missing
+                $missing = [];
+                try {
+                    $cur = $targetColl->find([], ['projection' => ['_id' => 1], 'typeMap' => ['root' => 'array', 'document' => 'array']]);
+                    foreach ($cur as $doc) {
+                        if (! isset($doc['_id'])) continue;
+                        $id = $doc['_id'];
+                        $key = $id instanceof ObjectId ? (string) $id : (is_string($id) ? $id : json_encode($id));
+                        if (! isset($sourceIds[$key])) {
+                            $missing[] = $id;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    $this->error("  {$name}: target _id scan failed — " . $e->getMessage());
+                    continue;
+                }
+                $deleteCount = count($missing);
+                $this->line(sprintf('  %s: target=%d source=%d missing=%d%s', $name, $targetCount, $sourceCount, $deleteCount, $execute ? '' : ' (would delete)'));
+                $totalDeletes += $deleteCount;
+                if ($deleteCount === 0 || ! $execute) {
+                    continue;
+                }
+                // Batch deletes
+                $batchIds = [];
+                foreach ($missing as $oid) {
+                    $batchIds[] = $oid;
+                    if (count($batchIds) >= $batch) {
+                        try {
+                            $targetColl->deleteMany(['_id' => ['$in' => $batchIds]]);
+                        } catch (\Throwable $e) {
+                            $this->error("  {$name}: deleteMany failed — " . $e->getMessage());
+                        }
+                        $batchIds = [];
+                    }
+                }
+                if ($batchIds !== []) {
+                    try {
+                        $targetColl->deleteMany(['_id' => ['$in' => $batchIds]]);
+                    } catch (\Throwable $e) {
+                        $this->error("  {$name}: deleteMany (tail) failed — " . $e->getMessage());
+                    }
+                }
+            }
+            $this->line(sprintf('  deletes total: %d%s', $totalDeletes, $execute ? ' EXECUTED' : ' (dry run)'));
+        }
+
         // Sync ids counters afterwards, so target data max reflects freshly copied docs.
         $this->line("\n--- ids counters ---");
-        $idsBlockers = $this->syncIds($sourceDb, $targetDb, $idsStrategy, $execute, $targets);
+        $idsBlockers = $this->syncIds($sourceDb, $targetDb, $idsStrategy, $execute, $targets, $hasCollectionFilter);
 
         $this->line(sprintf(
             "\nTotal: scanned=%d upserts=%d (ids blockers: %d) %s",
@@ -596,7 +696,7 @@ class NidSync extends Command
     /**
      * @param  list<string>  $targets
      */
-    private function syncIds(MongoDatabase $sourceDb, MongoDatabase $targetDb, string $strategy, bool $execute, array $targets): int
+    private function syncIds(MongoDatabase $sourceDb, MongoDatabase $targetDb, string $strategy, bool $execute, array $targets, bool $hasCollectionFilter = false): int
     {
         $sourceIds = $sourceDb->selectCollection('ids');
         $targetIds = $targetDb->selectCollection('ids');
@@ -606,7 +706,12 @@ class NidSync extends Command
         $targetMap = $this->collectIdsMap($targetIds);
 
         // Universe of collections to consider: union of ids rows + data targets.
+        // When --collection is scoped, limit ids to those collections only.
         $allNames = array_unique(array_merge(array_keys($sourceMap), array_keys($targetMap), $targets));
+        if ($hasCollectionFilter) {
+            $allow = array_flip($targets);
+            $allNames = array_values(array_filter($allNames, static fn (string $n): bool => isset($allow[$n])));
+        }
         sort($allNames);
 
         // Filter to those not skipped? Already targets filtered; for ids we also want to sync all ids rows though.
@@ -624,8 +729,11 @@ class NidSync extends Command
         }));
 
         if ($strategy === 'overwrite') {
-            // Copy source rows verbatim (canonical form)
+            // Copy source rows verbatim (canonical form) — scoped when --collection given.
             foreach ($sourceMap as $name => $rows) {
+                if ($hasCollectionFilter && ! in_array($name, $targets, true)) {
+                    continue;
+                }
                 $max = $this->maxCounterFromRows($rows);
                 // Find source canonical row value (first row's id if single, else max)
                 $sourceValue = $max;
