@@ -216,6 +216,37 @@ abstract class JsonResourceManager extends JsonResource
     protected static int $declaredClassesCount = -1;
 
     /**
+     * Whether this resource is rendered as part of a `list()` endpoint.
+     *
+     * Set by the list wrapping path ({@see \HZ\Illuminate\Mongez\Repository\Concerns\Listable::records()}).
+     * Detail paths (`wrap()`, `getBy()`, `get()`) leave it false, so resources
+     * can branch in `extend()` — e.g. skip per-row queries or read from a
+     * primed listing context instead. Instance-level, so Octane-safe by
+     * construction (no static state to reset).
+     *
+     * @var bool
+     */
+    protected bool $isListingContext = false;
+
+    /**
+     * Mark this resource as part of a listing response.
+     */
+    public function asListing(): static
+    {
+        $this->isListingContext = true;
+
+        return $this;
+    }
+
+    /**
+     * Whether this resource is rendered as part of a `list()` endpoint.
+     */
+    public function isListing(): bool
+    {
+        return $this->isListingContext;
+    }
+
+    /**
      * Capture the current disabled and allowed keys as the baseline.
      *
      * This should be called once after the application has booted to keep
@@ -882,7 +913,17 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected function makeResource(string $resourceClassName, $resourceData)
     {
-        return $resourceData === null ? null : new $resourceClassName(new Fluent($resourceData));
+        if ($resourceData === null) {
+            return null;
+        }
+
+        $resource = new $resourceClassName(new Fluent($resourceData));
+
+        if ($resource instanceof JsonResourceManager && $this->isListingContext) {
+            $resource->asListing();
+        }
+
+        return $resource;
     }
 
     /**
@@ -998,6 +1039,14 @@ abstract class JsonResourceManager extends JsonResource
         }
 
         $resources = $resource::collection($collection);
+
+        if ($this->isListingContext) {
+            foreach ($resources->collection as $item) {
+                if ($item instanceof JsonResourceManager) {
+                    $item->asListing();
+                }
+            }
+        }
 
         // the ->values() is needed to make sure it is a valid array syntax not an object
         $resources->collection = $resources->collection->filter(fn(JsonResourceManager $resource) => $resource->canBeEmbedded($this))->values();

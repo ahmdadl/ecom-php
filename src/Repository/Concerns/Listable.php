@@ -598,11 +598,18 @@ trait Listable
     /**
      * Adjust records that were fetched from database
      *
+     * Calls {@see primeListing()} once with the raw models so repositories can
+     * batch-preload referenced documents for the whole page, then wraps each
+     * record in its resource marked via `asListing()` so `extend()` can tell
+     * list rendering apart from detail rendering (`wrap()`, `getBy()`).
+     *
      * @param \Illuminate\Support\Collection<int, \Illuminate\Database\Eloquent\Model> $records
      * @return \Illuminate\Support\Collection<int, mixed>
      */
     protected function records(Collection $records): Collection
     {
+        $this->primeListing($records);
+
         $hasArrayableData = !empty(static::ARRAYBLE_DATA);
         return $records->map(function ($record) use ($hasArrayableData) {
             if ($hasArrayableData) {
@@ -615,9 +622,27 @@ trait Listable
 
             $resource = $this->getResourceClass();
 
-            return new $resource((object) $record);
+            $resourceInstance = new $resource((object) $record);
+
+            if (method_exists($resourceInstance, 'asListing')) {
+                $resourceInstance->asListing();
+            }
+
+            return $resourceInstance;
         });
     }
+
+    /**
+     * Batch-preload anything the listing resources need, once per `list()` call.
+     *
+     * Override in a repository to resolve N+1 lookups for the whole page with
+     * a fixed number of queries (e.g. `whereIn`) and stash the results in a
+     * request-scoped listing context that the resource's `extend()` reads via
+     * `$this->isListing()`. Default is a no-op. Never called on detail paths.
+     *
+     * @param \Illuminate\Support\Collection<int, \Illuminate\Database\Eloquent\Model> $records
+     */
+    protected function primeListing(Collection $records): void {}
 
     /**
      * Decode the array, which should be a string if you're working with mysql
