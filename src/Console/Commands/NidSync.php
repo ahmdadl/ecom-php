@@ -365,7 +365,7 @@ class NidSync extends Command
                 try {
                     $cur = $sourceColl->find([], ['projection' => ['_id' => 1], 'typeMap' => ['root' => 'array', 'document' => 'array']]);
                     foreach ($cur as $doc) {
-                        if (! isset($doc['_id'])) continue;
+                        if (! is_array($doc) || ! isset($doc['_id'])) continue;
                         $id = $doc['_id'];
                         $key = $id instanceof ObjectId ? (string) $id : (is_string($id) ? $id : json_encode($id));
                         $sourceIds[$key] = true;
@@ -379,7 +379,7 @@ class NidSync extends Command
                 try {
                     $cur = $targetColl->find([], ['projection' => ['_id' => 1], 'typeMap' => ['root' => 'array', 'document' => 'array']]);
                     foreach ($cur as $doc) {
-                        if (! isset($doc['_id'])) continue;
+                        if (! is_array($doc) || ! isset($doc['_id'])) continue;
                         $id = $doc['_id'];
                         $key = $id instanceof ObjectId ? (string) $id : (is_string($id) ? $id : json_encode($id));
                         if (! isset($sourceIds[$key])) {

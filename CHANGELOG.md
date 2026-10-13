@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased
+## [5.4.1] - 2026-10-13
+
+### Fixed
+
+- `mongez:migrate-nid` no longer exhausts low PHP memory limits (e.g. 128M)
+  on production-sized databases. The rename phase used to hold the original
+  document, its renamed copy and up to `--batch` queued replacements at once,
+  so a single multi-MB document could blow the limit. It now renames documents
+  in place (`NidKeyRenamer::renameInPlace()`), flushes the bulk queue when
+  growth exceeds 16MB, and pre-flushes before decoding the next document when
+  already over budget. Proven on a 1.56M-document restore: full `--execute`
+  completes under `memory_limit=128M`. The per-collection rename line now also
+  reports `mem=`/`peak=` for observability.
 
 ## [5.4.0] - 2026-10-06
 

@@ -390,48 +390,87 @@ class MigrateNid extends Command
             $renamed = 0;
             $dropped = 0;
 
-            foreach ($collection->find([], ['typeMap' => NidKeyRenamer::TYPE_MAP, 'batchSize' => $batch]) as $document) {
+            // Stream one document at a time with a single in-memory copy:
+            // renameInPlace() mutates the decoded document instead of building
+            // a second one, and the flush below is capped by count (--batch)
+            // AND bytes (16MB growth), so one multi-MB document flushes
+            // immediately instead of riding along with 99 siblings until the
+            // 128M limit blows inside Cursor->next(). gc_collect_cycles()
+            // reclaims the stdClass graphs left behind after each flush.
+            $cursor = $collection->find([], ['typeMap' => NidKeyRenamer::TYPE_MAP, 'batchSize' => $batch]);
+
+            $memBase = memory_get_usage(false);
+            $document = null;
+            $counts = null;
+
+            foreach ($cursor as $document) {
                 if (! is_array($document)) {
+                    unset($document);
                     continue;
                 }
 
                 $scanned++;
 
-                $result = $renamer->rename($document);
+                // Flush BEFORE decoding/walking when usage is already
+                // elevated: the next document could be a multi-MB monster
+                // whose decode transient alone approaches the limit, so it
+                // must never coexist with pending siblings.
+                if ($pending !== [] && memory_get_usage(false) - $memBase > 16777216) {
+                    $collection->bulkWrite($pending, ['ordered' => false]);
+                    $pending = [];
+                    $memBase = memory_get_usage(false);
+                    gc_collect_cycles();
+                }
 
-                if ($result['renamedKeys'] === 0 && $result['droppedKeys'] === 0) {
+                $_id = $document['_id'] ?? null;
+                $counts = $renamer->renameInPlace($document);
+
+                if ($counts['renamedKeys'] === 0 && $counts['droppedKeys'] === 0) {
+                    unset($document, $counts);
                     continue;
                 }
 
-                $renamed += $result['renamedKeys'];
-                $dropped += $result['droppedKeys'];
+                $renamed += $counts['renamedKeys'];
+                $dropped += $counts['droppedKeys'];
 
-                foreach ($result['paths'] as $path) {
+                foreach ($counts['paths'] as $path) {
                     $paths[$path] = true;
                 }
 
                 if (! $this->execute) {
+                    unset($document, $counts);
                     continue;
                 }
 
                 // Positional form: [filter, replacement]. The named
                 // filter/replacement keys are not part of bulkWrite's contract.
+                // $document moves into $pending by copy-on-write (no duplication
+                // yet); the unset drops our reference so only $pending holds it.
                 $pending[] = [
                     'replaceOne' => [
-                        ['_id' => $document['_id'] ?? null],
-                        $result['document'],
+                        ['_id' => $_id],
+                        $document,
                     ],
                 ];
 
-                if (count($pending) >= $batch) {
+                unset($document, $counts, $_id);
+
+                if (count($pending) >= $batch || (count($pending) > 0 && memory_get_usage(false) - $memBase > 16777216)) {
                     $collection->bulkWrite($pending, ['ordered' => false]);
                     $pending = [];
+                    $memBase = memory_get_usage(false);
+                    gc_collect_cycles();
                 }
             }
 
+            unset($cursor, $document, $counts);
+
             if ($pending !== []) {
                 $collection->bulkWrite($pending, ['ordered' => false]);
+                $pending = [];
             }
+
+            unset($pending);
 
             $renamedKeys += $renamed;
             $droppedKeys += $dropped;
@@ -441,13 +480,18 @@ class MigrateNid extends Command
             sort($pathNames);
 
             $this->line(sprintf(
-                '  %s: scanned=%d keys_renamed=%d stale_id_dropped=%d%s',
+                '  %s: scanned=%d keys_renamed=%d stale_id_dropped=%d mem=%.1fMB peak=%.1fMB%s',
                 $name,
                 $scanned,
                 $renamed,
                 $dropped,
+                memory_get_usage(false) / 1048576,
+                memory_get_peak_usage(false) / 1048576,
                 $pathNames === [] ? '' : ' paths=[' . implode(', ', $pathNames) . ']',
             ));
+
+            unset($paths, $pathNames, $collection);
+            gc_collect_cycles();
         }
 
         $this->line(sprintf(
@@ -1044,8 +1088,13 @@ class MigrateNid extends Command
     {
         $found = 0;
 
-        foreach ($collection->find([], ['typeMap' => NidKeyRenamer::TYPE_MAP]) as $document) {
-            if (! $renamer->containsIdKey($document)) {
+        $cursor = $collection->find([], ['typeMap' => NidKeyRenamer::TYPE_MAP]);
+
+        foreach ($cursor as $document) {
+            $hasId = $renamer->containsIdKey($document);
+            unset($document);
+
+            if (! $hasId) {
                 continue;
             }
 
@@ -1055,6 +1104,8 @@ class MigrateNid extends Command
                 break;
             }
         }
+
+        unset($cursor);
 
         return $found;
     }

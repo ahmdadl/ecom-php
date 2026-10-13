@@ -85,6 +85,113 @@ final class NidKeyRenamer
     }
 
     /**
+     * Rename every renamable `id` key to `nid` by mutating the given document.
+     *
+     * Same semantics as {@see rename()} (idempotency, `skipPaths`, path
+     * reporting) but keeps a single copy:peak memory is one document instead
+     * of two, which is what lets multi-MB documents migrate under a 128M
+     * limit. The only intentional difference is key order: `nid` is appended
+     * where `id` is removed instead of taking its position. Key order is
+     * insignificant to MongoDB and to the application.
+     *
+     * @param  array<mixed>  $document  Decoded with {@see TYPE_MAP}, mutated in place.
+     * @return array{renamedKeys: int, droppedKeys: int, paths: list<string>}
+     */
+    public function renameInPlace(array &$document): array
+    {
+        $renamed = 0;
+        $dropped = 0;
+        /** @var array<string, true> $paths */
+        $paths = [];
+
+        $this->walkFieldsInPlace($document, '', $renamed, $dropped, $paths);
+
+        $names = array_keys($paths);
+        sort($names);
+
+        return [
+            'renamedKeys' => $renamed,
+            'droppedKeys' => $dropped,
+            'paths' => $names,
+        ];
+    }
+
+    /**
+     * @param  array<string, true>  $paths
+     */
+    private function walkInPlace(mixed &$value, string $path, int &$renamed, int &$dropped, array &$paths): void
+    {
+        if ($value instanceof stdClass) {
+            $fields = (array) $value;
+            $this->walkFieldsInPlace($fields, $path, $renamed, $dropped, $paths);
+            $value = $this->asDocument($fields);
+
+            return;
+        }
+
+        if (! is_array($value)) {
+            return;
+        }
+
+        if (! array_is_list($value)) {
+            $this->walkFieldsInPlace($value, $path, $renamed, $dropped, $paths);
+
+            return;
+        }
+
+        $childPath = $path === '' ? '[]' : $path . '[]';
+
+        foreach ($value as &$child) {
+            $this->walkInPlace($child, $childPath, $renamed, $dropped, $paths);
+        }
+
+        unset($child);
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $fields
+     * @param  array<string, true>  $paths
+     */
+    private function walkFieldsInPlace(array &$fields, string $path, int &$renamed, int &$dropped, array &$paths): void
+    {
+        // Deferred: appending `nid` while iterating by reference could make
+        // foreach revisit the moved subtree, so the write happens after.
+        $movedValue = null;
+        $hasMoved = false;
+
+        foreach ($fields as $key => &$child) {
+            $childPath = $path === '' ? (string) $key : $path . '.' . $key;
+
+            if ($key === 'id' && ! $this->isSkipped($childPath)) {
+                $paths[$childPath] = true;
+
+                if (array_key_exists('nid', $fields)) {
+                    $dropped++;
+                    unset($fields[$key]);
+
+                    continue;
+                }
+
+                $renamed++;
+                $this->walkInPlace($child, $this->nidPath($childPath), $renamed, $dropped, $paths);
+                $movedValue = $child;
+                $hasMoved = true;
+                unset($fields[$key]);
+
+                continue;
+            }
+
+            $this->walkInPlace($child, $childPath, $renamed, $dropped, $paths);
+        }
+
+        unset($child);
+
+        if ($hasMoved) {
+            $fields['nid'] = $movedValue;
+        }
+    }
+
+    /**
      * Report whether any renamable `id` key survives anywhere in the value.
      *
      * Honours the same `skipPaths` list as {@see rename()}, so a collection that
