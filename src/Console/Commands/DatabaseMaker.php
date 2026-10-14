@@ -45,7 +45,7 @@ class DatabaseMaker extends Command
         $collation = config("database.connections.$driver.collation");
 
         if (! $database) {
-            $this->info('Skipping creation of database as env(DB_DATABASE) is empty');
+            $this->info('Skipping creation of database as database name is empty (config: database.connections.' . $driver . '.database)');
             return;
         }
 

@@ -109,7 +109,7 @@ class PostmanCollection extends Command
     */
     private function createCollection()
     {
-        $appName = env('APP_NAME', 'Postman Collection with Mongez');
+        $appName = config('app.name', 'Postman Collection with Mongez');
 
         $collection = [
             'item' => [],

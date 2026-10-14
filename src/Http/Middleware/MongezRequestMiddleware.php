@@ -123,6 +123,20 @@ class MongezRequestMiddleware
             return $betaDatabase;
         }
 
+        // `php artisan optimize` (`config:cache`) does not load the `.env` file
+        // at runtime (LoadEnvironmentVariables skips Dotenv when config is
+        // cached). Calling `env()` outside a config file then returns null and
+        // the beta switch silently breaks. Prefer the whitelisted
+        // `config/mongez.php` `database.beta` map (its `env()` calls are baked
+        // into `bootstrap/cache/config.php` at build time):
+        //   'beta' => ['BETA' => env('DB_DATABASE_BETA')]
+        // The direct `$_ENV`/`Env::get` fallback is kept for non-cached local
+        // development only and will intentionally return null when config is
+        // cached without a whitelist entry.
+        if (app()->configurationIsCached()) {
+            return null;
+        }
+
         return env("DB_DATABASE_$betaDBName") ?: null;
     }
 
