@@ -38,6 +38,13 @@ trait Listable
     protected $paginationInfo = [];
 
     /**
+     * Cursor pagination info
+     *
+     * @var array<string, mixed>
+     */
+    protected $cursorInfo = [];
+
+    /**
      * Current used resource class, 
      * defaults to static::RESOURCE
      * 
@@ -400,6 +407,97 @@ trait Listable
     public function getPaginationInfo(): array
     {
         return $this->paginationInfo;
+    }
+
+    /**
+     * Get cursor pagination info
+     *
+     * @return array<string, mixed>
+     */
+    public function getCursorInfo(): array
+    {
+        return $this->cursorInfo;
+    }
+
+    /**
+     * Return list of records using keyset (cursor) pagination by id.
+     *
+     * Avoids COUNT(*) and OFFSET; pages are fetched with
+     * `WHERE <cursorColumn> > <cursor> ORDER BY <cursorColumn> ASC LIMIT n+1`.
+     *
+     * @param  array<string, mixed> $options
+     * @return \Illuminate\Support\Collection<int, TModel>
+     */
+    public function listCursor(array $options): Collection
+    {
+        $this->initiateListing($options);
+
+        $this->trigger('listing', $this->query);
+
+        $cursorColumn = (string) ($this->option('cursorColumn', static::CURSOR_COLUMN ?? 'nid'));
+
+        $cursor = $this->option('cursor', $this->option('after', $this->option('lastId')));
+
+        $limit = (int) $this->option(
+            'limit',
+            $this->option('itemsPerPage', static::ITEMS_PER_PAGE ?? config('mongez.repository.pagination.itemsPerPage', 15))
+        );
+        $limit = max(1, $limit);
+
+        if ($cursor !== null && $cursor !== '' && $cursor !== false) {
+            if (is_string($cursor) && is_numeric($cursor)) {
+                $cursor = ctype_digit($cursor) ? (int) $cursor : (float) $cursor;
+            }
+            $this->query->where($cursorColumn, '>', $cursor);
+        }
+
+        $selectedColumns = $this->select->isNotEmpty() ? $this->select->list() : [];
+
+        if ($selectedColumns !== [] && !in_array('*', $selectedColumns, true) && !in_array($cursorColumn, $selectedColumns, true)) {
+            $selectedColumns[] = $cursorColumn;
+        }
+
+        if ($selectedColumns !== []) {
+            $this->query->select(...$selectedColumns);
+        }
+
+        $this->query->reorder();
+        $this->query->orderBy($cursorColumn, 'asc');
+
+        /** @var \Illuminate\Support\Collection<int, TModel> $rows */
+        $rows = $this->query->limit($limit + 1)->get();
+
+        $hasMore = $rows->count() > $limit;
+
+        $rows = $rows->take($limit)->values();
+
+        $nextCursor = null;
+        if ($hasMore && $rows->isNotEmpty()) {
+            /** @var TModel $last */
+            $last = $rows->last();
+            $nextCursor = $last->getAttribute($cursorColumn);
+        }
+
+        $records = $this->records($rows);
+
+        $results = $this->trigger('list', $records);
+        if ($results instanceof Collection) {
+            $records = $results;
+        }
+
+        $this->cursorInfo = [
+            'cursor'       => $cursor,
+            'nextCursor'   => $hasMore ? $nextCursor : null,
+            'hasMore'      => $hasMore,
+            'limit'        => $limit,
+            'count'        => $records->count(),
+            'cursorColumn' => $cursorColumn,
+        ];
+
+        // keep existing controllers that read getPaginationInfo() working
+        $this->paginationInfo = $this->cursorInfo;
+
+        return $records;
     }
 
     /**

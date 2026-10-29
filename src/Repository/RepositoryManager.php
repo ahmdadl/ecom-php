@@ -290,6 +290,13 @@ abstract class RepositoryManager implements RepositoryInterface
     const ITEMS_PER_PAGE = null;
 
     /**
+     * Default column used for keyset (cursor) pagination.
+     *
+     * @const string
+     */
+    const CURSOR_COLUMN = 'nid';
+
+    /**
      * Published column
      * 
      * @const string
@@ -430,15 +437,17 @@ abstract class RepositoryManager implements RepositoryInterface
      */
     public function list(array $options): Collection
     {
+        // Cursor pagination is explicit: only when pagination=cursor.
+        // Keeps `paginate` as bool (true|false|'false'|null) per config; no string overload.
+        if (($options['pagination'] ?? null) === 'cursor') {
+            return $this->listCursor($options);
+        }
+
         $this->initiateListing($options);
 
         $this->trigger("listing", $this->query);
 
         $paginate = $this->option('paginate', static::PAGINATE);
-
-        if ($this->request->input('paginate') === 'false') {
-            $paginate = false;
-        }
 
         if ($paginate === true || $paginate === null && config('mongez.repository.pagination.paginate') === true) {
             $pageNumber = $this->option('page', 1);

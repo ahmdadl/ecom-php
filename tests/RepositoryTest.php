@@ -92,4 +92,26 @@ final class RepositoryTest extends TestCase
         $repository->publish($product->nid, false);
         $this->assertNull($repository->getPublishedModel($product->nid));
     }
+
+    public function test_listCursor_paginates_by_nid(): void
+    {
+        $repository = $this->repository();
+        foreach (range(1, 5) as $i) {
+            $repository->create(['name' => "P{$i}", 'price' => $i]);
+        }
+
+        $page1 = $repository->listCursor(['limit' => 2]);
+        $this->assertCount(2, $page1);
+        $info1 = $repository->getCursorInfo();
+        $this->assertTrue($info1['hasMore']);
+        $this->assertNotNull($info1['nextCursor']);
+
+        $page2 = $repository->listCursor(['limit' => 2, 'cursor' => $info1['nextCursor']]);
+        $this->assertCount(2, $page2);
+
+        $page3 = $repository->listCursor(['limit' => 2, 'cursor' => $repository->getCursorInfo()['nextCursor']]);
+        $this->assertCount(1, $page3);
+        $this->assertFalse($repository->getCursorInfo()['hasMore']);
+        $this->assertNull($repository->getCursorInfo()['nextCursor']);
+    }
 }

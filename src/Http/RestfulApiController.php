@@ -67,6 +67,22 @@ abstract class RestfulApiController extends ApiController
     }
 
     /**
+     * Get List of records using cursor pagination
+     *
+     * @return Response
+     */
+    public function indexCursor(Request $request)
+    {
+        $json['records'] = $this->repository->listCursor($this->listOptions($request));
+
+        if ($cursor = $this->repository->getCursorInfo()) {
+            $json['cursorInfo'] = $cursor;
+        }
+
+        return $this->success($json);
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param  int $id
