@@ -217,7 +217,11 @@ if (!function_exists('date_response')) {
         }
 
         $timezone = new \DateTimeZone(config('app.timezone'));
-        $date->setTimezone($timezone); // @phpstan-ignore method.notFound
+        // Assign the result: CarbonImmutable (and DateTimeImmutable) return a
+        // NEW instance instead of mutating, and discarding it both skips the
+        // timezone conversion and trips PHP 8.5's #[NoDiscard] enforcement.
+        // Mutable flavors return $this, so this is safe for every input type.
+        $date = $date->setTimezone($timezone); // @phpstan-ignore method.notFound
 
         if (!$options['humanTime'] && !$options['timestamp']) {
             $intlFormat = $options['intlFormat'] ?? null;

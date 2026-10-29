@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.5.1] - 2026-10-29
+
+### Fixed
+
+- `date_response()` now assigns the result of `setTimezone()`. On immutable
+  inputs (`CarbonImmutable`/`DateTimeImmutable`, e.g. dates coming back from
+  `mongodb/laravel-mongodb`) the old code discarded the converted instance,
+  so the output stayed in the input timezone — and on PHP 8.5 the discarded
+  `#[NoDiscard]` return raises a warning that Laravel turns into a 500
+  whenever a resource formats a date (e.g. `CustomerResource::DATES`).
+
 ## [5.4.1] - 2026-10-13
 
 ### Fixed
