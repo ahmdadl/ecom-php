@@ -44,12 +44,19 @@ interface RepositoryInterface
     public function list(array $option): Collection;
 
     /**
-     * Return List of records using keyset (cursor) pagination by id.
+     * Return List of records using keyset (cursor) pagination by cursor column.
      *
      * @param  array<string, mixed> $option
      * @return \Illuminate\Support\Collection<int, TModel>
      */
     public function listCursor(array $option): Collection;
+
+    /**
+     * Get cursor pagination info for the last listCursor() call
+     *
+     * @return array<string, mixed>
+     */
+    public function getCursorInfo(): array;
 
     /**
      * Get a specific record with full details

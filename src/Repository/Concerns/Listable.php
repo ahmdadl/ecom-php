@@ -420,7 +420,7 @@ trait Listable
     }
 
     /**
-     * Return list of records using keyset (cursor) pagination by id.
+     * Return list of records using keyset (cursor) pagination by cursor column.
      *
      * Avoids COUNT(*) and OFFSET; pages are fetched with
      * `WHERE <cursorColumn> > <cursor> ORDER BY <cursorColumn> ASC LIMIT n+1`.
@@ -434,7 +434,7 @@ trait Listable
 
         $this->trigger('listing', $this->query);
 
-        $cursorColumn = (string) ($this->option('cursorColumn', static::CURSOR_COLUMN ?? 'nid'));
+        $cursorColumn = (string) ($this->option('cursorColumn', static::CURSOR_COLUMN));
 
         $cursor = $this->option('cursor', $this->option('after', $this->option('lastId')));
 

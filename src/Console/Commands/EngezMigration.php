@@ -73,7 +73,12 @@ class EngezMigration extends EngezGeneratorCommand implements EngezInterface
 
         $this->migrationType = $this->startsWith($this->migrationName, 'create_') && !$this->isMongoDB() ? 'create' : 'table';
 
-        $this->tableName = $this->optionHasValue('table') ? $this->option('table') : TableGuesser::guess($this->snake($this->migrationName))[0];
+        // TableGuesser::guess() returns null when the migration name matches no
+        // known pattern; fall back to the migration name itself so $tableName
+        // (typed string) never receives null.
+        $guessedTable = TableGuesser::guess($this->snake($this->migrationName));
+
+        $this->tableName = $this->optionHasValue('table') ? $this->option('table') : ($guessedTable[0] ?? $this->snake($this->migrationName));
     }
 
     /**

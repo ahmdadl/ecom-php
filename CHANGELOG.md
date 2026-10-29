@@ -1,5 +1,22 @@
 # Changelog
 
+## [5.5.0] - 2026-10-29
+
+### Added
+
+- Keyset (cursor) pagination: `RepositoryManager::CURSOR_COLUMN` (default
+  `'nid'`), `Listable::listCursor()` / `getCursorInfo()`,
+  `RepositoryInterface::listCursor()` / `getCursorInfo()`, and
+  `RestfulApiController::indexCursor()` (returns `cursorInfo`).
+  - `list()` delegates to `listCursor()` only when
+    `options['pagination'] === 'cursor'`; `paginate` stays boolean.
+  - String cursors from HTTP are cast for BSON int comparison, the cursor
+    column is auto-included in projections, and ordering is forced to ASC on
+    the cursor column.
+  - Wire `indexCursor` manually before `Router::restfulApi` so the route does
+    not clash with `show` (e.g. `Route::get('name/cursor', [Controller::class,
+    'indexCursor'])`).
+
 ## [5.5.1] - 2026-10-29
 
 ### Fixed

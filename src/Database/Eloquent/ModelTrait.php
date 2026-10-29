@@ -52,7 +52,7 @@ trait ModelTrait
      * @param  string $column
      * @param  int $amount
      * @param  array<string, mixed> $extra
-     * @return int
+     * @return int|false
      */
     public function increment($column, $amount = 1, array $extra = [])
     {
@@ -69,7 +69,7 @@ trait ModelTrait
      * @param  string $column
      * @param  int $amount
      * @param  array<string, mixed> $extra
-     * @return int
+     * @return int|false
      */
     public function decrement($column, $amount = 1, array $extra = [])
     {

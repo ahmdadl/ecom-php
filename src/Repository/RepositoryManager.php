@@ -449,6 +449,13 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $paginate = $this->option('paginate', static::PAGINATE);
 
+        // Backward compat: honor ?paginate=false from the HTTP request when the
+        // caller did not pass paginate explicitly. Controllers merge request
+        // input via listOptions(), but direct list() calls may not.
+        if (!array_key_exists('paginate', $options) && $this->request->input('paginate') === 'false') {
+            $paginate = false;
+        }
+
         if ($paginate === true || $paginate === null && config('mongez.repository.pagination.paginate') === true) {
             $pageNumber = $this->option('page', 1);
 
