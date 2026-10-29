@@ -5,12 +5,13 @@ namespace HZ\Illuminate\Mongez\Tests;
 use HZ\Illuminate\Mongez\Database\Eloquent\ModelEvents;
 use HZ\Illuminate\Mongez\Database\Eloquent\MongoDB\Model;
 use HZ\Illuminate\Mongez\Jobs\UpdateRelatedModelJob;
-use PHPUnit\Framework\TestCase;
 
 final class RelatedModelsJobTest extends TestCase
 {
     protected function setUp(): void
     {
+        parent::setUp();
+
         JobHandlerModelStub::$found = null;
         JobHandlerModelStub::$calls = [];
         JobHandlerModelStub::resetState();
