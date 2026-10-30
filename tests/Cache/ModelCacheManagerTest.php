@@ -138,6 +138,27 @@ class ModelCacheManagerTest extends TestCase
         $this->assertGreaterThan($firstVersion, $secondVersion);
     }
 
+    public function test_hydrated_model_matches_raw_attributes_and_is_clean(): void
+    {
+        $manager = app(ModelCacheManager::class);
+
+        $model = $this->makeModel(['nid' => 8, 'name' => 'Hydrated', 'slug' => 'hydrated']);
+        // Not in $fillable: the old fill()-based hydration silently dropped
+        // such attributes, while a model coming from the DB keeps them.
+        $model->setAttribute('internal_flag', 1);
+        $manager->put($model);
+
+        $resolved = $manager->rememberById(CachedTestModel::class, 8, function () {
+            $this->fail('Resolver should not be called when cache is warm');
+        });
+
+        $this->assertNotNull($resolved);
+        $this->assertTrue($resolved->exists);
+        $this->assertEquals($model->getAttributes(), $resolved->getAttributes());
+        $this->assertSame(1, $resolved->getAttribute('internal_flag'));
+        $this->assertTrue($resolved->isClean());
+    }
+
     public function test_disabled_caching_skips_cache(): void
     {
         config(['mongez.cache.enabled' => false]);

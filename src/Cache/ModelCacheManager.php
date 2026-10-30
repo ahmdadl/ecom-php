@@ -400,7 +400,16 @@ final class ModelCacheManager
     {
         unset($payload['__cacheVersion']);
 
-        $model = new $modelClass($payload);
+        // Rebuild the model the same way Eloquent builds models coming from
+        // the database (see newFromBuilder): assign raw attributes directly
+        // instead of routing every attribute through fill()/setAttribute().
+        // The fill() path costs ~0.1ms per attribute (guard checks, mutators,
+        // date parsing per attribute), which made cached reads slower than the
+        // DB query itself; setRawAttributes() restores the identical state in
+        // one shot and syncs the original attributes.
+        $model = new $modelClass;
+
+        $model->setRawAttributes($payload, true);
 
         $model->exists = true;
 
