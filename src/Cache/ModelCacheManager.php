@@ -135,7 +135,7 @@ final class ModelCacheManager
         // slug) before replacing this record's cache entry.
         $this->forgetById($modelClass, $nid);
 
-        $payload = $model->toArray();
+        $payload = $model->getAttributes();
         $payload['__cacheVersion'] = $version;
 
         $this->driver()->put(
