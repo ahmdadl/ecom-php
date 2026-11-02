@@ -1,5 +1,50 @@
 # Changelog
 
+## [5.5.3] - 2026-11-02
+
+### Fixed
+
+- `ModelCacheManager::put()` now stores `$model->getAttributes()` instead of
+  `$model->toArray()`. `toArray()` fires accessors and persisted the
+  transformed output as raw attributes, so a model hydrated from cache
+  re-fired accessors on already-transformed data. Context-dependent or
+  non-idempotent accessors (e.g. `Category::getShippingFeesAttribute()`
+  varying by application context) then served stale values cached under a
+  different context.
+
+## [5.5.2] - 2026-10-30
+
+### Fixed
+
+- Match newer Laravel contracts: `ModelTrait` increment/decrement docblock
+  `int` -> `int|false` (Laravel 13.39+ parent contract).
+- `EngezMigration`: null-safe `TableGuesser::guess()` with fallback to the
+  snake migration name (returns null on newer Laravel).
+- `RepositoryManager::list()`: restore `?paginate=false` request fallback
+  when `paginate` is not passed explicitly via options.
+- `RepositoryInterface`: add `getCursorInfo()` contract and fix `listCursor`
+  docs; `Listable`: drop dead `?? 'nid'` on `CURSOR_COLUMN`.
+
+### Changed
+
+- `ModelCacheManager` hydrates cached records the same way Eloquent builds
+  models from the database (empty instance +
+  `setRawAttributes($payload, true)`) instead of
+  `new $modelClass($payload)` through `fill()`. Identical `toArray()`,
+  casts and originals at ~0.02ms vs ~0.1ms per attribute, and non-fillable
+  raw attributes now round-trip instead of being silently dropped.
+
+## [5.5.1] - 2026-10-29
+
+### Fixed
+
+- `date_response()` now assigns the result of `setTimezone()`. On immutable
+  inputs (`CarbonImmutable`/`DateTimeImmutable`, e.g. dates coming back from
+  `mongodb/laravel-mongodb`) the old code discarded the converted instance,
+  so the output stayed in the input timezone — and on PHP 8.5 the discarded
+  `#[NoDiscard]` return raises a warning that Laravel turns into a 500
+  whenever a resource formats a date (e.g. `CustomerResource::DATES`).
+
 ## [5.5.0] - 2026-10-29
 
 ### Added
@@ -16,17 +61,6 @@
   - Wire `indexCursor` manually before `Router::restfulApi` so the route does
     not clash with `show` (e.g. `Route::get('name/cursor', [Controller::class,
     'indexCursor'])`).
-
-## [5.5.1] - 2026-10-29
-
-### Fixed
-
-- `date_response()` now assigns the result of `setTimezone()`. On immutable
-  inputs (`CarbonImmutable`/`DateTimeImmutable`, e.g. dates coming back from
-  `mongodb/laravel-mongodb`) the old code discarded the converted instance,
-  so the output stayed in the input timezone — and on PHP 8.5 the discarded
-  `#[NoDiscard]` return raises a warning that Laravel turns into a 500
-  whenever a resource formats a date (e.g. `CustomerResource::DATES`).
 
 ## [5.4.1] - 2026-10-13
 
