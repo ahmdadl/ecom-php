@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace HZ\Illuminate\Mongez\Cache;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Database\Eloquent\Model;
+use Carbon\CarbonInterface;
+use DateTimeInterface;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use MongoDB\BSON\UTCDateTime;
 
 final class ModelCacheManager
 {
@@ -66,7 +69,11 @@ final class ModelCacheManager
         $payload = $this->driver()->get($key);
 
         if ($payload !== null && $this->payloadVersion($payload) === $version) {
-            return $this->hydrate($modelClass, $payload);
+            if ($this->containsIncompleteClass($payload)) {
+                $this->driver()->forget($key);
+            } else {
+                return $this->hydrate($modelClass, $payload);
+            }
         }
 
         $record = $resolver();
@@ -102,9 +109,13 @@ final class ModelCacheManager
         $nid = $this->driver()->get($indexKey);
 
         if ($nid !== null && $this->payloadVersion($nid) === $version) {
-            $nid = $this->payloadValue($nid);
+            if ($this->containsIncompleteClass($nid)) {
+                $this->driver()->forget($indexKey);
+            } else {
+                $nid = $this->payloadValue($nid);
 
-            return $this->rememberById($modelClass, (int) $nid, $resolver);
+                return $this->rememberById($modelClass, (int) $nid, $resolver);
+            }
         }
 
         $record = $resolver();
@@ -135,7 +146,7 @@ final class ModelCacheManager
         // slug) before replacing this record's cache entry.
         $this->forgetById($modelClass, $nid);
 
-        $payload = $model->getAttributes();
+        $payload = $this->purifyForCache($model->getAttributes());
         $payload['__cacheVersion'] = $version;
 
         $this->driver()->put(
@@ -450,5 +461,85 @@ final class ModelCacheManager
         }
 
         return Cache::store($driver);
+    }
+
+    /**
+     * Detect stale payloads that unserialized to __PHP_Incomplete_Class
+     * when cache.serializable_classes=false (Laravel 13).
+     */
+    private function containsIncompleteClass(mixed $value): bool
+    {
+        if ($value instanceof \__PHP_Incomplete_Class) {
+            return true;
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if ($this->containsIncompleteClass($item)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (is_object($value)) {
+            // Already excluded above via instanceof; check the class name for
+            // payloads that are incomplete but not caught by the direct check.
+            $class = $value::class;
+            if ($class === '__PHP_Incomplete_Class' || str_contains($class, 'Incomplete')) {
+                return true;
+            }
+            foreach ((array) $value as $item) {
+                if ($this->containsIncompleteClass($item)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Convert payload to plain serializable arrays/scalars so Redis never
+     * stores objects that Laravel 13 will block on unserialize.
+     */
+    private function purifyForCache(mixed $value): mixed
+    {
+        if ($value instanceof \__PHP_Incomplete_Class) {
+            return null;
+        }
+
+        if ($value instanceof UTCDateTime) {
+            return $value->toDateTime()->format('Y-m-d\TH:i:s.u\Z');
+        }
+
+        if ($value instanceof CarbonInterface || $value instanceof DateTimeInterface) {
+            return $value->format('Y-m-d\TH:i:s.uP');
+        }
+
+        if ($value instanceof Model) {
+            return $this->purifyForCache($value->toArray());
+        }
+
+        if ($value instanceof \stdClass) {
+            return $this->purifyForCache((array) $value);
+        }
+
+        if (is_object($value)) {
+            if (method_exists($value, 'toArray')) {
+                return $this->purifyForCache($value->toArray());
+            }
+            return $this->purifyForCache((array) $value);
+        }
+
+        if (is_array($value)) {
+            $out = [];
+            foreach ($value as $k => $v) {
+                $out[$k] = $this->purifyForCache($v);
+            }
+            return $out;
+        }
+
+        return $value;
     }
 }

@@ -7,6 +7,7 @@ use HZ\Illuminate\Mongez\Database\Eloquent\CacheableModel;
 use HZ\Illuminate\Mongez\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use MongoDB\BSON\UTCDateTime;
 
 class ModelCacheManagerTest extends TestCase
 {
@@ -176,6 +177,48 @@ class ModelCacheManagerTest extends TestCase
         $this->assertNotNull($resolved);
         $this->assertEquals(4, $resolved->nid);
         $this->assertNull(Cache::get('mongez:cached_test_models:id:4'));
+    }
+
+    public function test_put_converts_dates_to_plain_scalars(): void
+    {
+        $manager = app(ModelCacheManager::class);
+
+        $model = $this->makeModel(['nid' => 9, 'name' => 'Dated']);
+        $model->setAttribute('created_at', new UTCDateTime());
+        $model->setAttribute('expires_at', now());
+
+        $manager->put($model);
+
+        $payload = (array) Cache::get('mongez:cached_test_models:id:9');
+
+        // Objects must not reach a serializing cache driver: Laravel 13 blocks
+        // unserialize of non-allowlisted classes (cache.serializable_classes).
+        $this->assertIsString($payload['created_at']);
+        $this->assertIsString($payload['expires_at']);
+        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T/', $payload['created_at']);
+        $this->assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T/', $payload['expires_at']);
+    }
+
+    public function test_stale_incomplete_class_payload_is_forgotten_and_resolved(): void
+    {
+        $manager = app(ModelCacheManager::class);
+
+        Cache::put('mongez:cached_test_models:id:7', [
+            '__cacheVersion' => 1,
+            'nid' => 7,
+            'name' => unserialize('O:4:"Nope":0:{}'),
+        ], 3600);
+
+        $called = false;
+        $resolved = $manager->rememberById(CachedTestModel::class, 7, function () use (&$called) {
+            $called = true;
+
+            return $this->makeModel(['nid' => 7, 'name' => 'Fresh']);
+        });
+
+        $this->assertTrue($called);
+        $this->assertNotNull($resolved);
+        $this->assertSame('Fresh', $resolved->getAttribute('name'));
     }
 
     /**

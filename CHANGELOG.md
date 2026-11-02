@@ -1,5 +1,20 @@
 # Changelog
 
+## [5.5.4] - 2026-11-02
+
+### Fixed
+
+- `ModelCacheManager` now writes cache payloads as plain arrays/scalars and
+  discards poisoned entries. `put()` runs the payload through a new
+  `purifyForCache()` which converts `MongoDB\BSON\UTCDateTime`,
+  `CarbonImmutable`/`DateTimeInterface` values to strings — Laravel 13 with
+  `cache.serializable_classes=false` blocks unserializing those objects, so a
+  Redis-backed model cache stored entries that could never be read back.
+- `rememberById()` / `rememberByColumn()` now detect payloads that
+  unserialize to `__PHP_Incomplete_Class` (legacy entries written by older
+  releases), forget the key, and fall through to the resolver instead of
+  hydrating a broken model or throwing.
+
 ## [5.5.3] - 2026-11-02
 
 ### Fixed
