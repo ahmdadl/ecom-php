@@ -1,5 +1,27 @@
 # Changelog
 
+## [5.6.0] - 2026-11-02
+
+### Added
+
+- Generic `requestIs(string ...$patterns)` method in `JsonResourceManager` that
+  delegates to `Request::is()` for URI-based context detection in any resource's
+  `extend()`. Supports wildcards. Replaces business-specific context flags
+  (like the removed `isCart()`/`asCart()`) with a generic, reusable API. Example:
+  `$this->requestIs('api/cart*', 'api/checkout*')`.
+
+### Fixed
+
+- `JsonResourceManager::remove()` now uses `Arr::forget()` instead of
+  `unset($this->data[$key])`, enabling dot-notation support for nested keys.
+  Example: `remove('totals.bundledItems')` now correctly removes nested data.
+
+### Changed
+
+- Removed cart-specific context methods (`isCart()`, `asCart()`, `isCartContext`)
+  and propagation logic from `makeResource()`/`collect()`. Superseded by generic
+  `requestIs()` approach — no business-specific flags needed in the framework.
+
 ## [5.5.4] - 2026-11-02
 
 ### Fixed
