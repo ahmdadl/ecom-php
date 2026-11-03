@@ -247,6 +247,24 @@ abstract class JsonResourceManager extends JsonResource
     }
 
     /**
+     * Check if the current request URI matches any of the given patterns.
+     *
+     * Delegates to Laravel's Request::is() — supports wildcards.
+     * Generic utility for any resource that needs to branch on request context
+     * without hardcoding business-specific flags in the framework.
+     *
+     * @example $this->requestIs('api/cart*', 'api/checkout*')
+     * @example $this->requestIs('admin/*')
+     *
+     * @param  string  ...$patterns
+     * @return bool
+     */
+    protected function requestIs(string ...$patterns): bool
+    {
+        return $this->request?->is(...$patterns) ?? false;
+    }
+
+    /**
      * Capture the current disabled and allowed keys as the baseline.
      *
      * This should be called once after the application has booted to keep
@@ -375,7 +393,7 @@ abstract class JsonResourceManager extends JsonResource
     public function remove(...$keys)
     {
         foreach ($keys as $key) {
-            unset($this->data[$key]);
+            Arr::forget($this->data, $key);
         }
     }
 
