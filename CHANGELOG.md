@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.6.1] - 2026-11-07
+
+### Fixed
+
+- `JsonResourceManager::requestIs()` now falls back to global `request()` when `$this->request` is `null`, so embedded resources created via `makeResource()`/`collect()` correctly see the parent route (e.g. product/customer diets via `requestIs('api/product-visits*')`).
+- `JsonResourceManager::makeResource()` and `collect()` now propagate both `asListing()` and `request` to nested `JsonResourceManager` instances, ensuring `isListing()` and `requestIs()` work for embedded resources before their own `toArray(request)` is resolved. Fixes diet no-ops for nested `ProductResource`/`CustomerResource`/`AddressResource` in admin listings.
+
 ## [5.6.0] - 2026-11-02
 
 ### Added

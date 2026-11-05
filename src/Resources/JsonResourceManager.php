@@ -261,7 +261,9 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected function requestIs(string ...$patterns): bool
     {
-        return $this->request?->is(...$patterns) ?? false;
+        $req = $this->request ?? (function_exists('request') ? request() : null);
+
+        return $req?->is(...$patterns) ?? false;
     }
 
     /**
@@ -937,8 +939,13 @@ abstract class JsonResourceManager extends JsonResource
 
         $resource = new $resourceClassName(new Fluent($resourceData));
 
-        if ($resource instanceof JsonResourceManager && $this->isListingContext) {
-            $resource->asListing();
+        if ($resource instanceof JsonResourceManager) {
+            if ($this->isListingContext) {
+                $resource->asListing();
+            }
+
+            // Propagate request so nested requestIs works before child's toArray is resolved
+            $resource->request = $this->request ?? (function_exists('request') ? request() : null);
         }
 
         return $resource;
@@ -1058,11 +1065,15 @@ abstract class JsonResourceManager extends JsonResource
 
         $resources = $resource::collection($collection);
 
-        if ($this->isListingContext) {
-            foreach ($resources->collection as $item) {
-                if ($item instanceof JsonResourceManager) {
+        $req = $this->request ?? (function_exists('request') ? request() : null);
+
+        foreach ($resources->collection as $item) {
+            if ($item instanceof JsonResourceManager) {
+                if ($this->isListingContext) {
                     $item->asListing();
                 }
+
+                $item->request = $req;
             }
         }
 
