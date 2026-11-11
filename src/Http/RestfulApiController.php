@@ -289,10 +289,10 @@ abstract class RestfulApiController extends ApiController
                     continue;
                 }
 
-                if ($errors = $this->beforeDeleting($model, $request)) {
+                if ($beforeDeletingError = $this->beforeDeleting($model, $request)) {
                     $errors[] = [
                         'key' => 'beforeDeleting',
-                        'value' => $errors,
+                        'value' => $beforeDeletingError,
                         'id' => $id
                     ];
 

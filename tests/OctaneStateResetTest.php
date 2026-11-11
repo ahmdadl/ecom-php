@@ -17,10 +17,10 @@ class OctaneStateResetTest extends TestCase
         $this->clearMongezResetCallbacks();
 
         $ref = new \ReflectionClass(JsonResourceManager::class);
-        $ref->setStaticPropertyValue('baseDisabledKeys', []);
-        $ref->setStaticPropertyValue('baseAllowedKeys', []);
-        $ref->setStaticPropertyValue('disabledKeys', []);
-        $ref->setStaticPropertyValue('allowedKeys', []);
+        $ref->setStaticPropertyValue('baseDisabledKeysMap', []);
+        $ref->setStaticPropertyValue('baseAllowedKeysMap', []);
+        $ref->setStaticPropertyValue('disabledKeysMap', []);
+        $ref->setStaticPropertyValue('allowedKeysMap', []);
         $ref->setStaticPropertyValue('subClassesCache', null);
     }
 
@@ -29,10 +29,10 @@ class OctaneStateResetTest extends TestCase
         $this->clearMongezResetCallbacks();
 
         $ref = new \ReflectionClass(JsonResourceManager::class);
-        $ref->setStaticPropertyValue('baseDisabledKeys', []);
-        $ref->setStaticPropertyValue('baseAllowedKeys', []);
-        $ref->setStaticPropertyValue('disabledKeys', []);
-        $ref->setStaticPropertyValue('allowedKeys', []);
+        $ref->setStaticPropertyValue('baseDisabledKeysMap', []);
+        $ref->setStaticPropertyValue('baseAllowedKeysMap', []);
+        $ref->setStaticPropertyValue('disabledKeysMap', []);
+        $ref->setStaticPropertyValue('allowedKeysMap', []);
         $ref->setStaticPropertyValue('subClassesCache', null);
         parent::tearDown();
     }
@@ -45,13 +45,27 @@ class OctaneStateResetTest extends TestCase
         JsonResourceManager::disable('request_disabled');
         JsonResourceManager::reset();
         $this->assertSame(
-            ['boot_disabled'],
-            $this->staticProperty(JsonResourceManager::class, 'disabledKeys')
+            [JsonResourceManager::class => ['boot_disabled']],
+            $this->staticProperty(JsonResourceManager::class, 'disabledKeysMap')
         );
         $this->assertSame(
-            ['boot_allowed'],
-            $this->staticProperty(JsonResourceManager::class, 'allowedKeys')
+            [JsonResourceManager::class => ['boot_allowed']],
+            $this->staticProperty(JsonResourceManager::class, 'allowedKeysMap')
         );
+    }
+
+    public function testResourceKeysAreIsolatedPerClass(): void
+    {
+        ResourceStubA::only('a', 'b');
+        ResourceStubB::disable('secret');
+
+        $disabled = $this->staticProperty(JsonResourceManager::class, 'disabledKeysMap');
+        $allowed = $this->staticProperty(JsonResourceManager::class, 'allowedKeysMap');
+
+        $this->assertSame(['secret'], $disabled[ResourceStubB::class]);
+        $this->assertArrayNotHasKey(ResourceStubA::class, $disabled);
+        $this->assertSame(['a', 'b'], $allowed[ResourceStubA::class]);
+        $this->assertArrayNotHasKey(ResourceStubB::class, $allowed);
     }
 
     public function testEventsResetPreservesBootListeners(): void
@@ -281,4 +295,12 @@ class ModelStubWithEventsQueued extends ModelStubWithEvents
 class ModelStubWithEventsQueueString extends ModelStubWithEvents
 {
     public const RELATED_MODELS_QUEUE_MODE = 'queue';
+}
+
+class ResourceStubA extends JsonResourceManager
+{
+}
+
+class ResourceStubB extends JsonResourceManager
+{
 }

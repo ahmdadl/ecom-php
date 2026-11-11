@@ -172,36 +172,39 @@ abstract class JsonResourceManager extends JsonResource
     protected $assetsUrlFunction;
 
     /**
-     * List of keys that will be unset before sending
+     * Per-resource lists of keys that will be unset before sending,
+     * keyed by resource class name.
      *
-     * @var array<int|string, mixed>
+     * Keys disabled via `SomeResource::disable()` apply only to that
+     * resource class (and its children), while keys disabled on the base
+     * `JsonResourceManager` apply globally. A single shared list cannot be
+     * used here: it leaked one resource's keys into every other resource
+     * rendered in the same response.
+     *
+     * @var array<class-string, array<int|string, mixed>>
      */
-    protected static $disabledKeys = [];
+    protected static array $disabledKeysMap = [];
 
     /**
-     * List of keys that will be taken only
+     * Per-resource lists of keys that will be taken only,
+     * keyed by resource class name.
      *
-     * @var array<int|string, mixed>
+     * @var array<class-string, array<int|string, mixed>>
      */
-    protected static $allowedKeys = [];
+    protected static array $allowedKeysMap = [];
 
     /**
-     * Baseline disabled keys captured right after boot.
+     * Boot-time baselines of the per-resource key maps, captured by
+     * {@see snapshotBaseState()} and restored by {@see reset()}.
      *
-     * It holds the keys that were disabled during the application boot.
-     * When running under Laravel Octane, `reset` restores this baseline so
-     * boot-time keys survive while per-request keys are discarded.
-     *
-     * @var array<int|string, mixed>
+     * @var array<class-string, array<int|string, mixed>>
      */
-    protected static $baseDisabledKeys = [];
+    protected static array $baseDisabledKeysMap = [];
 
     /**
-     * Baseline allowed keys captured right after boot.
-     *
-     * @var array<int|string, mixed>
+     * @var array<class-string, array<int|string, mixed>>
      */
-    protected static $baseAllowedKeys = [];
+    protected static array $baseAllowedKeysMap = [];
 
     /**
      * Cached sub classes list.
@@ -277,12 +280,12 @@ abstract class JsonResourceManager extends JsonResource
      */
     public static function snapshotBaseState()
     {
-        static::$baseDisabledKeys = static::$disabledKeys;
-        static::$baseAllowedKeys = static::$allowedKeys;
+        static::$baseDisabledKeysMap = static::$disabledKeysMap;
+        static::$baseAllowedKeysMap = static::$allowedKeysMap;
     }
 
     /**
-     * Reset the shared disabled and allowed keys lists
+     * Reset the per-resource disabled and allowed keys lists
      *
      * This is used between requests when running on Laravel Octane
      * to make sure the keys don't accumulate from one request to another.
@@ -293,10 +296,8 @@ abstract class JsonResourceManager extends JsonResource
      */
     public static function reset()
     {
-        foreach (static::subClasses() as $class) {
-            $class::$disabledKeys = static::$baseDisabledKeys;
-            $class::$allowedKeys = static::$baseAllowedKeys;
-        }
+        static::$disabledKeysMap = static::$baseDisabledKeysMap;
+        static::$allowedKeysMap = static::$baseAllowedKeysMap;
     }
 
     /**
@@ -368,13 +369,15 @@ abstract class JsonResourceManager extends JsonResource
             $this->extend($request);
 
             // unset all data from the resource
-            foreach (static::$disabledKeys as $key) {
+            foreach (static::effectiveKeys(static::$disabledKeysMap) as $key) {
                 unset($this->data[$key]);
             }
 
-            if (static::$allowedKeys !== []) {
+            $allowedKeys = static::effectiveKeys(static::$allowedKeysMap);
+
+            if ($allowedKeys !== []) {
                 foreach (array_keys($this->data) as $key) {
-                    if (!in_array($key, static::$allowedKeys)) {
+                    if (!in_array($key, $allowedKeys)) {
                         unset($this->data[$key]);
                     }
                 }
@@ -434,23 +437,63 @@ abstract class JsonResourceManager extends JsonResource
     }
 
     /**
-     * Disable the given list of keys
+     * Disable the given list of keys for the called resource class
+     * (global when called on the base JsonResourceManager).
      *
      * @param mixed ...$keys
      */
     public static function disable(...$keys): void
     {
-        static::$disabledKeys = array_merge(static::$disabledKeys, $keys);
+        $class = static::class;
+
+        static::$disabledKeysMap[$class] = array_merge(
+            static::$disabledKeysMap[$class] ?? [],
+            $keys
+        );
     }
 
     /**
-     * Disable the given list of keys
+     * Take only the given list of keys for the called resource class
+     * (global when called on the base JsonResourceManager).
      *
      * @param mixed ...$keys
      */
     public static function only(...$keys): void
     {
-        static::$allowedKeys = array_merge(static::$allowedKeys, $keys);
+        $class = static::class;
+
+        static::$allowedKeysMap[$class] = array_merge(
+            static::$allowedKeysMap[$class] ?? [],
+            $keys
+        );
+    }
+
+    /**
+     * Effective keys for the called resource class: its own entries plus
+     * every ancestor's up to (and including) the base JsonResourceManager,
+     * so base-level disable()/only() calls stay global.
+     *
+     * @param array<class-string, array<int|string, mixed>> $map
+     * @return array<int|string, mixed>
+     */
+    protected static function effectiveKeys(array $map): array
+    {
+        $keys = [];
+        $class = static::class;
+
+        while ($class !== false) {
+            if (isset($map[$class])) {
+                array_push($keys, ...$map[$class]);
+            }
+
+            if ($class === self::class) {
+                break;
+            }
+
+            $class = get_parent_class($class);
+        }
+
+        return array_values(array_unique($keys));
     }
 
     /**

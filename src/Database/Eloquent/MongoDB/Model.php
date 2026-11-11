@@ -678,11 +678,20 @@ abstract class Model extends BaseModel
     /**
      * {@inheritDoc}
      *
+     * Looks up by the numeric `nid` business key instead of `_id`.
+     * Unlike Eloquent, this only resolves a single record: passing an
+     * array throws instead of silently casting it to int (which used to
+     * return the nid-1 record). Use {@see findMany()} for multiples.
+     *
      * @param int|string $id
      * @return static|null
      */
     public static function find($id): ?static
     {
+        if (is_array($id)) {
+            throw new \InvalidArgumentException('Pass a single id to find(); use findMany() for multiple ids.');
+        }
+
         return static::query()->where('nid', (int) $id)->first();
     }
 

@@ -241,6 +241,11 @@ final class ModelCacheManager
     /**
      * Increment the model version to invalidate all cached records at once.
      *
+     * The version key is stored WITHOUT a TTL (forever): if it expired,
+     * getVersion() would fall back to 1 and ancient version-1 payloads
+     * still within their TTL would match again, serving stale records.
+     * Model tables are bounded, so one forever key per model is cheap.
+     *
      * @param Model|class-string<Model> $model
      */
     public function invalidateAll(Model|string $model): void
@@ -251,7 +256,7 @@ final class ModelCacheManager
 
         // add() initializes the generation atomically; increment() makes
         // repeated invalidations effective within the same second.
-        $driver->add($versionKey, 1, $this->ttl());
+        $driver->add($versionKey, 1);
         $driver->increment($versionKey);
     }
 

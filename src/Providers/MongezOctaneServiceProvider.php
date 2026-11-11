@@ -94,8 +94,11 @@ class MongezOctaneServiceProvider extends ServiceProvider
     protected function cleanupApplicationState()
     {
         // roll back any transaction that was left open during the request
+        // rollBack(0) unwinds every nesting level; passing the current
+        // level back (rollBack(DB::transactionLevel())) is a no-op because
+        // rollBack() returns early when $toLevel >= transactions.
         if (DB::transactionLevel() > 0) {
-            DB::rollBack(DB::transactionLevel());
+            DB::rollBack(0);
         }
     }
 
