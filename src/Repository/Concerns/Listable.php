@@ -64,8 +64,8 @@ trait Listable
      */
     public function has($value, string $column = 'nid'): bool
     {
-        if (is_numeric($value)) {
-            $value = (float) $value;
+        if (is_string($value) && ctype_digit($value)) {
+            $value = (int) $value;
         }
 
         $model = static::MODEL;

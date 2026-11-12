@@ -382,9 +382,13 @@ abstract class RestfulApiController extends ApiController
         $requestData = $request->all();
 
         $sortBy = $request->input('sortBy');
-        $sortDirection = $request->input('sortDirection');
+        $sortDirection = strtolower((string) $request->input('sortDirection', 'desc'));
 
-        if ($sortBy) {
+        if (!in_array($sortDirection, ['asc', 'desc'], true)) {
+            $sortDirection = 'desc';
+        }
+
+        if (is_string($sortBy) && $sortBy !== '' && preg_match('/^[A-Za-z0-9_.]+$/', $sortBy)) {
             $requestData['orderBy'] = [$sortBy, $sortDirection];
         };
 
