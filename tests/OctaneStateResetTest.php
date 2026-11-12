@@ -21,7 +21,6 @@ class OctaneStateResetTest extends TestCase
         $ref->setStaticPropertyValue('baseAllowedKeysMap', []);
         $ref->setStaticPropertyValue('disabledKeysMap', []);
         $ref->setStaticPropertyValue('allowedKeysMap', []);
-        $ref->setStaticPropertyValue('subClassesCache', null);
     }
 
     protected function tearDown(): void
@@ -33,7 +32,6 @@ class OctaneStateResetTest extends TestCase
         $ref->setStaticPropertyValue('baseAllowedKeysMap', []);
         $ref->setStaticPropertyValue('disabledKeysMap', []);
         $ref->setStaticPropertyValue('allowedKeysMap', []);
-        $ref->setStaticPropertyValue('subClassesCache', null);
         parent::tearDown();
     }
 

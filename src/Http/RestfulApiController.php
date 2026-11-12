@@ -110,7 +110,7 @@ abstract class RestfulApiController extends ApiController
     {
         $request = $this->controllerInfo('request.store') ? App::make($this->controllerInfo('request.store')) : $request;
 
-        $rules = array_merge_recursive($this->allValidation($request), $this->storeValidation($request));
+        $rules = $this->mergeValidationRules($this->allValidation($request), $this->storeValidation($request));
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -157,7 +157,7 @@ abstract class RestfulApiController extends ApiController
 
         $request = $this->controllerInfo('request.update') ? App::make($this->controllerInfo('request.update')) : $request;
 
-        $rules = array_merge_recursive($this->allValidation($request, $id), $this->updateValidation($id, $request));
+        $rules = $this->mergeValidationRules($this->allValidation($request, $id), $this->updateValidation($id, $request));
 
         $rules = $this->normalizeUniqueRules($rules, $id, $this->repository->getTableName());
 
@@ -216,7 +216,7 @@ abstract class RestfulApiController extends ApiController
             }
         }
 
-        $rules = array_merge_recursive($rules, $this->patchValidation($id, $request));
+        $rules = $this->mergeValidationRules($rules, $this->patchValidation($id, $request));
 
         $rules = $this->normalizeUniqueRules($rules, $id, $this->repository->getTableName());
 
@@ -360,6 +360,38 @@ abstract class RestfulApiController extends ApiController
         }
 
         return $rules;
+    }
+
+    /**
+     * Merge validation rule sets without nesting same-key rules.
+     *
+     * Unlike array_merge_recursive(), which nests array rules for the same
+     * attribute (e.g. ['email' => [['required'], ['unique:...']]] — invalid
+     * for the Validator), this concatenates each attribute's rules into one
+     * flat list. String rules keep their `|`-separated form untouched.
+     *
+     * @param  array<string, mixed> ...$ruleSets
+     * @return array<string, mixed>
+     */
+    protected function mergeValidationRules(array ...$ruleSets): array
+    {
+        $merged = [];
+
+        foreach ($ruleSets as $rules) {
+            foreach ($rules as $attribute => $rule) {
+                if (!array_key_exists($attribute, $merged)) {
+                    $merged[$attribute] = $rule;
+                    continue;
+                }
+
+                $merged[$attribute] = array_merge(
+                    (array) $merged[$attribute],
+                    (array) $rule
+                );
+            }
+        }
+
+        return $merged;
     }
 
     /**

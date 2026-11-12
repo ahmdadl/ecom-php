@@ -207,16 +207,21 @@ abstract class JsonResourceManager extends JsonResource
     protected static array $baseAllowedKeysMap = [];
 
     /**
-     * Cached sub classes list.
+     * Memoized `mongez.mongodb.id_aliases_nid` flag.
      *
-     * @var array<int,string>|null
+     * Instance-level (not static) so Octane/test config changes apply to
+     * subsequently created resources. Avoids a config() lookup per field.
      */
-    protected static $subClassesCache;
+    protected ?bool $idAliasesNid = null;
 
     /**
-     * Number of declared classes when the subclass cache was last built.
+     * Memoized `mongez.resources.date.*` defaults for setDate().
+     *
+     * Instance-level, avoids four config() lookups per date field.
+     *
+     * @var array<string, mixed>|null
      */
-    protected static int $declaredClassesCount = -1;
+    protected ?array $dateDefaults = null;
 
     /**
      * Whether this resource is rendered as part of a `list()` endpoint.
@@ -298,30 +303,6 @@ abstract class JsonResourceManager extends JsonResource
     {
         static::$disabledKeysMap = static::$baseDisabledKeysMap;
         static::$allowedKeysMap = static::$baseAllowedKeysMap;
-    }
-
-    /**
-     * Get the resource classes that share the disabled and allowed keys state
-     *
-     * @return array<int, string>
-     */
-    protected static function subClasses(): array
-    {
-        $declaredClassesCount = count(get_declared_classes());
-
-        if (
-            static::$subClassesCache !== null
-            && static::$declaredClassesCount === $declaredClassesCount
-        ) {
-            return static::$subClassesCache;
-        }
-
-        static::$declaredClassesCount = $declaredClassesCount;
-        $classes = array_merge([static::class], get_declared_classes());
-
-        $classes = array_filter($classes, fn($class) => $class === static::class || is_subclass_of($class, static::class));
-
-        return static::$subClassesCache = array_values(array_unique($classes));
     }
 
     /**
@@ -652,14 +633,10 @@ abstract class JsonResourceManager extends JsonResource
 
         $localeCode = Mongez::getRequestLocaleCode();
 
-        // get the localization mode
-        // it cn be an object or an array of objects
-        $localizationMode = config('mongez.localizationMode', 'array');
-        // the OR in the following if conditions is used as a fallback for the data that is
-        // not matching the current localization mode
-        // for example, if the data is stored as object and the localization mode is an array
-        // in that case it will be rendered as an array
-        if ($localizationMode === 'array' && isset($value[0]) || isset($value[0])) {
+        // the data shape is auto-detected: an array of {localeCode,text}
+        // objects resolves by matching localeCode, an object keyed by
+        // locale code resolves by key. Either stored shape renders.
+        if (isset($value[0])) {
             $valuesList = [];
             foreach ($value as $localizedValue) {
                 // check if it is an array of values
@@ -679,7 +656,7 @@ abstract class JsonResourceManager extends JsonResource
 
         }
 
-        if ($localizationMode === 'object' && isset($value[$localeCode]) || isset($value[$localeCode])) {
+        if (isset($value[$localeCode])) {
             return (string) ($value[$localeCode]['text'] ?? '');
         }
 
@@ -806,14 +783,10 @@ abstract class JsonResourceManager extends JsonResource
 
         $localeCode = Mongez::getRequestLocaleCode();
 
-        // get the localization mode
-        // it cn be an object or an array of objects
-        $localizationMode = config('mongez.localizationMode', 'array');
-        // the OR in the following if conditions is used as a fallback for the data that is
-        // not matching the current localization mode
-        // for example, if the data is stored as object and the localization mode is an array
-        // in that case it will be rendered as an array
-        if ($localizationMode === 'array' && isset($value[0]) || isset($value[0])) {
+        // the data shape is auto-detected: an array of {localeCode,text}
+        // objects resolves by matching localeCode, an object keyed by
+        // locale code resolves by key. Either stored shape renders.
+        if (isset($value[0])) {
             $valuesList = [];
             foreach ($value as $localizedValue) {
                 // check if it is an array of values
@@ -832,7 +805,7 @@ abstract class JsonResourceManager extends JsonResource
             return '';
         }
 
-        if ($localizationMode === 'object' && isset($value[$localeCode]) || isset($value[$localeCode])) {
+        if (isset($value[$localeCode])) {
             return $this->makeResource($column['resource'], $value[$localeCode]);
         }
 
@@ -1031,6 +1004,14 @@ abstract class JsonResourceManager extends JsonResource
     }
 
     /**
+     * Whether the `id` column should resolve to `nid`.
+     */
+    protected function idAliasesNid(): bool
+    {
+        return $this->idAliasesNid ??= (bool) config('mongez.mongodb.id_aliases_nid', false);
+    }
+
+    /**
      * Get value from resource
      *
      * When `mongez.mongodb.id_aliases_nid` is enabled, reading `'id'` resolves
@@ -1043,10 +1024,7 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected function value(int|string $column, $default = null)
     {
-        if (
-            $column === 'id'
-            && (bool) config('mongez.mongodb.id_aliases_nid', false)
-        ) {
+        if ($column === 'id' && $this->idAliasesNid()) {
             $nid = Arr::get($this->resource, 'nid');
 
             if ($nid !== null && $nid !== '') {
@@ -1066,12 +1044,14 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected function setDate(string $column, $value, array $options = [])
     {
-        $options = array_merge([
+        $this->dateDefaults ??= [
             'format' =>  config('mongez.resources.date.format', 'd-m-Y h:i:s a'),
             'timestamp' => config('mongez.resources.date.timestamp', true),
             'humanTime' => config('mongez.resources.date.humanTime', true),
             'intl' => config('mongez.resources.date.intl', true),
-        ], $options);
+        ];
+
+        $options = array_merge($this->dateDefaults, $options);
 
         $this->set($column, date_response($value, $options));
     }

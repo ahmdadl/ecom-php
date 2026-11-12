@@ -206,6 +206,13 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
         }
 
         if (($optionValue = $this->option($option)) !== null) {
+            // Query string / option values arrive as strings: a literal
+            // 'false' must map to false, otherwise (bool) 'false' === true
+            // inverts the filter. Matches Fillers::setBoolData().
+            if ($optionValue === 'false') {
+                $optionValue = false;
+            }
+
             $this->query->where($column, (bool) $optionValue);
         }
 
