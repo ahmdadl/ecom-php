@@ -445,8 +445,6 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $this->initiateListing($options);
 
-        $this->trigger("listing", $this->query);
-
         $paginate = $this->option('paginate', static::PAGINATE);
 
         // Backward compat: honor ?paginate=false from the HTTP request when the
@@ -636,11 +634,13 @@ abstract class RepositoryManager implements RepositoryInterface
 
         $this->forceIgnore = true;
 
-        $this->setAutoData($model);
+        try {
+            $this->setAutoData($model);
 
-        $this->setData($model, $this->request);
-
-        $this->forceIgnore = false;
+            $this->setData($model, $this->request);
+        } finally {
+            $this->forceIgnore = false;
+        }
 
         $this->save($model, $oldModel);
 
@@ -857,8 +857,6 @@ abstract class RepositoryManager implements RepositoryInterface
     public function chunkModels(array $options, int $count, callable $callback)
     {
         $this->initiateListing($options);
-
-        $this->trigger("listing", $this->query);
 
         if ($this->select->isNotEmpty()) {
             $this->query->select(...$this->select->list());

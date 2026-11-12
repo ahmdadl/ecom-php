@@ -20,13 +20,10 @@ trait Translatable
             $parent = get_parent_class($this);
 
             if ($parent !== false && method_exists($parent, '__call')) {
-                /** @var callable $callback */
-                $callback = [$parent, '__call'];
-
-                return call_user_func_array($callback, $args);
+                return parent::__call($method, $args); // @phpstan-ignore class.noParent
             }
 
-            return null;
+            throw new \BadMethodCallException("Method {$method} does not exist");
         }
 
         $moduleName = Str::replaceFirst('trans', '', $method);

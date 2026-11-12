@@ -135,13 +135,13 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
         foreach (static::LOCATION_DATA as $locationKey) {
             $location = $this->input($locationKey);
 
-            if ($location) {
-                $model->$locationKey = [
+            if (!is_array($location) || !isset($location['lat'], $location['lng'])) continue;
+
+            $model->$locationKey = [
                     'type' => 'Point',
                     'coordinates' => [(float) $location['lat'], (float) $location['lng']],
                     'address' => $location['address'] ?? null,
                 ];
-            }
         }
     }
 
@@ -165,6 +165,15 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
 
             $value = $this->input($column);
 
+            if (is_array($value)) {
+                $value = $value['nid'] ?? null;
+            }
+
+            if ($value === null || $value === '') {
+                $model->$column = null;
+                continue;
+            }
+
             $documentModel = $value instanceof Model ? $value : $documentModelClass::find((int) $value);
 
             $model->$column = $documentModel ? $documentModel->{$sharedInfoMethod}() : null;
@@ -182,7 +191,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
     {
         $location = $this->option($column);
 
-        if (!$location) return;
+        if (!is_array($location) || !isset($location['lat'], $location['lng'])) return;
 
             $this->query->whereLocationNear($column, [(float) $location['lat'], (float) $location['lng']], $distance); // @phpstan-ignore method.notFound
     }
@@ -221,7 +230,7 @@ abstract class MongoDBRepositoryManager extends RepositoryManager implements Rep
                 continue;
             }
 
-            $ids = array_map(intVal(...), $value);
+            $ids = array_map(intval(...), array_filter((array) $value, 'is_scalar'));
 
             if (is_array($documentModelClass)) {
                 [$class, $method] = $documentModelClass;

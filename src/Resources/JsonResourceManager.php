@@ -872,7 +872,7 @@ abstract class JsonResourceManager extends JsonResource
             }
 
             if (is_string($asset) && is_json($asset)) {
-                $asset = json_decode($asset);
+                $asset = json_decode($asset, true);
             }
 
             if (is_array($asset)) {
@@ -1147,7 +1147,7 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected function id(): int
     {
-        return $this->data['nid'];
+        return (int) ($this->data['nid'] ?? 0);
     }
 
     /**
@@ -1155,6 +1155,6 @@ abstract class JsonResourceManager extends JsonResource
      */
     protected function nid(): int
     {
-        return $this->data['nid'];
+        return (int) ($this->data['nid'] ?? 0);
     }
 }

@@ -97,7 +97,7 @@ class AggregateUtils
      */
     public function year(string $column = '', string $returnAs = ''): Expression
     {
-        return $this->expression('$year ', $column, $returnAs);
+        return $this->expression('$year', $column, $returnAs);
     }
 
     /**

@@ -77,6 +77,7 @@ class Aggregate
     {
         return $this->pipeline('group')->data('_id', [
             'day' => ['$dayOfMonth' => $this->prepareGroupByDateColumn($column)],
+            'year' => ['$year' => $this->prepareGroupByDateColumn($column)],
         ]);
     }
 
@@ -107,6 +108,7 @@ class Aggregate
 
         return $this->pipeline('group')->data('_id', [
             'month' => ['$month' => $preparedColumn],
+            'year' => ['$year' => $preparedColumn],
         ]);
     }
 
@@ -121,6 +123,7 @@ class Aggregate
 
         return $this->pipeline('group')->data('_id', [
             'week' => ['$week' => $preparedColumn],
+            'year' => ['$year' => $preparedColumn],
         ]);
     }
 

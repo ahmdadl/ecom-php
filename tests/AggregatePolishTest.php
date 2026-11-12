@@ -130,9 +130,9 @@ final class AggregatePolishTest extends BaseTestCase
         $this->assertSame([
             '$match' => ['category' => ['$eq' => 'restaurant']],
         ], $pipelines[1]);
-        // Pipeline::limit() stores value as array key (pre-existing behavior)
+        // Pipeline::limit() stores a scalar stage value
         $this->assertSame([
-            '$limit' => [10 => null],
+            '$limit' => 10,
         ], $pipelines[2]);
     }
 }

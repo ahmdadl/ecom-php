@@ -432,8 +432,6 @@ trait Listable
     {
         $this->initiateListing($options);
 
-        $this->trigger('listing', $this->query);
-
         $cursorColumn = (string) ($this->option('cursorColumn', static::CURSOR_COLUMN));
 
         $cursor = $this->option('cursor', $this->option('after', $this->option('lastId')));

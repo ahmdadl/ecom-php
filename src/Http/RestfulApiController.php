@@ -159,19 +159,7 @@ abstract class RestfulApiController extends ApiController
 
         $rules = array_merge_recursive($this->allValidation($request, $id), $this->updateValidation($id, $request));
 
-        foreach ($rules as &$rulesList) {
-            if (!is_array($rulesList)) {
-                $rulesList = explode('|', $rulesList);
-            }
-
-            foreach ($rulesList as &$rule) {
-                if ($rule === 'unique') {
-                    if (!Str::contains($rule, ':')) {
-                        $rule = Rule::unique($this->repository->getTableName())->ignore((int) $id, 'nid');
-                    }
-                }
-            }
-        }
+        $rules = $this->normalizeUniqueRules($rules, $id, $this->repository->getTableName());
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -229,6 +217,8 @@ abstract class RestfulApiController extends ApiController
         }
 
         $rules = array_merge_recursive($rules, $this->patchValidation($id, $request));
+
+        $rules = $this->normalizeUniqueRules($rules, $id, $this->repository->getTableName());
 
         $validator = Validator::make($request->all(), $rules);
 
@@ -325,6 +315,51 @@ abstract class RestfulApiController extends ApiController
         $this->repository->delete($model);
 
         return $this->success();
+    }
+
+    /**
+     * Normalize `unique` validation rules so update/patch ignore the current record by `nid`.
+     *
+     * - bare `unique` → Rule::unique(table)->ignore(id, 'nid')
+     * - `unique:table` → Rule::unique(table, attribute)->ignore(id, 'nid')
+     * - `unique:table,column` → Rule::unique(table, column)->ignore(id, 'nid')
+     * - 3+ segments (developer-supplied ignore) are left untouched
+     *
+     * @param  array<string, mixed> $rules
+     * @return array<string, mixed>
+     */
+    protected function normalizeUniqueRules(array $rules, mixed $id, string $table): array
+    {
+        foreach ($rules as $attribute => &$rulesList) {
+            if ($rulesList instanceof Rule) continue;
+
+            if (!is_array($rulesList)) {
+                if (!is_string($rulesList)) continue;
+                $rulesList = explode('|', $rulesList);
+            }
+
+            foreach ($rulesList as &$rule) {
+                if (!is_string($rule)) continue;
+
+                if ($rule === 'unique') {
+                    $rule = Rule::unique($table)->ignore((int) $id, 'nid');
+                    continue;
+                }
+
+                if (!str_starts_with($rule, 'unique:')) continue;
+
+                $segments = explode(',', substr($rule, strlen('unique:')));
+
+                if (count($segments) > 2) continue;
+
+                $ruleTable = $segments[0] !== '' ? $segments[0] : $table;
+                $ruleColumn = $segments[1] ?? $attribute;
+
+                $rule = Rule::unique($ruleTable, $ruleColumn)->ignore((int) $id, 'nid');
+            }
+        }
+
+        return $rules;
     }
 
     /**

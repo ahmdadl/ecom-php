@@ -20,7 +20,7 @@ trait Fillers
     /**
      * Storage directory path
      */
-    protected string $storageDirectory;
+    protected ?string $storageDirectory = null;
 
     /**
      * Force ignore any column that was not sent in request
@@ -182,7 +182,10 @@ trait Fillers
 
             if ($this->isIgnorable($input)) continue;
 
-            $value = array_filter((array) $this->input($input));
+            $value = array_values(array_filter(
+                (array) $this->input($input),
+                fn($v) => $v !== null && $v !== '' && $v !== []
+            ));
 
             $value = $this->handleArrayableValue($value);
 
@@ -265,6 +268,10 @@ trait Fillers
             } else {
                 if ($file instanceof UploadedFile && $file->isValid()) {
                     $filePath = $this->uploadFile($file);
+                    $oldPath = Arr::get($model, $column);
+                    if (is_string($oldPath) && $oldPath !== '' && $oldPath !== $filePath) {
+                        $this->unlink($oldPath);
+                    }
                     $this->setToModel($model, $column, $filePath);
                 }
             }
@@ -294,11 +301,21 @@ trait Fillers
     {
         $keepFileName = defined('static::UPLOADS_KEEP_FILE_NAME') ? static::UPLOADS_KEEP_FILE_NAME : config('mongez.repository.uploads.keepUploadsName', true);
 
-        $originalName = $fileObject->getClientOriginalName();
+        $originalName = basename($fileObject->getClientOriginalName());
 
         $extension = File::extension($originalName) ?: (string) $fileObject->guessExtension();
 
-        return false === $keepFileName ? Str::random(40) . '.' . $extension : $this->adjustFileName($originalName);
+        if (false === $keepFileName) {
+            return Str::random(40) . '.' . $extension;
+        }
+
+        $sanitized = $this->adjustFileName($originalName);
+
+        if ($sanitized === '' || trim($sanitized, '.-') === '') {
+            return Str::random(40) . '.' . $extension;
+        }
+
+        return $sanitized;
     }
 
     /**
@@ -306,6 +323,12 @@ trait Fillers
      */
     private function adjustFileName(string $fileName): string
     {
+        $fileName = basename($fileName);
+        // strip path separators, NUL bytes and control chars first
+        $fileName = str_replace(['/', '\\', "\0"], '-', $fileName);
+        $fileName = (string) preg_replace('/[\x00-\x1F\x7F]/', '', $fileName);
+        // collapse parent-directory traversal, then existing dash rules
+        $fileName = str_replace('..', '-', $fileName);
         $fileName = preg_replace('/(\-+)/', '-', str_replace([
             '-', '(', ')', '%', '#', ' ',
         ], '-', $fileName)) ?? $fileName;
@@ -327,7 +350,7 @@ trait Fillers
 
         $images = Arr::get($model, $column);
 
-        if ($images && is_string($images) || ($filesFromRequest === [] && $files === [])) return $images;
+        if ($filesFromRequest === [] && $files === []) return $images;
 
         foreach ($filesFromRequest as $key => $oldFile) {
             if (!isset($files[$key])) continue;
@@ -336,7 +359,18 @@ trait Fillers
             unset($filesFromRequest[$key]);
         }
 
-        return array_merge($filesFromRequest, $files);
+        $merged = array_merge($filesFromRequest, $files);
+
+        // delete removed array entries (old paths absent from the merged result)
+        if (is_array($images)) {
+            foreach ($images as $oldPath) {
+                if (is_string($oldPath) && $oldPath !== '' && !in_array($oldPath, $merged, true) && !in_array(ltrim($oldPath, '/'), $merged, true)) {
+                    $this->unlink($oldPath);
+                }
+            }
+        }
+
+        return $merged;
     }
 
     /**
@@ -533,8 +567,11 @@ trait Fillers
      */
     protected function isIgnorable(string $input): bool
     {
-        return ($this->forceIgnore && !in_array($input, static::PATCHABLE_DATA)) ||
-            ((static::WHEN_AVAILABLE_DATA === true || in_array($input, static::WHEN_AVAILABLE_DATA)) && $this->input($input) === null);
+        if ($this->forceIgnore) {
+            return !in_array($input, static::PATCHABLE_DATA, true) || !$this->request->has($input);
+        }
+
+        return ((static::WHEN_AVAILABLE_DATA === true || in_array($input, static::WHEN_AVAILABLE_DATA, true)) && $this->input($input) === null);
     }
 
     /**

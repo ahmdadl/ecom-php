@@ -225,17 +225,13 @@ if (!function_exists('date_response')) {
 
         if (!$options['humanTime'] && !$options['timestamp']) {
             $intlFormat = $options['intlFormat'] ?? null;
-            $args = [$date, null];
 
-            if (isset($intlFormat['date'])) {
-                $args[] = $intlFormat['date'];
-            }
-
-            if (isset($intlFormat['time'])) {
-                $args[] = $intlFormat['time'];
-            }
-
-            return $options['intl'] ? localized_date(...$args) : $date->format($options['format']);
+            return $options['intl'] ? localized_date(
+                $date,
+                null,
+                dateType: $intlFormat['date'] ?? IntlDateFormatter::FULL,
+                timeType: $intlFormat['time'] ?? IntlDateFormatter::SHORT,
+            ) : $date->format($options['format']);
         }
         $output = [
             'format' => $date->format($options['format']),
@@ -251,17 +247,13 @@ if (!function_exists('date_response')) {
 
         if ($options['intl']) {
             $intlFormat = $options['intlFormat'] ?? null;
-            $args = [$date, null];
 
-            if (isset($intlFormat['date'])) {
-                $args[] = $intlFormat['date'];
-            }
-
-            if (isset($intlFormat['time'])) {
-                $args[] = $intlFormat['time'];
-            }
-
-            $output['text'] = localized_date(...$args);
+            $output['text'] = localized_date(
+                $date,
+                null,
+                dateType: $intlFormat['date'] ?? IntlDateFormatter::FULL,
+                timeType: $intlFormat['time'] ?? IntlDateFormatter::SHORT,
+            );
         }
 
         return $output;

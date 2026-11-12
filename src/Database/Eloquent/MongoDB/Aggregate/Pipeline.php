@@ -31,6 +31,16 @@ class Pipeline
     protected $data = [];
 
     /**
+     * Scalar stage value for limit/skip stages.
+     */
+    protected mixed $scalarData = 0;
+
+    /**
+     * Whether this pipeline carries a scalar stage value.
+     */
+    protected bool $hasScalarData = false;
+
+    /**
      * Matched operators
      * 
      * @const array
@@ -209,7 +219,11 @@ class Pipeline
             ]
         ];
 
-        $this->data('$or', $data);
+        if (!isset($this->data['$or']) || !is_array($this->data['$or'])) {
+            $this->data['$or'] = [$data];
+        } else {
+            $this->data['$or'][] = $data;
+        }
 
         return $this;
     }
@@ -312,12 +326,12 @@ class Pipeline
 
     /**
      * Return the final data of the pipeline
-     * 
-     * @return array<int|string, mixed>
+     *
+     * @return array<int|string, mixed>|int
      */
     public function getData()
     {
-        return $this->data;
+        return $this->hasScalarData ? $this->scalarData : $this->data;
     }
 
     /**
@@ -325,7 +339,8 @@ class Pipeline
      */
     public function limit($number): Pipeline
     {
-        $this->data((int) $number);
+        $this->scalarData = (int) $number;
+        $this->hasScalarData = true;
         return $this;
     }
 
@@ -334,7 +349,8 @@ class Pipeline
      */
     public function skip($number): Pipeline
     {
-        $this->data((int)$number);
+        $this->scalarData = (int) $number;
+        $this->hasScalarData = true;
         return $this;
     }
 
