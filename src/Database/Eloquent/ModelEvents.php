@@ -126,9 +126,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setCreateModelOptions($model, $modelOptions);
+            $resolvedOptions = static::setCreateModelOptions($model, $modelOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getCreateRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -159,9 +160,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setCreateModelOptions($model, $modelOptions);
+            $resolvedOptions = static::setCreateModelOptions($model, $modelOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getCreateRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -194,9 +196,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setModelOptions($modelOptions);
+            $resolvedOptions = static::setModelOptions($modelOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -231,9 +234,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setModelOptions($modelOptions);
+            $resolvedOptions = static::setModelOptions($modelOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -262,9 +266,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setModelOptions($searchingOptions);
+            $resolvedOptions = static::setModelOptions($searchingOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -297,9 +302,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setModelOptions($searchingOptions);
+            $resolvedOptions = static::setModelOptions($searchingOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -328,9 +334,10 @@ trait ModelEvents
 
             static::$modelClass = $modelClass;
 
-            static::setModelOptions($searchingOptions);
+            $resolvedOptions = static::setModelOptions($searchingOptions);
+            static::$modelOptions = [];
 
-            collect(static::$modelOptions)->each(function ($options) use ($model) {
+            collect($resolvedOptions)->each(function ($options) use ($model) {
                 $records = static::getRelatedModels($model, $options);
 
                 foreach ($records as $record) {
@@ -345,23 +352,44 @@ trait ModelEvents
      *
      * @param Model $model
      * @param string|array<int, mixed> $options
-     * @return void
+     * @return array<int, array<string, mixed>>
      */
-    public static function setCreateModelOptions(Model $model, string|array $options)
+    public static function setCreateModelOptions(Model $model, string|array $options): array
     {
         $options = static::getOptionsArray($options);
 
-        collect($options)->each(function ($option) use ($model) {
+        $resolved = [];
+
+        collect($options)->each(function ($option) use ($model, &$resolved) {
+            if (!is_array($option) || $option === []) {
+                return;
+            }
+
+            $modelOptions = [];
             $modelOptions['searchingColumn'] = $option[0];
 
             switch (count($option)) {
                 case 1:
                     // resolves related (Model::class) namespace to camelCase model name (model)
-                    $relationalModel = Str::camel(str_replace('Models\\', '', (string) strstr(static::$modelClass, 'Models')));
+                    $base = Str::afterLast(static::$modelClass, '\\');
+                    $relationalModel = $base !== '' ? Str::camel($base) : '';
+
+                    if ($relationalModel === '') {
+                        return;
+                    }
+
+                    $attributes = $model->toArray();
 
                     // searching in the model attributes for key asymptotic to resolved (Model::class) name to get the searching key
-                    $foreignColumn = array_key_exists($relationalModel, $model->toArray()) ? $relationalModel :
-                        array_key_first(array_filter($model->toArray(), fn($key) => str_contains($key, $relationalModel), ARRAY_FILTER_USE_KEY));
+                    if (array_key_exists($relationalModel, $attributes)) {
+                        $foreignColumn = $relationalModel;
+                    } else {
+                        $foreignColumn = array_key_first(array_filter($attributes, fn($key) => str_contains((string) $key, $relationalModel), ARRAY_FILTER_USE_KEY));
+                    }
+
+                    if ($foreignColumn === null) {
+                        return;
+                    }
 
                     $modelOptions['foreignColumn'] = $foreignColumn;
                     $modelOptions['sharedInfoMethod'] = static::$sharedInfoMethod;
@@ -375,23 +403,36 @@ trait ModelEvents
                 case 3:
                     $modelOptions['foreignColumn'] = $option[1];
                     $modelOptions['sharedInfoMethod'] = $option[2];
+                    break;
+                default:
+                    return;
             }
 
+            $resolved[] = $modelOptions;
             static::$modelOptions[] = $modelOptions;
         });
+
+        return $resolved;
     }
 
     /**
      * Set model options on update and delete events.
      *
      * @param string|array<int, mixed> $options
-     * @return void
+     * @return array<int, array<string, mixed>>
      */
-    public static function setModelOptions(string|array $options)
+    public static function setModelOptions(string|array $options): array
     {
         $options = static::getOptionsArray($options);
 
-        collect($options)->each(function ($option) {
+        $resolved = [];
+
+        collect($options)->each(function ($option) use (&$resolved) {
+            if (!is_array($option) || $option === []) {
+                return;
+            }
+
+            $modelOptions = [];
             $modelOptions['searchingColumn'] = Str::contains($option[0], '.nid') ? $option[0] : "{$option[0]}.nid";
 
             switch (count($option)) {
@@ -408,10 +449,16 @@ trait ModelEvents
                 case 3:
                     $modelOptions['foreignColumn'] = $option[1];
                     $modelOptions['sharedInfoMethod'] = $option[2];
+                    break;
+                default:
+                    return;
             }
 
+            $resolved[] = $modelOptions;
             static::$modelOptions[] = $modelOptions;
         });
+
+        return $resolved;
     }
 
     /**

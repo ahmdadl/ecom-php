@@ -15,11 +15,27 @@ trait Associatable
     {
         $listOfValues = $this->{$column} ?? [];
 
-        if ($modelInfo instanceof Model) {
-            $listOfValues[] = $modelInfo->sharedInfo();
-        } else {
-            $listOfValues[] = $modelInfo;
+        if (!is_array($listOfValues)) {
+            $listOfValues = $listOfValues === '' ? [] : [$listOfValues];
         }
+
+        $infoArray = $modelInfo instanceof Model
+            ? $modelInfo->sharedInfo()
+            : (is_array($modelInfo) ? $modelInfo : ['nid' => $modelInfo]);
+
+        $searchValue = $infoArray['nid'] ?? null;
+
+        if ($searchValue !== null) {
+            foreach ($listOfValues as $existing) {
+                $existingArray = (array) $existing;
+
+                if (array_key_exists('nid', $existingArray) && (string) $existingArray['nid'] === (string) $searchValue) {
+                    return $this;
+                }
+            }
+        }
+
+        $listOfValues[] = $modelInfo instanceof Model ? $modelInfo->sharedInfo() : $modelInfo;
 
         $this->setAttribute($column, $listOfValues);
 
@@ -35,6 +51,10 @@ trait Associatable
     {
         $documents = $this->{$column} ?? [];
 
+        if (!is_array($documents)) {
+            $documents = [$documents];
+        }
+
         $modelInfoArray = $modelInfo instanceof Model ? $modelInfo->sharedInfo() : (array) $modelInfo;
         $searchValue = $modelInfoArray[$searchingColumn] ?? null;
 
@@ -43,7 +63,7 @@ trait Associatable
         foreach ($documents as $key => $document) {
             $documentArray = (array) $document;
 
-            if (isset($documentArray[$searchingColumn]) && $documentArray[$searchingColumn] == $searchValue) {
+            if ($searchValue !== null && array_key_exists($searchingColumn, $documentArray) && (string) $documentArray[$searchingColumn] === (string) $searchValue) {
                 $documents[$key] = $modelInfoArray;
                 $found = true;
 
@@ -69,6 +89,10 @@ trait Associatable
     {
         $array = $this->{$column} ?? [];
 
+        if (!is_array($array)) {
+            $array = [$array];
+        }
+
         $modelInfoArray = $modelInfo instanceof Model ? $modelInfo->sharedInfo() : (array) $modelInfo;
         $searchValue = $modelInfoArray[$searchBy] ?? null;
 
@@ -77,7 +101,7 @@ trait Associatable
         foreach ($array as $value) {
             $valueArray = (array) $value;
 
-            if (isset($valueArray[$searchBy]) && $valueArray[$searchBy] == $searchValue) {
+            if ($searchValue !== null && array_key_exists($searchBy, $valueArray) && (string) $valueArray[$searchBy] === (string) $searchValue) {
                 continue;
             }
 
@@ -159,7 +183,7 @@ trait Associatable
         $current = $this->{$path};
         $snapshot = $related->{$sharedInfoMethod}();
 
-        if (is_array($current) && $current !== [] && array_is_list($current)) {
+        if (is_array($current) && ($current === [] || array_is_list($current))) {
             $documents = $current;
             $searchValue = $snapshot[$searchingColumn] ?? $related->{$searchingColumn} ?? null;
             $found = false;
@@ -167,7 +191,7 @@ trait Associatable
             foreach ($documents as $key => $document) {
                 $documentArray = (array) $document;
 
-                if (isset($documentArray[$searchingColumn]) && $documentArray[$searchingColumn] == $searchValue) {
+                if ($searchValue !== null && array_key_exists($searchingColumn, $documentArray) && (string) $documentArray[$searchingColumn] === (string) $searchValue) {
                     $documents[$key] = $snapshot;
                     $found = true;
                     break;
@@ -199,11 +223,30 @@ trait Associatable
         }
 
         foreach ($criteria as $key => $expected) {
-            if (! array_key_exists($key, $document) || $document[$key] != $expected) {
+            if (! array_key_exists($key, $document) || ! self::embeddedValuesEqual($document[$key], $expected)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Compare an embedded document value against match criteria.
+     *
+     * Scalars compare by string value so int/string nid mismatches still
+     * match, while booleans keep strict identity.
+     */
+    protected static function embeddedValuesEqual(mixed $actual, mixed $expected): bool
+    {
+        if (is_bool($actual) || is_bool($expected)) {
+            return $actual === $expected;
+        }
+
+        if ((is_scalar($actual) || $actual === null) && (is_scalar($expected) || $expected === null)) {
+            return (string) $actual === (string) $expected;
+        }
+
+        return $actual === $expected;
     }
 }

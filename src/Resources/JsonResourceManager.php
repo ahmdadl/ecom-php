@@ -675,14 +675,15 @@ abstract class JsonResourceManager extends JsonResource
                     }
                 }
             }
-            return $valuesList ?: $value;
+            return $valuesList ?: '';
+
         }
 
         if ($localizationMode === 'object' && isset($value[$localeCode]) || isset($value[$localeCode])) {
             return (string) ($value[$localeCode]['text'] ?? '');
         }
 
-        return $value;
+        return '';
     }
 
     /**
@@ -828,14 +829,14 @@ abstract class JsonResourceManager extends JsonResource
                     }
                 }
             }
-            return $value;
+            return '';
         }
 
         if ($localizationMode === 'object' && isset($value[$localeCode]) || isset($value[$localeCode])) {
             return $this->makeResource($column['resource'], $value[$localeCode]);
         }
 
-        return $value;
+        return '';
     }
 
     /**

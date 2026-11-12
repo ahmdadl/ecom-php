@@ -27,10 +27,10 @@ class Aggregate
 
     /**
      * Current Pipeline
-     * 
-     * @var Pipeline
+     *
+     * @var Pipeline|null
      */
-    protected $currentPipeline;
+    protected ?Pipeline $currentPipeline = null;
 
     /**
      * Constructor
@@ -60,6 +60,10 @@ class Aggregate
                 }
 
                 [$name] = explode('.', $column);
+
+                if (array_key_exists($name, $columnsList)) {
+                    $name = str_replace('.', '_', (string) $column);
+                }
 
                 $columnsList[$name] = "$$column";
             }
@@ -340,7 +344,7 @@ class Aggregate
      */
     public function orderBy($column, $order = 'asc')
     {
-        $pipeline = $this->currentPipeline->name == 'sort' ? $this->currentPipeline : $this->pipeline('sort');
+        $pipeline = $this->currentPipeline !== null && $this->currentPipeline->name == 'sort' ? $this->currentPipeline : $this->pipeline('sort');
 
         $columnsList = [];
 
@@ -739,6 +743,10 @@ class Aggregate
             $callback = [$this->pipeline('match'), $name];
 
             return call_user_func_array($callback, $arguments);
+        }
+
+        if ($this->currentPipeline === null) {
+            throw new \BadMethodCallException("No pipeline started; call pipeline() or a where* method first.");
         }
 
         /** @var callable $callback */

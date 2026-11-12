@@ -69,7 +69,17 @@ class Expression
      */
     public function parse(): array
     {
-        $returnAs = $this->returnAs ?: $this->column;
+        $returnAs = $this->returnAs;
+
+        if ($returnAs === '') {
+            if (is_array($this->column)) {
+                $returnAs = implode('_', array_map('strval', $this->column));
+            } elseif ($this->column instanceof Expression) {
+                $returnAs = 'expression';
+            } else {
+                $returnAs = (string) $this->column;
+            }
+        }
 
         $column = $this->column;
 

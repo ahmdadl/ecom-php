@@ -1,5 +1,40 @@
 # Changelog
 
+## [5.6.2] - 2026-11-12
+
+### Fixed
+
+- HIGH review findings: multi-delete error accumulator no longer clobbered by
+  `beforeDeleting()`; `JsonResourceManager` disabled/allowed keys are now
+  per-class (no cross-resource leakage, Octane-safe reset); model cache version
+  key written forever (monotonic invalidation); Octane state cleanup rolls back
+  with `DB::rollBack(0)`; `Model::find()` throws on array input instead of
+  returning the wrong record.
+- MED review findings: arrayble filtering preserves `0`/`false` and reindexes;
+  PATCH no longer blanks absent fields (`isIgnorable` checks `$request->has()`,
+  `forceIgnore` reset via `try/finally`); upload filenames sanitized
+  (`basename` + `..`/separator strip, hash fallback); nullable
+  `$storageDirectory`, orphaned upload cleanup on replace/remove;
+  `setMultiDocumentData` accepts scalar input; location data validated as array
+  with `lat`/`lng`; `listing` event fires once; `unique:table,column` rules get
+  `->ignore($id, 'nid')` on update/patch; `collectAssets()` decodes JSON objects
+  as assoc; guarded `id()`/`nid()`; scalar `Pipeline::limit()`/`skip()`;
+  `AggregateUtils::year()` operator typo; `groupByDay/Month/Week` include year;
+  `Pipeline::orWhere()` builds a clause list; `Translatable::__call` delegates
+  correctly; `date_response()` uses named `dateType`/`timeType` args;
+  `Listable::has()` casts digit strings to `int`; `listOptions()` validates
+  sort direction and column charset.
+- LOW review findings: `ModelEvents` options always initialized (Swoole-safe
+  per-handler locals, `default` arity guard, fixed relational foreign-column
+  guess); `Associatable` dedups by `nid` and handles scalar columns;
+  `patch()` calls `beforeAll()`; missing locale returns `''`;
+  `ApiRequest` after-heading/after-request key mappings;
+  `Aggregate::$currentPipeline` typed with dotted-key collision guard;
+  `Pipeline::project()` scalar shape, `count()` default name, `parseDate()`
+  (typo alias kept); `Expression::parse()` array-column `returnAs` fallback;
+  `HasSettings` literal keys and per-group cache clear; `Deletable` passes
+  `nid` to `deleting` and unlinks object-shaped uploads safely.
+
 ## [5.6.1] - 2026-11-07
 
 ### Fixed

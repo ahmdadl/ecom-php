@@ -230,9 +230,9 @@ abstract class RestfulApiController extends ApiController
             return $this->badRequest($errors);
         }
 
-        // if ($errors = $this->beforeAll($request)) {
-        //     return $this->badRequest($errors);
-        // }
+        if ($errors = $this->beforeAll($request)) {
+            return $this->badRequest($errors);
+        }
 
         $this->repository->patch($model, $request);
 

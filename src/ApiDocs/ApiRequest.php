@@ -212,7 +212,7 @@ class ApiRequest
      */
     protected function setAfterDocumentHeading()
     {
-        $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_REQUEST_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_HEADING_KEY));
     }
 
     /**
@@ -432,7 +432,7 @@ class ApiRequest
      */
     protected function setAfterRequestInformation()
     {
-        $this->append($this->get(static::ADDTIONAL_CONTENT_BEFORE_REQUEST_KEY));
+        $this->append($this->get(static::ADDTIONAL_CONTENT_AFTER_REQUEST_KEY));
     }
 
     /**

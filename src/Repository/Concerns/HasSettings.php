@@ -102,16 +102,12 @@ trait HasSettings
         }
 
         foreach ($this->fetchSettingsGrouped($missing) as $group => $rows) {
-            foreach ($rows as $setting) {
-                Arr::set(
-                    $this->loadedSettings,
-                    $group . '.' . $this->settingName($setting),
-                    $this->mapSettingValue($setting)
-                );
+            if (! array_key_exists($group, $this->loadedSettings) || ! is_array($this->loadedSettings[$group])) {
+                $this->loadedSettings[$group] = [];
             }
 
-            if (! array_key_exists($group, $this->loadedSettings)) {
-                $this->loadedSettings[$group] = [];
+            foreach ($rows as $setting) {
+                $this->loadedSettings[$group][$this->settingName($setting)] = $this->mapSettingValue($setting);
             }
         }
 
@@ -129,16 +125,12 @@ trait HasSettings
         $this->loadedSettings = [];
 
         foreach ($settings as $group => $groupSettings) {
-            foreach ($groupSettings as $setting) {
-                Arr::set(
-                    $this->loadedSettings,
-                    $group . '.' . $this->settingName($setting),
-                    $this->mapSettingValue($setting)
-                );
+            if (! array_key_exists($group, $this->loadedSettings) || ! is_array($this->loadedSettings[$group])) {
+                $this->loadedSettings[$group] = [];
             }
 
-            if (! array_key_exists($group, $this->loadedSettings)) {
-                $this->loadedSettings[$group] = [];
+            foreach ($groupSettings as $setting) {
+                $this->loadedSettings[$group][$this->settingName($setting)] = $this->mapSettingValue($setting);
             }
         }
 
@@ -150,8 +142,19 @@ trait HasSettings
      */
     public function getSetting(string $key, mixed $default = null): mixed
     {
-        [$group] = explode('.', $key, 2);
+        $parts = explode('.', $key, 2);
+        $group = $parts[0];
         $this->load($group);
+
+        if (count($parts) === 1) {
+            return $this->loadedSettings[$group] ?? $default;
+        }
+
+        $name = $parts[1];
+
+        if (is_array($this->loadedSettings[$group] ?? null) && array_key_exists($name, $this->loadedSettings[$group])) {
+            return $this->loadedSettings[$group][$name];
+        }
 
         return Arr::get($this->loadedSettings, $key, $default);
     }
@@ -200,8 +203,14 @@ trait HasSettings
 
         $prefix = $this->settingsCachePrefix();
 
+        foreach (array_keys($this->loadedSettings) as $loadedGroup) {
+            Cache::forget($this->settingsCacheKey((string) $loadedGroup));
+        }
+
         // Best-effort: forget a sentinel "all" key used by full loads.
         Cache::forget($prefix . '.all');
+
+        $this->flushLoadedSettings();
     }
 
     /**

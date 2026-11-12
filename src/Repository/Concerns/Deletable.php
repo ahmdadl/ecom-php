@@ -27,19 +27,19 @@ trait Deletable
 
         if (!$model) return false;
 
-        if ($this->trigger("deleting", $model, $model->getKey()) === false) return false;
+        if ($this->trigger("deleting", $model, $model->nid ?? $model->getKey()) === false) return false;
 
         // delete uploaded files
-        foreach (static::UPLOADS as $file) {
-            if (!$model->$file) continue;
+        foreach (static::UPLOADS as $upload) {
+            $column = is_array($upload) ? ($upload['column'] ?? $upload['input'] ?? null) : $upload;
 
-            if (is_array($model->$file)) {
-                foreach ($model->$file as $singleFile) {
-                    $this->unlink($singleFile);
-                }
-            } else {
-                $this->unlink($model->$file);
-            }
+            if (!is_string($column) || $column === '') continue;
+
+            $stored = $model->$column ?? null;
+
+            if (!$stored) continue;
+
+            $this->unlinkStoredUpload($stored);
         }
 
         $model->delete();
@@ -49,6 +49,36 @@ trait Deletable
         $this->trigger("delete", $model, $model->getKey());
 
         return true;
+    }
+
+    /**
+     * Remove stored upload value(s), tolerating multi-file and metadata shapes.
+     *
+     * @param mixed $stored
+     */
+    protected function unlinkStoredUpload(mixed $stored): void
+    {
+        if (is_string($stored)) {
+            $this->unlink($stored);
+
+            return;
+        }
+
+        if (is_array($stored)) {
+            $entries = array_is_list($stored) ? $stored : [$stored];
+
+            foreach ($entries as $entry) {
+                if (is_string($entry)) {
+                    $this->unlink($entry);
+                } elseif (is_array($entry)) {
+                    $path = $entry['path'] ?? $entry['file'] ?? $entry['relativePath'] ?? null;
+
+                    if (is_string($path) && $path !== '') {
+                        $this->unlink($path);
+                    }
+                }
+            }
+        }
     }
 
     /**

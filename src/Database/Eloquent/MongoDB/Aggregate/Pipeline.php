@@ -141,9 +141,7 @@ class Pipeline
                     '$last' => "$$column"
                 ]);
             } elseif ($this->name === 'project') {
-                $this->data($alias, [
-                    $column => "$$column"
-                ]);
+                $this->data($alias, "$$column");
             }
         }
 
@@ -184,7 +182,7 @@ class Pipeline
         }
 
         if ($value instanceof DateTimeInterface) {
-            $value = $this->praseDate($value);
+            $value = $this->parseDate($value);
         }
 
         $this->data($column, [
@@ -269,11 +267,11 @@ class Pipeline
     public function whereBetween($column, $minValue, $maxValue): Pipeline
     {
         if ($minValue instanceof DateTimeInterface) {
-            $minValue = $this->praseDate($minValue);
+            $minValue = $this->parseDate($minValue);
         }
 
         if ($maxValue instanceof DateTimeInterface) {
-            $maxValue = $this->praseDate($maxValue);
+            $maxValue = $this->parseDate($maxValue);
         }
 
         $this->data($column, [
@@ -291,6 +289,10 @@ class Pipeline
      */
     public function count(...$columns): Pipeline
     {
+        if ($columns === []) {
+            $columns = ['count'];
+        }
+
         foreach ($columns as $column) {
             if (is_array($column)) {
                 [$column, $alias] = $column;
@@ -311,9 +313,19 @@ class Pipeline
      *
      * @return UTCDateTime
      */
-    protected function praseDate(DateTimeInterface $date)
+    protected function parseDate(DateTimeInterface $date)
     {
         return new UTCDateTime((int) $date->format('Uv'));
+    }
+
+    /**
+     * @deprecated Use parseDate() instead.
+     *
+     * @return UTCDateTime
+     */
+    protected function praseDate(DateTimeInterface $date)
+    {
+        return $this->parseDate($date);
     }
 
     /**
